@@ -23,27 +23,22 @@ dependencies {
 
 ## Examples:
 
-#### Load Banner: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L96)
-#### Load Interstitial: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L159)
-#### Load Rewarded Video: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L213)
+#### Load Banner: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L99)
+#### Load Interstitial: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L170)
+#### Load Rewarded Video: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L225)
 
 
 Parameter list for server configuretion:
 
-| Key             |                                   Definition                                                     | Value type          |
-| --------------- | ------------------------------------------------------------------------------------------------ | ------------------- |
-| seller_id       | You unique seller id. To get your Seller Id or for more info please visit https://bidmachine.io/ |
-| coppa           | Flag indicating if COPPA regulations can be applied.
-                    The Children's Online Privacy Protection Act (COPPA) was established by the U.S.
-                    Federal Trade Commission.
-| logging_enabled | Enable logs if required
-| test_mode       | Enable test mode
-| subject_to_gdpr | Flag indicating if GDPR regulations can be applied.
-                    The General Data Protection Regulation (GDPR) is a regulation of the European Union.
-| has_consent     | User has given consent to the processing of personal data relating to him or her.
-                    https://www.eugdpr.org/
-| consent_string  | GDPR consent string (if applicable), indicating the compliance to the IAB standard
-                    Consent String Format of the Transparency and Consent Framework technical specifications.
+| Key             | Definition | Value type |
+| --------------- | ---------- | ---------- |
+| seller_id       | You unique seller id. To get your Seller Id or for more info please visit https://bidmachine.io/ | Stirng |
+| coppa           | Flag indicating if COPPA regulations can be applied. The Children's Online Privacy Protection Act (COPPA) was established by the U.S. Federal Trade Commission. | String |
+| logging_enabled | Enable logs if required | String |
+| test_mode       | Enable test mode | String |
+| subject_to_gdpr | Flag indicating if GDPR regulations can be applied. The General Data Protection Regulation (GDPR) is a regulation of the European Union. | String |
+| has_consent     | User has given consent to the processing of personal data relating to him or her. https://www.eugdpr.org/ | String |
+| consent_string  | GDPR consent string (if applicable), indicating the compliance to the IAB standard Consent String Format of the Transparency and Consent Framework technical specifications. | Stirng |
 | ad_content_type | Content type for interstitial ad, one of following: "All", "Static", "Video"   | String              |
 | userId          | Vendor-specific ID for the user                                                | String              |
 | gender          | Gender, one of following: "F", "M", "O"                                        | String              |
