@@ -31,7 +31,7 @@ dependencies {
 Parameter list for server configuretion:
 
 | Key             | Definition | Value type |
-| --------------- | ---------- | ---------- |
+|:--------------- |:-------------- |:---------- |
 | seller_id       | You unique seller id. To get your Seller Id or for more info please visit https://bidmachine.io/ | Stirng |
 | coppa           | Flag indicating if COPPA regulations can be applied. The Children's Online Privacy Protection Act (COPPA) was established by the U.S. Federal Trade Commission. | String |
 | logging_enabled | Enable logs if required | String |
