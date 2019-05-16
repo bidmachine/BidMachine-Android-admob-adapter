@@ -1,0 +1,59 @@
+/**
+ * Gradle task for submit aar build to maven repo.
+ * Required params:
+ * artifactory_repo - target maven repository
+ * artifactory_username - user name for authorization
+ * artifactory_password - user password for authorization
+ */
+
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+def libGroupId = "io.bidmachine"
+def libArtifactId = "ads-admob"
+
+configurations.maybeCreate("default")
+def publishArtifact = artifacts.add("default", file("build/outputs/aar/bidmachine_android_admob-release.aar"))
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId = libGroupId
+            artifactId = libArtifactId
+            version = android.defaultConfig.versionName
+            artifact publishArtifact
+        }
+    }
+}
+
+artifactory {
+    contextUrl = 'https://artifactory.appodeal.com/artifactory'
+    publish {
+        repository {
+            if (project.hasProperty("artifactory_repo")) {
+                repoKey = artifactory_repo
+                println "Artifactory repo: $artifactory_repo"
+            } else {
+                println "Artifactory repo not provided (-Partifactory_repo)"
+            }
+            if (project.hasProperty("artifactory_username")) {
+                username = artifactory_username
+                println "Artifactory username: $artifactory_username"
+            } else {
+                println "Artifactory username not provided! (-Partifactory_username)"
+            }
+            if (project.hasProperty("artifactory_password")) {
+                password = artifactory_password
+                println "Artifactory password: $artifactory_password"
+            } else {
+                println "Artifactory password not provided! (-Partifactory_password)"
+            }
+        }
+        defaults {
+            publications('aar')
+        }
+    }
+}
+
+task uploadAarToArtifactory(dependsOn: [assemble, artifactoryPublish], group: 'aar')
+artifactoryPublish.mustRunAfter(assemble)
