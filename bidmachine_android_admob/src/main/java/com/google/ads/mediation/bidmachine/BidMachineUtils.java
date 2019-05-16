@@ -162,23 +162,6 @@ class BidMachineUtils {
     }
 
     /**
-     * +----------+--------------------------------------------------------------------------------+------------+
-     * |   Key    |                                   Definition                                   | Value type |
-     * +----------+--------------------------------------------------------------------------------+------------+
-     * | user_id  | Vendor-specific ID for the user                                                | String     |
-     * | gender   | Gender, one of following: "F", "M", "O"                                        | String     |
-     * | yob      | Year of birth as a 4-digit integer (e.g - 1990)                                | String     |
-     * | keywords | List of keywords, interests, or intents (separated by comma)                   | String     |
-     * | country  | Country of the user's home base (i.e., not necessarily their current location) | String     |
-     * | city     | City of the user's home base (i.e., not necessarily their current location)    | String     |
-     * | zip      | Zip of the user's home base (i.e., not necessarily their current location)     | String     |
-     * | sturl    | App store URL for an installed app; for IQG 2.1 compliance                     | String     |
-     * | paid     | Determines, if it is a free or paid version of the app                         | String     |
-     * | bcat     | Block list of content categories using IDs (separated by comma)                | String     |
-     * | badv     | Block list of advertisers by their domains (separated by comma)                | String     |
-     * | bapps    | Block list of apps where ads are disallowed (separated by comma)               | String     |
-     * +----------+--------------------------------------------------------------------------------+------------+
-     * <p>
      * Targeting parameters must be set with help {@link BidMachineBundleBuilder}
      *
      * @param extras - bundle which contains the necessary parameters for targeting
@@ -244,12 +227,6 @@ class BidMachineUtils {
     }
 
     /**
-     * +--------------+---------------------+---------------------+
-     * |     Key      |     Definition      |     Value type      |
-     * +--------------+---------------------+---------------------+
-     * | price_floors | List of price floor | JSONArray in String |
-     * +--------------+---------------------+---------------------+
-     * <p>
      * Price floor parameters must be set with help {@link BidMachineBundleBuilder}
      *
      * @param extras - bundle which contains the necessary parameters for price floor
