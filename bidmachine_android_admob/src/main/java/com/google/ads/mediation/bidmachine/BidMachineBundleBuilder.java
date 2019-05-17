@@ -151,12 +151,8 @@ public class BidMachineBundleBuilder {
         return this;
     }
 
-    public BidMachineBundleBuilder setConsent(boolean hasConsent) {
+    public BidMachineBundleBuilder setConsentConfig(boolean hasConsent, String consentString) {
         this.hasConsent = hasConsent;
-        return this;
-    }
-
-    public BidMachineBundleBuilder setConsentString(String consentString) {
         this.consentString = consentString;
         return this;
     }
@@ -298,4 +294,5 @@ public class BidMachineBundleBuilder {
         }
         return extras;
     }
+
 }

@@ -42,7 +42,6 @@ public final class BidMachineCustomEventInterstitial implements CustomEventInter
                 mediationAdRequest.taggedForChildDirectedTreatment());
         BidMachineUtils.updateGDPR(fusedBundle);
         if (!BidMachineUtils.prepareBidMachine(context, fusedBundle)) {
-            Log.d(TAG, "Failed to request ad. seller_id not found");
             customEventInterstitialListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
@@ -53,8 +52,6 @@ public final class BidMachineCustomEventInterstitial implements CustomEventInter
         AdContentType adContentType = getAdContentType(fusedBundle);
         if (adContentType != null) {
             interstitialRequestBuilder.setAdContentType(adContentType);
-        } else {
-            Log.d(TAG, "ad_content_type not found. Will be used default AdContentType");
         }
         interstitialAd = new InterstitialAd(context);
         interstitialAd.setListener(new BidMachineAdListener(customEventInterstitialListener));
