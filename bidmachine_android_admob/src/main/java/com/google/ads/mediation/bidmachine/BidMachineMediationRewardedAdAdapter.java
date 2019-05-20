@@ -51,7 +51,6 @@ public final class BidMachineMediationRewardedAdAdapter
                 mediationAdRequest.taggedForChildDirectedTreatment());
         BidMachineUtils.updateGDPR(fusedBundle);
         if (!BidMachineUtils.prepareBidMachine(context, fusedBundle)) {
-            Log.d(TAG, "Failed to request ad. seller_id not found");
             mediationRewardedVideoAdListener.onAdFailedToLoad(
                     this,
                     AdRequest.ERROR_CODE_INVALID_REQUEST);
@@ -83,7 +82,6 @@ public final class BidMachineMediationRewardedAdAdapter
                 mediationAdRequest.taggedForChildDirectedTreatment());
         BidMachineUtils.updateGDPR(fusedBundle);
         if (!BidMachineUtils.prepareBidMachine(context, fusedBundle)) {
-            Log.d(TAG, "Failed to request ad. seller_id not found");
             mediationRewardedVideoAdListener.onAdFailedToLoad(
                     this,
                     AdRequest.ERROR_CODE_INVALID_REQUEST);

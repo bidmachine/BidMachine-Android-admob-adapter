@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.mediation.MediationAdRequest;
@@ -23,6 +24,8 @@ import io.bidmachine.utils.BMError;
 import io.bidmachine.utils.Gender;
 
 class BidMachineUtils {
+
+    private static final String TAG = BidMachineUtils.class.getSimpleName();
 
     static final String SELLER_ID = "seller_id";
     static final String COPPA = "coppa";
@@ -73,6 +76,7 @@ class BidMachineUtils {
                 isInitialized = true;
                 return true;
             } else {
+                Log.d(TAG, "Failed to request ad. seller_id not found");
                 return false;
             }
         }
@@ -95,11 +99,7 @@ class BidMachineUtils {
         Boolean hasConsent = getBoolean(extras, HAS_CONSENT);
         String consentString = getString(extras, CONSENT_STRING);
         if (hasConsent != null) {
-            BidMachine.setConsentConfig(
-                    hasConsent,
-                    consentString != null
-                            ? consentString
-                            : "");
+            BidMachine.setConsentConfig(hasConsent, consentString);
         }
     }
 
@@ -129,11 +129,11 @@ class BidMachineUtils {
      */
     static int transformToAdMobErrorCode(@NonNull BMError bmError) {
         if (bmError == BMError.NoContent
-                || bmError == BMError.NotLoaded
-                || bmError == BMError.TimeoutError) {
+                || bmError == BMError.NotLoaded) {
             return AdRequest.ERROR_CODE_NO_FILL;
         } else if (bmError == BMError.Server
-                || bmError == BMError.Connection) {
+                || bmError == BMError.Connection
+                || bmError == BMError.TimeoutError) {
             return AdRequest.ERROR_CODE_NETWORK_ERROR;
         } else if (bmError == BMError.IncorrectAdUnit) {
             return AdRequest.ERROR_CODE_INVALID_REQUEST;
@@ -283,10 +283,12 @@ class BidMachineUtils {
             Iterator<String> iterator = jsonObject.keys();
             while (iterator.hasNext()) {
                 String key = iterator.next();
-                Object value = jsonObject.get(key);
-                String valueString = String.valueOf(value);
-                if (!TextUtils.isEmpty(valueString) && !valueString.equals("null")) {
-                    bundle.putString(key, String.valueOf(value));
+                if (!jsonObject.isNull(key)) {
+                    Object value = jsonObject.get(key);
+                    String valueString = String.valueOf(value);
+                    if (!TextUtils.isEmpty(valueString) && !valueString.equals("null")) {
+                        bundle.putString(key, String.valueOf(value));
+                    }
                 }
             }
             return bundle;
@@ -294,7 +296,6 @@ class BidMachineUtils {
             return null;
         }
     }
-
 
     @Nullable
     private static Object getValue(Bundle bundle, String key) {
