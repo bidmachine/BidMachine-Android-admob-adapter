@@ -23,9 +23,6 @@ import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import io.bidmachine.AdContentType;
 
 public class BidMachineAdMobActivity extends Activity {
@@ -101,16 +98,6 @@ public class BidMachineAdMobActivity extends Activity {
         destroyBanner();
 
         Log.d(TAG, "AdMob loadBanner");
-
-        JSONArray priceFloors = new JSONArray();
-        try {
-            priceFloors.put(new JSONObject().put("id1", 300.006));
-            priceFloors.put(new JSONObject().put("id2", 1000));
-            priceFloors.put(302.006);
-            priceFloors.put(1002);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         //Prepare bundle for set to AdRequest
         Bundle bundle = new BidMachineBundleBuilder()
