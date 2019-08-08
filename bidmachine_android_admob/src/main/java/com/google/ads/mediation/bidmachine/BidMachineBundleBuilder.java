@@ -16,6 +16,11 @@ public class BidMachineBundleBuilder {
     private String sellerId;
 
     /**
+     * You mediation config
+     */
+    private JSONArray mediationConfig;
+
+    /**
      * Flag indicating if COPPA regulations can be applied.
      * The Children's Online Privacy Protection Act (COPPA) was established by the U.S.
      * Federal Trade Commission.
@@ -131,6 +136,11 @@ public class BidMachineBundleBuilder {
         return this;
     }
 
+    public BidMachineBundleBuilder setMediationConfig(JSONArray mediationConfig) {
+        this.mediationConfig = mediationConfig;
+        return this;
+    }
+
     public BidMachineBundleBuilder setCoppa(boolean coppa) {
         this.coppa = coppa;
         return this;
@@ -231,6 +241,9 @@ public class BidMachineBundleBuilder {
         Bundle extras = new Bundle();
         if (sellerId != null) {
             extras.putString(BidMachineUtils.SELLER_ID, sellerId);
+        }
+        if (mediationConfig != null) {
+            extras.putString(BidMachineUtils.MEDIATION_CONFIG, mediationConfig.toString());
         }
         if (coppa != null) {
             extras.putBoolean(BidMachineUtils.COPPA, coppa);

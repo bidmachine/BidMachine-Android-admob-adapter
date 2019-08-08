@@ -28,6 +28,7 @@ class BidMachineUtils {
     private static final String TAG = BidMachineUtils.class.getSimpleName();
 
     static final String SELLER_ID = "seller_id";
+    static final String MEDIATION_CONFIG = "mediation_config";
     static final String COPPA = "coppa";
     static final String LOGGING_ENABLED = "logging_enabled";
     static final String TEST_MODE = "test_mode";
@@ -57,7 +58,8 @@ class BidMachineUtils {
      * @param extras - bundle which contains one or more of:
      *               1. {@link BidMachineUtils#SELLER_ID};
      *               2. {@link BidMachineUtils#LOGGING_ENABLED};
-     *               3. {@link BidMachineUtils#TEST_MODE}.
+     *               3. {@link BidMachineUtils#TEST_MODE};
+     *               4. {@link BidMachineUtils#MEDIATION_CONFIG}.
      * @return was initialize or not
      */
     static boolean prepareBidMachine(Context context, @NonNull Bundle extras) {
@@ -70,8 +72,13 @@ class BidMachineUtils {
             BidMachine.setTestMode(testMode);
         }
         if (!isInitialized) {
+            String jsonData = getString(extras, MEDIATION_CONFIG);
+            if (jsonData != null) {
+                BidMachine.registerNetworks(jsonData);
+            }
             String sellerId = getString(extras, SELLER_ID);
             if (!TextUtils.isEmpty(sellerId)) {
+                assert sellerId != null;
                 BidMachine.initialize(context, sellerId);
                 isInitialized = true;
                 return true;
