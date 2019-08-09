@@ -2,6 +2,8 @@
 BidMachine Android adapter for AdMob mediation
 
 ## Integration:
+[<img src="https://appodeal-android.s3-us-west-1.amazonaws.com/publishing/bm_130_git_version_badge.svg">](https://github.com/bidmachine/BidMachine-Android-SDK)
+[<img src="https://appodeal-android.s3-us-west-1.amazonaws.com/publishing/bm_mopub_1302_git_version_badge.svg">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads-mopub/1.3.0.2/)
 ```gradle
 repositories {
     //Add BidMachine maven repository
@@ -12,9 +14,9 @@ repositories {
 
 dependencies {
     //Add BidMachine SDK dependency
-    implementation 'io.bidmachine:ads:1.1.0'
+    implementation 'io.bidmachine:ads:1.3.0'
     //Add BidMachine SDK AdMob Adapter dependency
-    implementation 'io.bidmachine:ads-admob:1.0.2'
+    implementation 'io.bidmachine:ads-adapters-admob:1.3.0.2'
     //Add AdMob SDK dependency
     implementation 'com.google.android.gms:play-services-ads:17.2.0'
     ...
@@ -23,9 +25,9 @@ dependencies {
 
 ## Examples:
 
-#### Load Banner: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L99)
-#### Load Interstitial: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L170)
-#### Load Rewarded Video: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L225)
+#### Load Banner: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L96)
+#### Load Interstitial: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L157)
+#### Load Rewarded Video: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L212)
 
 
 Parameter list for server configuretion:
@@ -33,6 +35,7 @@ Parameter list for server configuretion:
 | Key             | Definition | Value type |
 |:--------------- |:-------------- |:---------- |
 | seller_id       | You unique seller id. To get your Seller Id or for more info please visit https://bidmachine.io/ | String |
+| mediation_config | Your mediation config | JSONArray in String |
 | coppa           | Flag indicating if COPPA regulations can be applied. The Children's Online Privacy Protection Act (COPPA) was established by the U.S. Federal Trade Commission. | String |
 | logging_enabled | Enable logs if required | String |
 | test_mode       | Enable test mode | String |
@@ -58,6 +61,7 @@ Server configuration sample:
 ```json
 {
     "seller_id": "YOUR_SELLER_ID",
+    "mediation_config": "YOUR_MEDIATION_CONFIG",
     "coppa": "true",
     "logging_enabled": "true",
     "test_mode": "true",
@@ -102,6 +106,7 @@ try {
 
 Bundle bundle = new BidMachineBundleBuilder()
         .setSellerId("YOUR_SELLER_ID")
+        .setMediationConfig(YOURJSONArray.toString)
         .setCoppa(true)
         .setLoggingEnabled(true)
         .setTestMode(true)
