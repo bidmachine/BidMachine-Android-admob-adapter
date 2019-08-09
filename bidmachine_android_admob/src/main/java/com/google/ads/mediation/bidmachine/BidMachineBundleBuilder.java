@@ -56,6 +56,11 @@ public class BidMachineBundleBuilder {
     private String consentString;
 
     /**
+     * Your custom endpoint
+     */
+    private String endpoint;
+
+    /**
      * Content type for interstitial ad, one of following:
      * 1. {@link AdContentType#All} - Flag to request both Video and Static ad content types;
      * 2. {@link AdContentType#Static} - Flag to request Video ad content type only;
@@ -167,6 +172,11 @@ public class BidMachineBundleBuilder {
         return this;
     }
 
+    public BidMachineBundleBuilder setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+        return this;
+    }
+
     public BidMachineBundleBuilder setAdContentType(AdContentType adContentType) {
         this.adContentType = adContentType;
         return this;
@@ -262,6 +272,9 @@ public class BidMachineBundleBuilder {
         }
         if (consentString != null) {
             extras.putString(BidMachineUtils.CONSENT_STRING, consentString);
+        }
+        if (endpoint != null) {
+            extras.putString(BidMachineUtils.ENDPOINT, endpoint);
         }
         if (adContentType != null) {
             extras.putString(BidMachineUtils.AD_CONTENT_TYPE, adContentType.name());

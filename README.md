@@ -42,6 +42,7 @@ Parameter list for server configuretion:
 | subject_to_gdpr | Flag indicating if GDPR regulations can be applied. The General Data Protection Regulation (GDPR) is a regulation of the European Union. | String |
 | has_consent     | User has given consent to the processing of personal data relating to him or her. https://www.eugdpr.org/ | String |
 | consent_string  | GDPR consent string (if applicable), indicating the compliance to the IAB standard Consent String Format of the Transparency and Consent Framework technical specifications. | String |
+| endpoint | Your custom endpoint | String |
 | ad_content_type | Content type for interstitial ad, one of following: "All", "Static", "Video"   | String              |
 | userId          | Vendor-specific ID for the user                                                | String              |
 | gender          | Gender, one of following: "F", "M", "O"                                        | String              |
@@ -68,6 +69,7 @@ Server configuration sample:
     "subject_to_gdpr": "true",
     "has_consent": "true",
     "consent_string": "YOUR_CONSENT_STRING",
+    "endpoint": "YOUR_ENDPOINT",
     "ad_content_type": "All",
     "user_id": "YOUR_USER_ID",
     "gender": "M",
@@ -112,6 +114,7 @@ Bundle bundle = new BidMachineBundleBuilder()
         .setTestMode(true)
         .setSubjectToGDPR(true)
         .setConsentConfig(true, "YOUR_CONSENT_STRING")
+        .setEndpoint("YOUR_ENDPOINT")
         .setAdContentType(AdContentType.All)
         .setUserId("YOUR_USER_ID")
         .setGender(Gender.Male)

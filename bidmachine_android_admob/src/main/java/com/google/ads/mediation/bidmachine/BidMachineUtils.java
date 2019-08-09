@@ -35,6 +35,7 @@ class BidMachineUtils {
     static final String SUBJECT_TO_GDPR = "subject_to_gdpr";
     static final String HAS_CONSENT = "has_consent";
     static final String CONSENT_STRING = "consent_string";
+    static final String ENDPOINT = "endpoint";
     static final String AD_CONTENT_TYPE = "ad_content_type";
     static final String USER_ID = "user_id";
     static final String GENDER = "gender";
@@ -70,6 +71,11 @@ class BidMachineUtils {
         Boolean testMode = getBoolean(extras, TEST_MODE);
         if (testMode != null) {
             BidMachine.setTestMode(testMode);
+        }
+        String endpoint = getString(extras, ENDPOINT);
+        if (!TextUtils.isEmpty(endpoint)) {
+            assert endpoint != null;
+            BidMachine.setEndpoint(endpoint);
         }
         if (!isInitialized) {
             String jsonData = getString(extras, MEDIATION_CONFIG);
