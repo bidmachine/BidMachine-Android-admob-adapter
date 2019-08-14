@@ -44,7 +44,7 @@ Parameter list for server configuretion:
 | consent_string  | GDPR consent string (if applicable), indicating the compliance to the IAB standard Consent String Format of the Transparency and Consent Framework technical specifications. | String |
 | endpoint | Your custom endpoint | String |
 | ad_content_type | Content type for interstitial ad, one of following: "All", "Static", "Video"   | String              |
-| userId          | Vendor-specific ID for the user                                                | String              |
+| user_id         | Vendor-specific ID for the user                                                | String              |
 | gender          | Gender, one of following: "F", "M", "O"                                        | String              |
 | yob             | Year of birth as a 4-digit integer (e.g - 1990)                                | String              |
 | keywords        | List of keywords, interests, or intents (separated by comma)                   | String              |
@@ -56,7 +56,7 @@ Parameter list for server configuretion:
 | bcat            | Block list of content categories using IDs (separated by comma)                | String              |
 | badv            | Block list of advertisers by their domains (separated by comma)                | String              |
 | bapps           | Block list of apps where ads are disallowed (separated by comma)               | String              |
-| priceFloors     | List of price floor                                                            | JSONArray in String |
+| price_floors    | List of price floor                                                            | JSONArray in String |
 
 Server configuration sample:
 ```json
