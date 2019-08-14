@@ -177,6 +177,9 @@ class BidMachineUtils {
     static TargetingParams createTargetingParams(@NonNull Bundle extras) {
         TargetingParams targetingParams = new TargetingParams();
         String userId = getString(extras, USER_ID);
+        if (userId == null) {
+            userId = getString(extras, "userId");
+        }
         if (userId != null) {
             targetingParams.setUserId(userId);
         }
@@ -240,8 +243,11 @@ class BidMachineUtils {
      * @return PriceFloorParams with price floors from extras
      */
     static PriceFloorParams createPriceFloorParams(@NonNull Bundle extras) {
-        String priceFloors = getString(extras, PRICE_FLOORS);
         PriceFloorParams priceFloorParams = new PriceFloorParams();
+        String priceFloors = getString(extras, PRICE_FLOORS);
+        if (TextUtils.isEmpty(priceFloors)) {
+            priceFloors = getString(extras, "priceFloors");
+        }
         if (TextUtils.isEmpty(priceFloors)) {
             return priceFloorParams;
         }
