@@ -91,11 +91,11 @@ public final class BidMachineCustomEventBanner implements CustomEventBanner {
     private BannerSize transformToBannerSize(@NonNull AdSize adSize) {
         switch (adSize.getWidth()) {
             case 300:
-                return BannerSize.Size_300_250;
+                return BannerSize.Size_300x250;
             case 320:
-                return BannerSize.Size_320_50;
+                return BannerSize.Size_320x50;
             case 728:
-                return BannerSize.Size_728_90;
+                return BannerSize.Size_728x90;
             default:
                 return null;
         }

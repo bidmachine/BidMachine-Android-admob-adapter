@@ -3,11 +3,12 @@ BidMachine Android adapter for AdMob mediation
 
 ## Integration:
 [<img src="https://appodeal-android.s3-us-west-1.amazonaws.com/publishing/bm_130_git_version_badge.svg">](https://github.com/bidmachine/BidMachine-Android-SDK)
-[<img src="https://appodeal-android.s3-us-west-1.amazonaws.com/publishing/bm_mopub_1302_git_version_badge.svg">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads-mopub/1.3.0.2/)
+[<img src="https://img.shields.io/badge/Adapter%20version-1.3.0.2-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.3.0.2/)
 ```gradle
 repositories {
     //Add BidMachine maven repository
     maven {
+        name 'BidMachine Ads maven repository'
         url 'https://artifactory.bidmachine.io/bidmachine'
     }
 }
@@ -16,7 +17,7 @@ dependencies {
     //Add BidMachine SDK dependency
     implementation 'io.bidmachine:ads:1.3.0'
     //Add BidMachine SDK AdMob Adapter dependency
-    implementation 'io.bidmachine:ads-adapters-admob:1.3.0.2'
+    implementation 'io.bidmachine:ads.adapters.admob:1.3.0.2'
     //Add AdMob SDK dependency
     implementation 'com.google.android.gms:play-services-ads:17.2.0'
     ...
@@ -32,31 +33,31 @@ dependencies {
 
 Parameter list for server configuretion:
 
-| Key             | Definition | Value type |
-|:--------------- |:-------------- |:---------- |
-| seller_id       | You unique seller id. To get your Seller Id or for more info please visit https://bidmachine.io/ | String |
+| Key              | Definition | Value type |
+|:---------------- |:-------------- |:---------- |
+| seller_id        | Your unique seller id. To get your Seller Id or for more info please visit https://bidmachine.io/ | String |
 | mediation_config | Your mediation config | JSONArray in String |
-| coppa           | Flag indicating if COPPA regulations can be applied. The Children's Online Privacy Protection Act (COPPA) was established by the U.S. Federal Trade Commission. | String |
-| logging_enabled | Enable logs if required | String |
-| test_mode       | Enable test mode | String |
-| subject_to_gdpr | Flag indicating if GDPR regulations can be applied. The General Data Protection Regulation (GDPR) is a regulation of the European Union. | String |
-| has_consent     | User has given consent to the processing of personal data relating to him or her. https://www.eugdpr.org/ | String |
-| consent_string  | GDPR consent string (if applicable), indicating the compliance to the IAB standard Consent String Format of the Transparency and Consent Framework technical specifications. | String |
-| endpoint | Your custom endpoint | String |
-| ad_content_type | Content type for interstitial ad, one of following: "All", "Static", "Video"   | String              |
-| user_id         | Vendor-specific ID for the user                                                | String              |
-| gender          | Gender, one of following: "F", "M", "O"                                        | String              |
-| yob             | Year of birth as a 4-digit integer (e.g - 1990)                                | String              |
-| keywords        | List of keywords, interests, or intents (separated by comma)                   | String              |
-| country         | Country of the user's home base (i.e., not necessarily their current location) | String              |
-| city            | City of the user's home base (i.e., not necessarily their current location)    | String              |
-| zip             | Zip of the user's home base (i.e., not necessarily their current location)     | String              |
-| sturl           | App store URL for an installed app; for IQG 2.1 compliance                     | String              |
-| paid            | Determines, if it is a free or paid version of the app                         | String              |
-| bcat            | Block list of content categories using IDs (separated by comma)                | String              |
-| badv            | Block list of advertisers by their domains (separated by comma)                | String              |
-| bapps           | Block list of apps where ads are disallowed (separated by comma)               | String              |
-| price_floors    | List of price floor                                                            | JSONArray in String |
+| coppa            | Flag indicating if COPPA regulations can be applied. The Children's Online Privacy Protection Act (COPPA) was established by the U.S. Federal Trade Commission. | String |
+| logging_enabled  | Enable logs if required | String |
+| test_mode        | Enable test mode | String |
+| subject_to_gdpr  | Flag indicating if GDPR regulations can be applied. The General Data Protection Regulation (GDPR) is a regulation of the European Union. | String |
+| has_consent      | User has given consent to the processing of personal data relating to him or her. https://www.eugdpr.org/ | String |
+| consent_string   | GDPR consent string if applicable, complying with the comply with the IAB standard <a href="https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework/blob/master/Consent%20string%20and%20vendor%20list%20formats%20v1.1%20Final.md">Consent String Format</a> in the <a href="https://github.com/InteractiveAdvertisingBureau/GDPR-Transparency-and-Consent-Framework">Transparency and Consent Framework</a> technical specifications | String |
+| endpoint         | Your custom endpoint | String |
+| ad_content_type  | Content type for interstitial ad, one of following: "All", "Static", "Video"   | String              |
+| user_id          | Vendor-specific ID for the user                                                | String              |
+| gender           | Gender, one of following: "F", "M", "O"                                        | String              |
+| yob              | Year of birth as a 4-digit integer (e.g - 1990)                                | String              |
+| keywords         | List of keywords, interests, or intents (separated by comma)                   | String              |
+| country          | Country of the user's home base (i.e., not necessarily their current location) | String              |
+| city             | City of the user's home base (i.e., not necessarily their current location)    | String              |
+| zip              | Zip of the user's home base (i.e., not necessarily their current location)     | String              |
+| sturl            | App store URL for an installed app; for IQG 2.1 compliance                     | String              |
+| paid             | Determines, if it is a free or paid version of the app                         | String              |
+| bcat             | Block list of content categories using IDs (separated by comma)                | String              |
+| badv             | Block list of advertisers by their domains (separated by comma)                | String              |
+| bapps            | Block list of apps where ads are disallowed (separated by comma)               | String              |
+| price_floors     | List of price floor                                                            | JSONArray in String |
 
 Server configuration sample:
 ```json
@@ -108,7 +109,7 @@ try {
 
 Bundle bundle = new BidMachineBundleBuilder()
         .setSellerId("YOUR_SELLER_ID")
-        .setMediationConfig(YOURJSONArray.toString)
+        .setMediationConfig(YOURJSONArray)
         .setCoppa(true)
         .setLoggingEnabled(true)
         .setTestMode(true)
@@ -176,3 +177,7 @@ rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
 rewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoListener());
 rewardedVideoAd.loadAd(REWARDED_ID, adRequest);
 ```
+
+## What's new in this version
+
+Please view the [changelog](CHANGELOG.md) for details.

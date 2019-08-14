@@ -10,7 +10,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
 def libGroupId = "io.bidmachine"
-def libArtifactId = "ads-adapters-admob"
+def libArtifactId = "ads.adapters.admob"
 
 configurations.maybeCreate("default")
 def publishArtifact = artifacts.add("default", file("build/outputs/aar/bidmachine_android_admob-release.aar"))

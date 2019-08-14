@@ -7,9 +7,6 @@ buildscript {
         maven {
             url 'https://artifactory.bidmachine.io/bidmachine'
         }
-        maven {
-            url "https://s3.amazonaws.com/moat-sdk-builds"
-        }
     }
     dependencies {
         dependencies {
@@ -23,25 +20,10 @@ allprojects {
     repositories {
         google()
         jcenter()
+        //Add BidMachine maven repository
         maven {
+            name 'BidMachine Ads maven repository'
             url 'https://artifactory.bidmachine.io/bidmachine'
-        }
-        maven {
-            url 'https://artifactory.bidmachine.io/bidmachine-private/'
-            credentials {
-                username = System.getenv("APD_USERNAME")
-                password = System.getenv("APD_USERPASSWORD")
-            }
-        }
-        maven {
-            url "https://s3.amazonaws.com/moat-sdk-builds"
-        }
-        maven {
-            url "https://adcolony.bintray.com/AdColony"
-        }
-        maven {
-            name "TapjoyVideo's maven repo"
-            url "https://tapjoy.bintray.com/maven"
         }
     }
 }
