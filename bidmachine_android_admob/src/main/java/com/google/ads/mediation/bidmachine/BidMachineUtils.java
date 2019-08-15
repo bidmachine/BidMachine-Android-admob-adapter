@@ -28,12 +28,14 @@ class BidMachineUtils {
     private static final String TAG = BidMachineUtils.class.getSimpleName();
 
     static final String SELLER_ID = "seller_id";
+    static final String MEDIATION_CONFIG = "mediation_config";
     static final String COPPA = "coppa";
     static final String LOGGING_ENABLED = "logging_enabled";
     static final String TEST_MODE = "test_mode";
     static final String SUBJECT_TO_GDPR = "subject_to_gdpr";
     static final String HAS_CONSENT = "has_consent";
     static final String CONSENT_STRING = "consent_string";
+    static final String ENDPOINT = "endpoint";
     static final String AD_CONTENT_TYPE = "ad_content_type";
     static final String USER_ID = "user_id";
     static final String GENDER = "gender";
@@ -57,7 +59,9 @@ class BidMachineUtils {
      * @param extras - bundle which contains one or more of:
      *               1. {@link BidMachineUtils#SELLER_ID};
      *               2. {@link BidMachineUtils#LOGGING_ENABLED};
-     *               3. {@link BidMachineUtils#TEST_MODE}.
+     *               3. {@link BidMachineUtils#TEST_MODE};
+     *               4. {@link BidMachineUtils#MEDIATION_CONFIG};
+     *               5. {@link BidMachineUtils#ENDPOINT}.
      * @return was initialize or not
      */
     static boolean prepareBidMachine(Context context, @NonNull Bundle extras) {
@@ -69,9 +73,19 @@ class BidMachineUtils {
         if (testMode != null) {
             BidMachine.setTestMode(testMode);
         }
+        String endpoint = getString(extras, ENDPOINT);
+        if (!TextUtils.isEmpty(endpoint)) {
+            assert endpoint != null;
+            BidMachine.setEndpoint(endpoint);
+        }
         if (!isInitialized) {
+            String jsonData = getString(extras, MEDIATION_CONFIG);
+            if (jsonData != null) {
+                BidMachine.registerNetworks(jsonData);
+            }
             String sellerId = getString(extras, SELLER_ID);
             if (!TextUtils.isEmpty(sellerId)) {
+                assert sellerId != null;
                 BidMachine.initialize(context, sellerId);
                 isInitialized = true;
                 return true;
@@ -170,6 +184,9 @@ class BidMachineUtils {
     static TargetingParams createTargetingParams(@NonNull Bundle extras) {
         TargetingParams targetingParams = new TargetingParams();
         String userId = getString(extras, USER_ID);
+        if (userId == null) {
+            userId = getString(extras, "userId");
+        }
         if (userId != null) {
             targetingParams.setUserId(userId);
         }
@@ -233,8 +250,11 @@ class BidMachineUtils {
      * @return PriceFloorParams with price floors from extras
      */
     static PriceFloorParams createPriceFloorParams(@NonNull Bundle extras) {
-        String priceFloors = getString(extras, PRICE_FLOORS);
         PriceFloorParams priceFloorParams = new PriceFloorParams();
+        String priceFloors = getString(extras, PRICE_FLOORS);
+        if (TextUtils.isEmpty(priceFloors)) {
+            priceFloors = getString(extras, "priceFloors");
+        }
         if (TextUtils.isEmpty(priceFloors)) {
             return priceFloorParams;
         }

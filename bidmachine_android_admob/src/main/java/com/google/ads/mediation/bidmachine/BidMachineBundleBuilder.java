@@ -16,6 +16,11 @@ public class BidMachineBundleBuilder {
     private String sellerId;
 
     /**
+     * You mediation config
+     */
+    private String mediationConfig;
+
+    /**
      * Flag indicating if COPPA regulations can be applied.
      * The Children's Online Privacy Protection Act (COPPA) was established by the U.S.
      * Federal Trade Commission.
@@ -49,6 +54,11 @@ public class BidMachineBundleBuilder {
      * Consent String Format of the Transparency and Consent Framework technical specifications.
      */
     private String consentString;
+
+    /**
+     * Your custom endpoint
+     */
+    private String endpoint;
 
     /**
      * Content type for interstitial ad, one of following:
@@ -131,6 +141,18 @@ public class BidMachineBundleBuilder {
         return this;
     }
 
+    public BidMachineBundleBuilder setMediationConfig(JSONArray mediationConfig) {
+        if (mediationConfig != null) {
+            this.mediationConfig = mediationConfig.toString();
+        }
+        return this;
+    }
+
+    public BidMachineBundleBuilder setMediationConfig(String mediationConfig) {
+        this.mediationConfig = mediationConfig;
+        return this;
+    }
+
     public BidMachineBundleBuilder setCoppa(boolean coppa) {
         this.coppa = coppa;
         return this;
@@ -154,6 +176,11 @@ public class BidMachineBundleBuilder {
     public BidMachineBundleBuilder setConsentConfig(boolean hasConsent, String consentString) {
         this.hasConsent = hasConsent;
         this.consentString = consentString;
+        return this;
+    }
+
+    public BidMachineBundleBuilder setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
         return this;
     }
 
@@ -232,6 +259,9 @@ public class BidMachineBundleBuilder {
         if (sellerId != null) {
             extras.putString(BidMachineUtils.SELLER_ID, sellerId);
         }
+        if (mediationConfig != null) {
+            extras.putString(BidMachineUtils.MEDIATION_CONFIG, mediationConfig);
+        }
         if (coppa != null) {
             extras.putBoolean(BidMachineUtils.COPPA, coppa);
         }
@@ -249,6 +279,9 @@ public class BidMachineBundleBuilder {
         }
         if (consentString != null) {
             extras.putString(BidMachineUtils.CONSENT_STRING, consentString);
+        }
+        if (endpoint != null) {
+            extras.putString(BidMachineUtils.ENDPOINT, endpoint);
         }
         if (adContentType != null) {
             extras.putString(BidMachineUtils.AD_CONTENT_TYPE, adContentType.name());

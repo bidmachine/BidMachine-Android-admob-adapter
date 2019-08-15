@@ -7,9 +7,6 @@ buildscript {
         maven {
             url 'https://artifactory.bidmachine.io/bidmachine'
         }
-        maven {
-            url "https://s3.amazonaws.com/moat-sdk-builds"
-        }
     }
     dependencies {
         dependencies {
@@ -23,11 +20,10 @@ allprojects {
     repositories {
         google()
         jcenter()
+        //Add BidMachine maven repository
         maven {
+            name 'BidMachine Ads maven repository'
             url 'https://artifactory.bidmachine.io/bidmachine'
-        }
-        maven {
-            url "https://s3.amazonaws.com/moat-sdk-builds"
         }
     }
 }
