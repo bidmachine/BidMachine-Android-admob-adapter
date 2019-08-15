@@ -130,21 +130,22 @@ public class BidMachineAdMobActivity extends Activity {
             JSONObject facebookJSON = new JSONObject("" +
                     "{" +
                     "  \"network\": \"facebook\"," +
+                    "  \"app_id\": \"1525692904128549\"," +
                     "  \"ad_units\": [{" +
                     "    \"format\": \"banner\"," +
-                    "    \"slot_id\": \"1525692904128549_2386746951356469\"" +
+                    "    \"facebook_key\": \"1525692904128549_2386746951356469\"" +
                     "  }, {" +
                     "    \"format\": \"banner_320x50\"," +
-                    "    \"slot_id\": \"1525692904128549_2386746951356469\"" +
+                    "    \"facebook_key\": \"1525692904128549_2386746951356469\"" +
                     "  }, {" +
                     "    \"format\": \"banner_300x250\"," +
-                    "    \"slot_id\": \"1525692904128549_2386746951356469\"" +
+                    "    \"facebook_key\": \"1525692904128549_2386746951356469\"" +
                     "  }, {" +
                     "    \"format\": \"interstitial_static\"," +
-                    "    \"slot_id\": \"1525692904128549_2386743441356820\"" +
+                    "    \"facebook_key\": \"1525692904128549_2386743441356820\"" +
                     "  }, {" +
                     "    \"format\": \"rewarded_video\"," +
-                    "    \"slot_id\": \"1525692904128549_2386753464689151\"" +
+                    "    \"facebook_key\": \"1525692904128549_2386753464689151\"" +
                     "  }]" +
                     "}");
             JSONObject tapjoyJSON = new JSONObject("" +
