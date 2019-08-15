@@ -18,7 +18,7 @@ public class BidMachineBundleBuilder {
     /**
      * You mediation config
      */
-    private JSONArray mediationConfig;
+    private String mediationConfig;
 
     /**
      * Flag indicating if COPPA regulations can be applied.
@@ -142,6 +142,13 @@ public class BidMachineBundleBuilder {
     }
 
     public BidMachineBundleBuilder setMediationConfig(JSONArray mediationConfig) {
+        if (mediationConfig != null) {
+            this.mediationConfig = mediationConfig.toString();
+        }
+        return this;
+    }
+
+    public BidMachineBundleBuilder setMediationConfig(String mediationConfig) {
         this.mediationConfig = mediationConfig;
         return this;
     }
@@ -253,7 +260,7 @@ public class BidMachineBundleBuilder {
             extras.putString(BidMachineUtils.SELLER_ID, sellerId);
         }
         if (mediationConfig != null) {
-            extras.putString(BidMachineUtils.MEDIATION_CONFIG, mediationConfig.toString());
+            extras.putString(BidMachineUtils.MEDIATION_CONFIG, mediationConfig);
         }
         if (coppa != null) {
             extras.putBoolean(BidMachineUtils.COPPA, coppa);

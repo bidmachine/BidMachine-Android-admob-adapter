@@ -63,7 +63,7 @@ Server configuration sample:
 ```json
 {
     "seller_id": "YOUR_SELLER_ID",
-    "mediation_config": "YOUR_MEDIATION_CONFIG",
+    "mediation_config": "YOUR_MEDIATION_CONFIG", //JSONArray in String
     "coppa": "true",
     "logging_enabled": "true",
     "test_mode": "true",
@@ -109,7 +109,7 @@ try {
 
 Bundle bundle = new BidMachineBundleBuilder()
         .setSellerId("YOUR_SELLER_ID")
-        .setMediationConfig(YOURJSONArray)
+        .setMediationConfig("YOUR_MEDIATION_CONFIG") //JSONArray in String
         .setCoppa(true)
         .setLoggingEnabled(true)
         .setTestMode(true)

@@ -60,7 +60,8 @@ class BidMachineUtils {
      *               1. {@link BidMachineUtils#SELLER_ID};
      *               2. {@link BidMachineUtils#LOGGING_ENABLED};
      *               3. {@link BidMachineUtils#TEST_MODE};
-     *               4. {@link BidMachineUtils#MEDIATION_CONFIG}.
+     *               4. {@link BidMachineUtils#MEDIATION_CONFIG};
+     *               5. {@link BidMachineUtils#ENDPOINT}.
      * @return was initialize or not
      */
     static boolean prepareBidMachine(Context context, @NonNull Bundle extras) {
