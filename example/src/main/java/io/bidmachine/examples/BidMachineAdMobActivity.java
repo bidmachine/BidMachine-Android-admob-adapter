@@ -23,6 +23,9 @@ import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import io.bidmachine.AdContentType;
 
 public class BidMachineAdMobActivity extends Activity {
@@ -37,6 +40,7 @@ public class BidMachineAdMobActivity extends Activity {
     private AdView adView;
     private InterstitialAd interstitialAd;
     private RewardedVideoAd rewardedVideoAd;
+    private JSONArray mediationConfig;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,6 +84,92 @@ public class BidMachineAdMobActivity extends Activity {
                 showRewardedVideo();
             }
         });
+
+        try {
+            JSONObject myTargetJSON = new JSONObject("" +
+                    "{" +
+                    "  \"network\": \"my_target\"," +
+                    "  \"ad_units\": [{" +
+                    "    \"format\": \"banner\"," +
+                    "    \"slot_id\": \"437933\"" +
+                    "  }, {" +
+                    "    \"format\": \"banner_320x50\"," +
+                    "    \"slot_id\": \"437933\"" +
+                    "  }, {" +
+                    "    \"format\": \"banner_300x250\"," +
+                    "    \"slot_id\": \"64526\"" +
+                    "  }, {" +
+                    "    \"format\": \"banner_728x90\"," +
+                    "    \"slot_id\": \"81620\"" +
+                    "  }, {" +
+                    "    \"format\": \"interstitial_static\"," +
+                    "    \"slot_id\": \"365991\"" +
+                    "  }, {" +
+                    "    \"format\": \"rewarded_video\"," +
+                    "    \"slot_id\": \"482205\"" +
+                    "  }]" +
+                    "}");
+            JSONObject adColonyJSON = new JSONObject("" +
+                    "{" +
+                    "  \"network\": \"adcolony\"," +
+                    "  \"network_config\": {" +
+                    "    \"app_id\": \"app185a7e71e1714831a49ec7\"" +
+                    "  }," +
+                    "  \"ad_units\": [{" +
+                    "    \"format\": \"interstitial_video\"," +
+                    "    \"app_id\": \"app185a7e71e1714831a49ec7\"," +
+                    "    \"zone_id\": \"vz06e8c32a037749699e7050\"," +
+                    "    \"store_id\": \"google\"" +
+                    "  }, {" +
+                    "    \"format\": \"rewarded_video\"," +
+                    "    \"app_id\": \"app185a7e71e1714831a49ec7\"," +
+                    "    \"zone_id\": \"vz1fd5a8b2bf6841a0a4b826\"," +
+                    "    \"store_id\": \"google\"" +
+                    "  }]" +
+                    "}");
+            JSONObject facebookJSON = new JSONObject("" +
+                    "{" +
+                    "  \"network\": \"facebook\"," +
+                    "  \"app_id\": \"1525692904128549\"," +
+                    "  \"ad_units\": [{" +
+                    "    \"format\": \"banner\"," +
+                    "    \"facebook_key\": \"1525692904128549_2386746951356469\"" +
+                    "  }, {" +
+                    "    \"format\": \"banner_320x50\"," +
+                    "    \"facebook_key\": \"1525692904128549_2386746951356469\"" +
+                    "  }, {" +
+                    "    \"format\": \"banner_300x250\"," +
+                    "    \"facebook_key\": \"1525692904128549_2386746951356469\"" +
+                    "  }, {" +
+                    "    \"format\": \"interstitial_static\"," +
+                    "    \"facebook_key\": \"1525692904128549_2386743441356820\"" +
+                    "  }, {" +
+                    "    \"format\": \"rewarded_video\"," +
+                    "    \"facebook_key\": \"1525692904128549_2386753464689151\"" +
+                    "  }]" +
+                    "}");
+            JSONObject tapjoyJSON = new JSONObject("" +
+                    "{" +
+                    "  \"network\": \"tapjoy\"," +
+                    "  \"sdk_key\": \"tmyN5ZcXTMyjeJNJmUD5ggECAbnEGtJREmLDd0fvqKBXcIr7e1dvboNKZI4y\"," +
+                    "  \"ad_units\": [{" +
+                    "    \"format\": \"interstitial_video\"," +
+                    "    \"sdk_key\": \"tmyN5ZcXTMyjeJNJmUD5ggECAbnEGtJREmLDd0fvqKBXcIr7e1dvboNKZI4y\"," +
+                    "    \"placement_name\": \"video_without_cap_pb\"" +
+                    "  }, {" +
+                    "    \"format\": \"rewarded_video\"," +
+                    "    \"sdk_key\": \"tmyN5ZcXTMyjeJNJmUD5ggECAbnEGtJREmLDd0fvqKBXcIr7e1dvboNKZI4y\"," +
+                    "    \"placement_name\": \"rewarded_video_without_cap_pb\"" +
+                    "  }]" +
+                    "}");
+            mediationConfig = new JSONArray();
+            mediationConfig.put(myTargetJSON);
+            mediationConfig.put(adColonyJSON);
+            mediationConfig.put(facebookJSON);
+            mediationConfig.put(tapjoyJSON);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -105,6 +195,7 @@ public class BidMachineAdMobActivity extends Activity {
                 .setCoppa(true)
                 .setLoggingEnabled(true)
                 .setTestMode(true)
+                .setMediationConfig(mediationConfig)
                 .build();
 
         //Set bundle to custom event banner
@@ -167,6 +258,7 @@ public class BidMachineAdMobActivity extends Activity {
                 .setLoggingEnabled(true)
                 .setTestMode(true)
                 .setAdContentType(AdContentType.All)
+                .setMediationConfig(mediationConfig)
                 .build();
 
         //Set bundle to custom event interstitial
@@ -221,6 +313,7 @@ public class BidMachineAdMobActivity extends Activity {
                 .setCoppa(false)
                 .setLoggingEnabled(true)
                 .setTestMode(true)
+                .setMediationConfig(mediationConfig)
                 .build();
 
         //Set bundle to mediation rewarded video ad adapter
