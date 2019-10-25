@@ -1,1 +1,1 @@
-include ':example', ':bidmachine_android_admob'
+include ':example', ':example-admanager', ':bidmachine_android_admob'
