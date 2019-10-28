@@ -24,7 +24,6 @@ import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -322,7 +321,6 @@ public class BidMachineAdMobActivity extends Activity {
 
         BannerRequest bannerRequest = new BannerRequest.Builder()
                 .setSize(BannerSize.Size_320x50)
-                .setPriceFloorParams(new PriceFloorParams().addPriceFloor(0.1))
                 .setListener(new BannerRequest.AdRequestListener() {
                     @Override
                     public void onRequestSuccess(@NonNull BannerRequest bannerRequest,
@@ -442,7 +440,6 @@ public class BidMachineAdMobActivity extends Activity {
         Log.d(TAG, "InterstitialAd loadInterstitial");
 
         InterstitialRequest interstitialRequest = new InterstitialRequest.Builder()
-                .setPriceFloorParams(new PriceFloorParams().addPriceFloor(0.1))
                 .setListener(new AdRequest.AdRequestListener<InterstitialRequest>() {
                     @Override
                     public void onRequestSuccess(@NonNull InterstitialRequest interstitialRequest,
@@ -553,7 +550,6 @@ public class BidMachineAdMobActivity extends Activity {
         Log.d(TAG, "RewardedVideoAd loadRewardedVideo");
 
         RewardedRequest request = new RewardedRequest.Builder()
-                .setPriceFloorParams(new PriceFloorParams().addPriceFloor(0.1))
                 .setListener(new AdRequest.AdRequestListener<RewardedRequest>() {
                     @Override
                     public void onRequestSuccess(@NonNull RewardedRequest rewardedRequest,

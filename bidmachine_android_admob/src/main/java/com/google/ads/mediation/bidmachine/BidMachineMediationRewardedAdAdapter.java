@@ -91,7 +91,7 @@ public final class BidMachineMediationRewardedAdAdapter
         }
         RewardedRequest request;
         if (fusedBundle.containsKey(BidMachineFetcher.KEY_ID)) {
-            request = BidMachineUtils.obtainCachedRequest(AdsType.Interstitial, fusedBundle);
+            request = BidMachineUtils.obtainCachedRequest(AdsType.Rewarded, fusedBundle);
             if (request == null) {
                 Log.d(TAG, "Fetched AdRequest not found");
             } else {
