@@ -1,9 +1,11 @@
-# BidMachine-Android-admob-adapter
+# BidMachine Android AdMobAdapter
 BidMachine Android adapter for AdMob mediation
 
+[BidMachine integration documentation](https://wiki.appodeal.com/display/BID/BidMachine+Android+SDK+Documentation)
+
 ## Integration:
-[<img src="https://appodeal-android.s3-us-west-1.amazonaws.com/publishing/bm_130_git_version_badge.svg">](https://github.com/bidmachine/BidMachine-Android-SDK)
-[<img src="https://img.shields.io/badge/Adapter%20version-1.3.0.2-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.3.0.2/)
+[<img src="https://img.shields.io/badge/SDK%20Version-1.4.0-brightgreen">](https://github.com/bidmachine/BidMachine-Android-SDK)
+[<img src="https://img.shields.io/badge/Adapter%20Version-1.4.0.3-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.4.0.3/)
 ```gradle
 repositories {
     //Add BidMachine maven repository
@@ -15,9 +17,9 @@ repositories {
 
 dependencies {
     //Add BidMachine SDK dependency
-    implementation 'io.bidmachine:ads:1.3.0'
+    implementation 'io.bidmachine:ads:1.4.0'
     //Add BidMachine SDK AdMob Adapter dependency
-    implementation 'io.bidmachine:ads.adapters.admob:1.3.0.2'
+    implementation 'io.bidmachine:ads.adapters.admob:1.4.0.3'
     //Add AdMob SDK dependency
     implementation 'com.google.android.gms:play-services-ads:17.2.0'
     ...
@@ -26,9 +28,10 @@ dependencies {
 
 ## Examples:
 
-#### Load Banner: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L96)
-#### Load Interstitial: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L157)
-#### Load Rewarded Video: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L212)
+#### Load Banner: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L284)
+#### Load Interstitial: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L347)
+#### Load Rewarded Video: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L403)
+#### Load Native: [Sample](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L458)
 
 
 Parameter list for server configuretion:
@@ -176,6 +179,21 @@ AdRequest adRequest = new AdRequest.Builder()
 rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
 rewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoListener());
 rewardedVideoAd.loadAd(REWARDED_ID, adRequest);
+```
+
+Local Native configuration sample:
+```java
+//Set bundle to mediation native ad adapter
+AdRequest adRequest = new AdRequest.Builder()
+        .addCustomEventExtrasBundle(BidMachineCustomEventNative.class, bundle)
+        .build();
+
+//Create new AdLoader instance and load
+AdLoader adLoader = new AdLoader.Builder(this, NATIVE_ID)
+        .forUnifiedNativeAd(nativeListener)
+        .withAdListener(nativeListener)
+        .build();
+adLoader.loadAd(adRequest);
 ```
 
 ## What's new in this version
