@@ -4,21 +4,31 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.ads.mediation.bidmachine.BidMachineBundleBuilder;
 import com.google.ads.mediation.bidmachine.BidMachineCustomEventBanner;
 import com.google.ads.mediation.bidmachine.BidMachineCustomEventInterstitial;
+import com.google.ads.mediation.bidmachine.BidMachineCustomEventNative;
 import com.google.ads.mediation.bidmachine.BidMachineMediationRewardedAdAdapter;
 import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.formats.MediaView;
+import com.google.android.gms.ads.formats.UnifiedNativeAd;
+import com.google.android.gms.ads.formats.UnifiedNativeAdView;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
@@ -31,15 +41,17 @@ import io.bidmachine.AdContentType;
 public class BidMachineAdMobActivity extends Activity {
 
     private static final String TAG = "MainActivity";
-    private static final String BANNER_ID = "ca-app-pub-1405929557079197/8614249475";
-    private static final String INTERSTITIAL_ID = "ca-app-pub-1405929557079197/1600418448";
-    private static final String REWARDED_ID = "ca-app-pub-1405929557079197/6263418305";
+    private static final String BANNER_ID = "YOUR_BANNER_ID";
+    private static final String INTERSTITIAL_ID = "YOUR_INTERSTITIAL_ID";
+    private static final String REWARDED_ID = "YOUR_REWARDED_ID";
+    private static final String NATIVE_ID = "YOUR_NATIVE_ID";
 
-    private FrameLayout bannerContainer;
+    private FrameLayout adContainer;
 
     private AdView adView;
     private InterstitialAd interstitialAd;
     private RewardedVideoAd rewardedVideoAd;
+    private UnifiedNativeAd nativeAd;
     private JSONArray mediationConfig;
 
     @Override
@@ -47,7 +59,7 @@ public class BidMachineAdMobActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bannerContainer = findViewById(R.id.banner_container);
+        adContainer = findViewById(R.id.ad_container);
         findViewById(R.id.load_banner).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,84 +96,168 @@ public class BidMachineAdMobActivity extends Activity {
                 showRewardedVideo();
             }
         });
+        findViewById(R.id.load_native).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadNative();
+            }
+        });
+        findViewById(R.id.show_native).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNative();
+            }
+        });
 
         try {
-            JSONObject myTargetJSON = new JSONObject("" +
-                    "{" +
-                    "  \"network\": \"my_target\"," +
-                    "  \"ad_units\": [{" +
-                    "    \"format\": \"banner\"," +
-                    "    \"slot_id\": \"437933\"" +
-                    "  }, {" +
-                    "    \"format\": \"banner_320x50\"," +
-                    "    \"slot_id\": \"437933\"" +
-                    "  }, {" +
-                    "    \"format\": \"banner_300x250\"," +
-                    "    \"slot_id\": \"64526\"" +
-                    "  }, {" +
-                    "    \"format\": \"banner_728x90\"," +
-                    "    \"slot_id\": \"81620\"" +
-                    "  }, {" +
-                    "    \"format\": \"interstitial_static\"," +
-                    "    \"slot_id\": \"365991\"" +
-                    "  }, {" +
-                    "    \"format\": \"rewarded_video\"," +
-                    "    \"slot_id\": \"482205\"" +
-                    "  }]" +
-                    "}");
-            JSONObject adColonyJSON = new JSONObject("" +
-                    "{" +
-                    "  \"network\": \"adcolony\"," +
-                    "  \"network_config\": {" +
-                    "    \"app_id\": \"app185a7e71e1714831a49ec7\"" +
-                    "  }," +
-                    "  \"ad_units\": [{" +
-                    "    \"format\": \"interstitial_video\"," +
-                    "    \"app_id\": \"app185a7e71e1714831a49ec7\"," +
-                    "    \"zone_id\": \"vz06e8c32a037749699e7050\"," +
-                    "    \"store_id\": \"google\"" +
-                    "  }, {" +
-                    "    \"format\": \"rewarded_video\"," +
-                    "    \"app_id\": \"app185a7e71e1714831a49ec7\"," +
-                    "    \"zone_id\": \"vz1fd5a8b2bf6841a0a4b826\"," +
-                    "    \"store_id\": \"google\"" +
-                    "  }]" +
-                    "}");
-            JSONObject facebookJSON = new JSONObject("" +
-                    "{" +
-                    "  \"network\": \"facebook\"," +
-                    "  \"app_id\": \"1525692904128549\"," +
-                    "  \"ad_units\": [{" +
-                    "    \"format\": \"banner\"," +
-                    "    \"facebook_key\": \"1525692904128549_2386746951356469\"" +
-                    "  }, {" +
-                    "    \"format\": \"banner_320x50\"," +
-                    "    \"facebook_key\": \"1525692904128549_2386746951356469\"" +
-                    "  }, {" +
-                    "    \"format\": \"banner_300x250\"," +
-                    "    \"facebook_key\": \"1525692904128549_2386746951356469\"" +
-                    "  }, {" +
-                    "    \"format\": \"interstitial_static\"," +
-                    "    \"facebook_key\": \"1525692904128549_2386743441356820\"" +
-                    "  }, {" +
-                    "    \"format\": \"rewarded_video\"," +
-                    "    \"facebook_key\": \"1525692904128549_2386753464689151\"" +
-                    "  }]" +
-                    "}");
-            JSONObject tapjoyJSON = new JSONObject("" +
-                    "{" +
-                    "  \"network\": \"tapjoy\"," +
-                    "  \"sdk_key\": \"tmyN5ZcXTMyjeJNJmUD5ggECAbnEGtJREmLDd0fvqKBXcIr7e1dvboNKZI4y\"," +
-                    "  \"ad_units\": [{" +
-                    "    \"format\": \"interstitial_video\"," +
-                    "    \"sdk_key\": \"tmyN5ZcXTMyjeJNJmUD5ggECAbnEGtJREmLDd0fvqKBXcIr7e1dvboNKZI4y\"," +
-                    "    \"placement_name\": \"video_without_cap_pb\"" +
-                    "  }, {" +
-                    "    \"format\": \"rewarded_video\"," +
-                    "    \"sdk_key\": \"tmyN5ZcXTMyjeJNJmUD5ggECAbnEGtJREmLDd0fvqKBXcIr7e1dvboNKZI4y\"," +
-                    "    \"placement_name\": \"rewarded_video_without_cap_pb\"" +
-                    "  }]" +
-                    "}");
+            JSONObject myTargetJSON = new JSONObject(""
+                                                             +
+                                                             "{"
+                                                             +
+                                                             "  \"network\": \"my_target\","
+                                                             +
+                                                             "  \"ad_units\": [{"
+                                                             +
+                                                             "    \"format\": \"banner\","
+                                                             +
+                                                             "    \"slot_id\": \"437933\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"banner_320x50\","
+                                                             +
+                                                             "    \"slot_id\": \"437933\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"banner_300x250\","
+                                                             +
+                                                             "    \"slot_id\": \"64526\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"banner_728x90\","
+                                                             +
+                                                             "    \"slot_id\": \"81620\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"interstitial_static\","
+                                                             +
+                                                             "    \"slot_id\": \"365991\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"rewarded_video\","
+                                                             +
+                                                             "    \"slot_id\": \"482205\""
+                                                             +
+                                                             "  }]"
+                                                             +
+                                                             "}");
+            JSONObject adColonyJSON = new JSONObject(""
+                                                             +
+                                                             "{"
+                                                             +
+                                                             "  \"network\": \"adcolony\","
+                                                             +
+                                                             "  \"network_config\": {"
+                                                             +
+                                                             "    \"app_id\": \"app185a7e71e1714831a49ec7\""
+                                                             +
+                                                             "  },"
+                                                             +
+                                                             "  \"ad_units\": [{"
+                                                             +
+                                                             "    \"format\": \"interstitial_video\","
+                                                             +
+                                                             "    \"app_id\": \"app185a7e71e1714831a49ec7\","
+                                                             +
+                                                             "    \"zone_id\": \"vz06e8c32a037749699e7050\","
+                                                             +
+                                                             "    \"store_id\": \"google\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"rewarded_video\","
+                                                             +
+                                                             "    \"app_id\": \"app185a7e71e1714831a49ec7\","
+                                                             +
+                                                             "    \"zone_id\": \"vz1fd5a8b2bf6841a0a4b826\","
+                                                             +
+                                                             "    \"store_id\": \"google\""
+                                                             +
+                                                             "  }]"
+                                                             +
+                                                             "}");
+            JSONObject facebookJSON = new JSONObject(""
+                                                             +
+                                                             "{"
+                                                             +
+                                                             "  \"network\": \"facebook\","
+                                                             +
+                                                             "  \"app_id\": \"1525692904128549\","
+                                                             +
+                                                             "  \"ad_units\": [{"
+                                                             +
+                                                             "    \"format\": \"banner\","
+                                                             +
+                                                             "    \"facebook_key\": \"1525692904128549_2386746951356469\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"banner_320x50\","
+                                                             +
+                                                             "    \"facebook_key\": \"1525692904128549_2386746951356469\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"banner_300x250\","
+                                                             +
+                                                             "    \"facebook_key\": \"1525692904128549_2386746951356469\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"interstitial_static\","
+                                                             +
+                                                             "    \"facebook_key\": \"1525692904128549_2386743441356820\""
+                                                             +
+                                                             "  }, {"
+                                                             +
+                                                             "    \"format\": \"rewarded_video\","
+                                                             +
+                                                             "    \"facebook_key\": \"1525692904128549_2386753464689151\""
+                                                             +
+                                                             "  }]"
+                                                             +
+                                                             "}");
+            JSONObject tapjoyJSON = new JSONObject(""
+                                                           +
+                                                           "{"
+                                                           +
+                                                           "  \"network\": \"tapjoy\","
+                                                           +
+                                                           "  \"sdk_key\": \"tmyN5ZcXTMyjeJNJmUD5ggECAbnEGtJREmLDd0fvqKBXcIr7e1dvboNKZI4y\","
+                                                           +
+                                                           "  \"ad_units\": [{"
+                                                           +
+                                                           "    \"format\": \"interstitial_video\","
+                                                           +
+                                                           "    \"sdk_key\": \"tmyN5ZcXTMyjeJNJmUD5ggECAbnEGtJREmLDd0fvqKBXcIr7e1dvboNKZI4y\","
+                                                           +
+                                                           "    \"placement_name\": \"video_without_cap_pb\""
+                                                           +
+                                                           "  }, {"
+                                                           +
+                                                           "    \"format\": \"rewarded_video\","
+                                                           +
+                                                           "    \"sdk_key\": \"tmyN5ZcXTMyjeJNJmUD5ggECAbnEGtJREmLDd0fvqKBXcIr7e1dvboNKZI4y\","
+                                                           +
+                                                           "    \"placement_name\": \"rewarded_video_without_cap_pb\""
+                                                           +
+                                                           "  }]"
+                                                           +
+                                                           "}");
             mediationConfig = new JSONArray();
             mediationConfig.put(myTargetJSON);
             mediationConfig.put(adColonyJSON);
@@ -178,6 +274,8 @@ public class BidMachineAdMobActivity extends Activity {
 
         destroyBanner();
         destroyInterstitial();
+        destroyRewardedVideo();
+        destroyNative();
     }
 
     /**
@@ -191,7 +289,7 @@ public class BidMachineAdMobActivity extends Activity {
 
         //Prepare bundle for set to AdRequest
         Bundle bundle = new BidMachineBundleBuilder()
-                .setSellerId("1")
+                .setSellerId("5")
                 .setCoppa(true)
                 .setLoggingEnabled(true)
                 .setTestMode(true)
@@ -222,7 +320,8 @@ public class BidMachineAdMobActivity extends Activity {
             Log.d(TAG, "AdView showBanner");
 
             //Add AdView for show
-            bannerContainer.addView(adView);
+            adContainer.removeAllViews();
+            adContainer.addView(adView);
         } else {
             Log.d(TAG, "AdView null, load banner first");
         }
@@ -235,7 +334,7 @@ public class BidMachineAdMobActivity extends Activity {
         if (adView != null) {
             Log.d(TAG, "AdView destroyBanner");
 
-            bannerContainer.removeAllViews();
+            adContainer.removeAllViews();
             adView.setAdListener(null);
             adView.destroy();
             adView = null;
@@ -253,7 +352,7 @@ public class BidMachineAdMobActivity extends Activity {
 
         //Prepare bundle for set to AdRequest
         Bundle bundle = new BidMachineBundleBuilder()
-                .setSellerId("1")
+                .setSellerId("5")
                 .setCoppa(true)
                 .setLoggingEnabled(true)
                 .setTestMode(true)
@@ -309,7 +408,7 @@ public class BidMachineAdMobActivity extends Activity {
 
         //Prepare bundle for set to AdRequest
         Bundle bundle = new BidMachineBundleBuilder()
-                .setSellerId("1")
+                .setSellerId("5")
                 .setCoppa(false)
                 .setLoggingEnabled(true)
                 .setTestMode(true)
@@ -341,15 +440,107 @@ public class BidMachineAdMobActivity extends Activity {
     }
 
     /**
-     * Method for destroy InterstitialAd
+     * Method for destroy RewardedAd
      */
     private void destroyRewardedVideo() {
         if (rewardedVideoAd != null) {
-            Log.d(TAG, "InterstitialAd destroyInterstitial");
+            Log.d(TAG, "RewardedVideoAd destroyRewardedVideo");
 
             rewardedVideoAd.setRewardedVideoAdListener(null);
             rewardedVideoAd.destroy(this);
             rewardedVideoAd = null;
+        }
+    }
+
+    /**
+     * Method for load native from AdMob
+     */
+    private void loadNative() {
+        //Destroy previous NativeAd
+        destroyNative();
+
+        Log.d(TAG, "UnifiedNativeAd loadNative");
+
+        //Prepare bundle for set to AdRequest
+        Bundle bundle = new BidMachineBundleBuilder()
+                .setSellerId("5")
+                .setCoppa(true)
+                .setLoggingEnabled(true)
+                .setTestMode(true)
+                .setMediationConfig(mediationConfig)
+                .build();
+
+        //Set bundle to mediation native ad adapter
+        AdRequest adRequest = new AdRequest.Builder()
+                .addCustomEventExtrasBundle(BidMachineCustomEventNative.class, bundle)
+                .build();
+
+        //Create new AdLoader instance and load
+        NativeListener nativeListener = new NativeListener();
+        AdLoader adLoader = new AdLoader.Builder(this, NATIVE_ID)
+                .forUnifiedNativeAd(nativeListener)
+                .withAdListener(nativeListener)
+                .build();
+        adLoader.loadAd(adRequest);
+    }
+
+    /**
+     * Method for show native from AdMob
+     */
+    private void showNative() {
+        if (nativeAd == null) {
+            Log.d(TAG, "UnifiedNativeAd not loaded");
+            return;
+        }
+        Log.d(TAG, "UnifiedNativeAd showNative");
+
+        UnifiedNativeAdView unifiedNativeAdView = (UnifiedNativeAdView) LayoutInflater.from(this)
+                .inflate(R.layout.native_ad, adContainer, false);
+        fillNative(unifiedNativeAdView, nativeAd);
+        unifiedNativeAdView.setNativeAd(nativeAd);
+        adContainer.removeAllViews();
+        adContainer.addView(unifiedNativeAdView);
+    }
+
+    /**
+     * Method sets the text, images and the native ad, etc into the ad view
+     *
+     * @param unifiedNativeAdView container what will be filled by assets from UnifiedNativeAd
+     * @param unifiedNativeAd     data storage which contains title, description, etc
+     */
+    private void fillNative(UnifiedNativeAdView unifiedNativeAdView,
+                            UnifiedNativeAd unifiedNativeAd) {
+        TextView titleView = unifiedNativeAdView.findViewById(R.id.txtTitle);
+        titleView.setText(unifiedNativeAd.getHeadline());
+
+        TextView descriptionView = unifiedNativeAdView.findViewById(R.id.txtDescription);
+        descriptionView.setText(unifiedNativeAd.getBody());
+
+        float rating = unifiedNativeAd.getStarRating() != null
+                ? unifiedNativeAd.getStarRating().floatValue()
+                : 0;
+        RatingBar ratingBar = unifiedNativeAdView.findViewById(R.id.ratingBar);
+        ratingBar.setRating(rating);
+
+        Button ctaView = unifiedNativeAdView.findViewById(R.id.btnCta);
+        ctaView.setText(unifiedNativeAd.getCallToAction());
+
+        ImageView iconView = unifiedNativeAdView.findViewById(R.id.icon);
+        unifiedNativeAdView.setIconView(iconView);
+
+        MediaView mediaView = unifiedNativeAdView.findViewById(R.id.mediaView);
+        unifiedNativeAdView.setMediaView(mediaView);
+    }
+
+    /**
+     * Method for destroy UnifiedNativeAd
+     */
+    private void destroyNative() {
+        if (nativeAd != null) {
+            Log.d(TAG, "InterstitialAd destroyInterstitial");
+
+            nativeAd.destroy();
+            nativeAd = null;
         }
     }
 
@@ -504,6 +695,46 @@ public class BidMachineAdMobActivity extends Activity {
         @Override
         public void onRewardedVideoAdLeftApplication() {
             Log.d(TAG, "RewardedVideoAd onRewardedVideoAdLeftApplication");
+        }
+    }
+
+    /**
+     * Class for definition behavior UnifiedNativeAd
+     */
+    private class NativeListener extends AdListener implements UnifiedNativeAd.OnUnifiedNativeAdLoadedListener {
+
+        @Override
+        public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
+            nativeAd = unifiedNativeAd;
+            Log.d(TAG, "NativeAd onNativeAdLoaded");
+            Toast.makeText(
+                    BidMachineAdMobActivity.this,
+                    "NativeAdLoaded",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onAdFailedToLoad(int errorCode) {
+            Log.d(TAG, "NativeAd onNativeAdFailedToLoad with errorCode - " + errorCode + ")");
+            Toast.makeText(
+                    BidMachineAdMobActivity.this,
+                    "NativeAdFailedToLoad",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onAdOpened() {
+            Log.d(TAG, "NativeAd onNativeAdOpened");
+        }
+
+        @Override
+        public void onAdImpression() {
+            Log.d(TAG, "NativeAd onNativeAdImpression");
+        }
+
+        @Override
+        public void onAdClicked() {
+            Log.d(TAG, "NativeAd onNativeAdClicked");
         }
     }
 
