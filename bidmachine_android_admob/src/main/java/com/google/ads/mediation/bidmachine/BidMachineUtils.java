@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.mediation.MediationAdRequest;
 
 import org.json.JSONArray;
@@ -16,14 +17,17 @@ import org.json.JSONObject;
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
+import io.bidmachine.AdsType;
 import io.bidmachine.BidMachine;
+import io.bidmachine.BidMachineFetcher;
 import io.bidmachine.PriceFloorParams;
 import io.bidmachine.TargetingParams;
 import io.bidmachine.utils.BMError;
 import io.bidmachine.utils.Gender;
 
-class BidMachineUtils {
+public class BidMachineUtils {
 
     private static final String TAG = BidMachineUtils.class.getSimpleName();
 
@@ -51,8 +55,6 @@ class BidMachineUtils {
     static final String BAPPS = "bapps";
     static final String PRICE_FLOORS = "price_floors";
 
-    private static boolean isInitialized = false;
-
     /**
      * Preparing BidMachine before it may be used
      *
@@ -78,7 +80,7 @@ class BidMachineUtils {
             assert endpoint != null;
             BidMachine.setEndpoint(endpoint);
         }
-        if (!isInitialized) {
+        if (!BidMachine.isInitialized()) {
             String jsonData = getString(extras, MEDIATION_CONFIG);
             if (jsonData != null) {
                 BidMachine.registerNetworks(jsonData);
@@ -87,7 +89,6 @@ class BidMachineUtils {
             if (!TextUtils.isEmpty(sellerId)) {
                 assert sellerId != null;
                 BidMachine.initialize(context, sellerId);
-                isInitialized = true;
                 return true;
             } else {
                 Log.d(TAG, "Failed to request ad. seller_id not found");
@@ -415,6 +416,58 @@ class BidMachineUtils {
             }
         }
         return -1;
+    }
+
+    @Nullable
+    static <T extends io.bidmachine.AdRequest> T obtainCachedRequest(@NonNull AdsType adsType,
+                                                                     @NonNull Bundle fusedBundle) {
+        return obtainCachedRequest(adsType, fusedBundle.get(BidMachineFetcher.KEY_ID));
+    }
+
+    @Nullable
+    @SuppressWarnings("unchecked")
+    static <T extends io.bidmachine.AdRequest> T obtainCachedRequest(@NonNull AdsType adsType,
+                                                                     @Nullable Object id) {
+        return id != null ? (T) BidMachineFetcher.pop(adsType, String.valueOf(id)) : null;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static PublisherAdRequest.Builder createPublisherAdRequest(@NonNull AdsType adsType,
+                                                                      @NonNull BidMachineBundleBuilder bundleBuilder) {
+        PublisherAdRequest.Builder adRequestBuilder = createPublisherAdRequest(bundleBuilder.getFetchParams());
+        if (adsType == AdsType.Banner) {
+            adRequestBuilder.addCustomEventExtrasBundle(BidMachineCustomEventBanner.class,
+                                                        bundleBuilder.build());
+        } else if (adsType == AdsType.Interstitial) {
+            adRequestBuilder.addCustomEventExtrasBundle(BidMachineCustomEventInterstitial.class,
+                                                        bundleBuilder.build());
+
+        } else if (adsType == AdsType.Rewarded) {
+            adRequestBuilder.addNetworkExtrasBundle(BidMachineMediationRewardedAdAdapter.class,
+                                                    bundleBuilder.build());
+        } else {
+            Log.e(BidMachine.NAME, "Fetching unsupported ads type: " + adsType);
+        }
+        return adRequestBuilder;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static PublisherAdRequest.Builder createPublisherAdRequest(@Nullable Map<String, ?> fetchParams) {
+        return addFetchParamsToPublisherAdRequest(new PublisherAdRequest.Builder(), fetchParams);
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static PublisherAdRequest.Builder addFetchParamsToPublisherAdRequest(@NonNull PublisherAdRequest.Builder adRequestBuilder,
+                                                                                @Nullable Map<String, ?> fetchParams) {
+        if (fetchParams != null) {
+            for (Map.Entry<String, ?> entry : fetchParams.entrySet()) {
+                Object value = entry.getValue();
+                if (value != null) {
+                    adRequestBuilder.addCustomTargeting(entry.getKey(), String.valueOf(value));
+                }
+            }
+        }
+        return adRequestBuilder;
     }
 
 }

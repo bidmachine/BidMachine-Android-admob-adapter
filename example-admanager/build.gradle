@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "io.bidmachine.examples"
+        applicationId "io.bidmachine.examples.adamanager"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 3
-        versionName "1.1.$versionCode"
+        versionCode 1
+        versionName "1.0"
         multiDexEnabled true
     }
     buildTypes {
@@ -22,13 +22,13 @@ dependencies {
     implementation project(':bidmachine_android_admob')
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'com.google.android.gms:play-services-ads:17.2.0'
-    implementation 'io.bidmachine:ads:1.4.0'
-//    implementation 'io.bidmachine:ads.adapters.admob:1.4.0.3'
-    implementation 'io.bidmachine:ads.networks.adcolony:1.4.0.2'
-    implementation 'io.bidmachine:ads.networks.facebook:1.4.0.2'
-    implementation('io.bidmachine:ads.networks.my_target:1.4.0.2') {
+    implementation 'io.bidmachine:ads:1.3.3'
+//    implementation 'io.bidmachine:ads.adapters.admob:1.3.0.2'
+    implementation 'io.bidmachine:ads.networks.adcolony:1.3.3.2'
+    implementation 'io.bidmachine:ads.networks.facebook:1.3.3.2'
+    implementation('io.bidmachine:ads.networks.my_target:1.3.3.2') {
         exclude group: 'com.android.support'
         exclude module: 'support-v4'
     }
-    implementation 'io.bidmachine:ads.networks.tapjoy:1.4.0.2'
+    implementation 'io.bidmachine:ads.networks.tapjoy:1.3.3.2'
 }
