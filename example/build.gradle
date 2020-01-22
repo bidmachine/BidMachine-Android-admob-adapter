@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply from: "../versions.gradle"
 
 android {
     compileSdkVersion 28
@@ -21,9 +22,9 @@ android {
 dependencies {
     implementation project(':bidmachine_android_admob')
     implementation 'com.android.support:support-annotations:28.0.0'
-    implementation 'com.google.android.gms:play-services-ads:17.2.0'
-    implementation 'io.bidmachine:ads:1.4.0'
-//    implementation 'io.bidmachine:ads.adapters.admob:1.4.0.3'
+    implementation "com.google.android.gms:play-services-ads:$playServicesAdsVersion"
+    implementation "io.bidmachine:ads:$bidMachineVersion"
+//    implementation "io.bidmachine:ads.adapters.admob:bidMachineCustomAdapterVersion"
     implementation 'io.bidmachine:ads.networks.adcolony:1.4.0.2'
     implementation 'io.bidmachine:ads.networks.facebook:1.4.0.2'
     implementation('io.bidmachine:ads.networks.my_target:1.4.0.2') {
