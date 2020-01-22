@@ -14,6 +14,8 @@ import com.google.android.gms.ads.reward.mediation.MediationRewardedVideoAdListe
 
 import java.lang.ref.WeakReference;
 
+import io.bidmachine.AdsType;
+import io.bidmachine.BidMachineFetcher;
 import io.bidmachine.rewarded.RewardedAd;
 import io.bidmachine.rewarded.RewardedListener;
 import io.bidmachine.rewarded.RewardedRequest;
@@ -87,16 +89,29 @@ public final class BidMachineMediationRewardedAdAdapter
                     AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
-
-        RewardedRequest rewardedRequest = new RewardedRequest.Builder()
-                .setTargetingParams(BidMachineUtils.createTargetingParams(fusedBundle))
-                .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle))
-                .build();
-        rewardedAd = new RewardedAd(context);
-        rewardedAd.setListener(new BidMachineAdListener(
-                this,
-                mediationRewardedVideoAdListener));
-        rewardedAd.load(rewardedRequest);
+        RewardedRequest request;
+        if (fusedBundle.containsKey(BidMachineFetcher.KEY_ID)) {
+            request = BidMachineUtils.obtainCachedRequest(AdsType.Rewarded, fusedBundle);
+            if (request == null) {
+                Log.d(TAG, "Fetched AdRequest not found");
+            } else {
+                Log.d(TAG, "Fetched request resolved: " + request.getAuctionResult());
+            }
+        } else {
+            request = new RewardedRequest.Builder()
+                    .setTargetingParams(BidMachineUtils.createTargetingParams(fusedBundle))
+                    .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle))
+                    .build();
+        }
+        if (request != null) {
+            rewardedAd = new RewardedAd(context);
+            rewardedAd.setListener(new BidMachineAdListener(
+                    this,
+                    mediationRewardedVideoAdListener));
+            rewardedAd.load(request);
+        } else {
+            mediationRewardedVideoAdListener.onAdFailedToLoad(this, AdRequest.ERROR_CODE_NO_FILL);
+        }
     }
 
     @Override
@@ -190,17 +205,18 @@ public final class BidMachineMediationRewardedAdAdapter
         @Override
         public void onAdRewarded(@NonNull RewardedAd rewardedAd) {
             mediationRewardedVideoAdListener.onVideoCompleted(mediationRewardedVideoAdAdapter);
-            mediationRewardedVideoAdListener.onRewarded(mediationRewardedVideoAdAdapter, new RewardItem() {
-                @Override
-                public String getType() {
-                    return "";
-                }
+            mediationRewardedVideoAdListener.onRewarded(mediationRewardedVideoAdAdapter,
+                                                        new RewardItem() {
+                                                            @Override
+                                                            public String getType() {
+                                                                return "";
+                                                            }
 
-                @Override
-                public int getAmount() {
-                    return 0;
-                }
-            });
+                                                            @Override
+                                                            public int getAmount() {
+                                                                return 0;
+                                                            }
+                                                        });
         }
 
         @Override

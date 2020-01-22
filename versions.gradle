@@ -1,0 +1,7 @@
+ext {
+    bidMachineVersion = '1.4.0'
+    customAdapterVersion = 4
+    bidMachineCustomAdapterVersion = "$bidMachineVersion.$customAdapterVersion"
+
+    playServicesAdsVersion = '17.2.0'
+}
