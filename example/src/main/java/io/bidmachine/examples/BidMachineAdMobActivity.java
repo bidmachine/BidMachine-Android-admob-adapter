@@ -1,11 +1,10 @@
 package io.bidmachine.examples;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -13,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.google.ads.mediation.bidmachine.BidMachineBundleBuilder;
 import com.google.ads.mediation.bidmachine.BidMachineCustomEventBanner;
@@ -60,54 +61,14 @@ public class BidMachineAdMobActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         adContainer = findViewById(R.id.ad_container);
-        findViewById(R.id.load_banner).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadBanner();
-            }
-        });
-        findViewById(R.id.show_banner).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showBanner();
-            }
-        });
-        findViewById(R.id.load_interstitial).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadInterstitial();
-            }
-        });
-        findViewById(R.id.show_interstitial).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showInterstitial();
-            }
-        });
-        findViewById(R.id.load_rvideo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadRewardedVideo();
-            }
-        });
-        findViewById(R.id.show_rvideo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showRewardedVideo();
-            }
-        });
-        findViewById(R.id.load_native).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadNative();
-            }
-        });
-        findViewById(R.id.show_native).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showNative();
-            }
-        });
+        findViewById(R.id.load_banner).setOnClickListener(v -> loadBanner());
+        findViewById(R.id.show_banner).setOnClickListener(v -> showBanner());
+        findViewById(R.id.load_interstitial).setOnClickListener(v -> loadInterstitial());
+        findViewById(R.id.show_interstitial).setOnClickListener(v -> showInterstitial());
+        findViewById(R.id.load_rvideo).setOnClickListener(v -> loadRewardedVideo());
+        findViewById(R.id.show_rvideo).setOnClickListener(v -> showRewardedVideo());
+        findViewById(R.id.load_native).setOnClickListener(v -> loadNative());
+        findViewById(R.id.show_native).setOnClickListener(v -> showNative());
 
         try {
             JSONObject myTargetJSON = new JSONObject(""
@@ -281,6 +242,7 @@ public class BidMachineAdMobActivity extends Activity {
     /**
      * Method for load banner from AdMob
      */
+    @SuppressLint("MissingPermission")
     private void loadBanner() {
         //Destroy previous AdView
         destroyBanner();
@@ -344,6 +306,7 @@ public class BidMachineAdMobActivity extends Activity {
     /**
      * Method for load interstitial from AdMob
      */
+    @SuppressLint("MissingPermission")
     private void loadInterstitial() {
         //Destroy previous InterstitialAd
         destroyInterstitial();
@@ -455,6 +418,7 @@ public class BidMachineAdMobActivity extends Activity {
     /**
      * Method for load native from AdMob
      */
+    @SuppressLint("MissingPermission")
     private void loadNative() {
         //Destroy previous NativeAd
         destroyNative();

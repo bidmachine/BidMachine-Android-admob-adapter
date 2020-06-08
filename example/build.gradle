@@ -6,8 +6,8 @@ android {
         applicationId "io.bidmachine.examples"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 2
-        versionName "1.1.0"
+        versionCode 3
+        versionName "1.1.$versionCode"
         multiDexEnabled true
     }
     buildTypes {
@@ -16,19 +16,27 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation project(':bidmachine_android_admob')
     implementation 'com.android.support:support-annotations:28.0.0'
-    implementation 'com.google.android.gms:play-services-ads:17.2.0'
-    implementation 'io.bidmachine:ads:1.4.0'
-//    implementation 'io.bidmachine:ads.adapters.admob:1.4.0.3'
-    implementation 'io.bidmachine:ads.networks.adcolony:1.4.0.2'
-    implementation 'io.bidmachine:ads.networks.facebook:1.4.0.2'
-    implementation('io.bidmachine:ads.networks.my_target:1.4.0.2') {
+    implementation 'com.google.android.gms:play-services-ads:19.1.0'
+
+    implementation 'io.bidmachine:ads:1.4.4'
+//    implementation 'io.bidmachine:ads.adapters.admob:1.4.4.4'
+    implementation 'io.bidmachine:ads.networks.adcolony:1.4.4.3'
+    implementation 'io.bidmachine:ads.networks.amazon:1.4.4.2'
+    implementation 'io.bidmachine:ads.networks.criteo:1.4.4.2'
+    implementation 'io.bidmachine:ads.networks.facebook:1.4.4.3'
+    implementation 'io.bidmachine:ads.networks.mintegral:1.4.4.2'
+    implementation('io.bidmachine:ads.networks.my_target:1.4.4.2') {
         exclude group: 'com.android.support'
         exclude module: 'support-v4'
     }
-    implementation 'io.bidmachine:ads.networks.tapjoy:1.4.0.2'
+    implementation 'io.bidmachine:ads.networks.tapjoy:1.4.4.3'
 }
