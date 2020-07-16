@@ -1,3 +1,8 @@
+## Version 1.5.1.5 (July 16, 2020)
+**Features**:
+* Updated BidMachine version to 1.5.1
+* Updated AdMob version to 19.2.0
+
 ## Version 1.4.4.4 (June 8, 2020)
 **Features**:
 * Updated BidMachine version to 1.4.4

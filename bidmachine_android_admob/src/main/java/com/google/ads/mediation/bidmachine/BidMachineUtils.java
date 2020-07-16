@@ -52,8 +52,6 @@ class BidMachineUtils {
     static final String BAPPS = "bapps";
     static final String PRICE_FLOORS = "price_floors";
 
-    private static boolean isInitialized = false;
-
     /**
      * Preparing BidMachine before it may be used
      *
@@ -76,19 +74,16 @@ class BidMachineUtils {
         }
         String endpoint = getString(extras, ENDPOINT);
         if (!TextUtils.isEmpty(endpoint)) {
-            assert endpoint != null;
             BidMachine.setEndpoint(endpoint);
         }
-        if (!isInitialized) {
+        if (!BidMachine.isInitialized()) {
             String jsonData = getString(extras, MEDIATION_CONFIG);
             if (jsonData != null) {
                 BidMachine.registerNetworks(jsonData);
             }
             String sellerId = getString(extras, SELLER_ID);
             if (!TextUtils.isEmpty(sellerId)) {
-                assert sellerId != null;
                 BidMachine.initialize(context, sellerId);
-                isInitialized = true;
                 return true;
             } else {
                 Log.d(TAG, "Failed to request ad. seller_id not found");

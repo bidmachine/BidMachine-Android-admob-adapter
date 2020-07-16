@@ -4,8 +4,8 @@ BidMachine Android adapter for AdMob mediation
 [BidMachine integration documentation](https://wiki.appodeal.com/display/BID/BidMachine+Android+SDK+Documentation)
 
 ## Integration:
-[<img src="https://img.shields.io/badge/SDK%20Version-1.4.4-brightgreen">](https://github.com/bidmachine/BidMachine-Android-SDK)
-[<img src="https://img.shields.io/badge/Adapter%20Version-1.4.4.4-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.4.4.4/)
+[<img src="https://img.shields.io/badge/SDK%20Version-1.5.1-brightgreen">](https://github.com/bidmachine/BidMachine-Android-SDK)
+[<img src="https://img.shields.io/badge/Adapter%20Version-1.5.1.5-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.5.1.5/)
 ```gradle
 repositories {
     //Add BidMachine maven repository
@@ -17,11 +17,11 @@ repositories {
 
 dependencies {
     //Add BidMachine SDK dependency
-    implementation 'io.bidmachine:ads:1.4.4'
+    implementation 'io.bidmachine:ads:1.5.1'
     //Add BidMachine SDK AdMob Adapter dependency
-    implementation 'io.bidmachine:ads.adapters.admob:1.4.4.4'
+    implementation 'io.bidmachine:ads.adapters.admob:1.5.1.5'
     //Add AdMob SDK dependency
-    implementation 'com.google.android.gms:play-services-ads:19.1.0'
+    implementation 'com.google.android.gms:play-services-ads:19.2.0'
     ...
 }
 ```
