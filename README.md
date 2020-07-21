@@ -122,7 +122,7 @@ AdRequest adRequest = new AdRequest.Builder()
         .build();
 
 //Create new AdView instance and load
-adView = new AdView(this);
+AdView adView = new AdView(this);
 adView.setLayoutParams(new ViewGroup.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT));
@@ -131,14 +131,14 @@ adView.setAdSize(AdSize.BANNER);
 adView.setAdListener(new BannerViewListener());
 adView.loadAd(adRequest);
 ```
-[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L98)
+[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L97)
 
 ### Interstitial implementation
 Server configuration sample:
 ```json
 {
     "seller_id": "YOUR_SELLER_ID",
-    "mediation_config": "YOUR_MEDIATION_CONFIG", //JSONArray in String
+    "mediation_config": "YOUR_MEDIATION_CONFIG",
     "coppa": "true",
     "logging_enabled": "true",
     "test_mode": "true",
@@ -212,7 +212,7 @@ AdRequest adRequest = new AdRequest.Builder()
         .build();
 
 //Create new InterstitialAd instance and load
-interstitialAd = new InterstitialAd(this);
+InterstitialAd interstitialAd = new InterstitialAd(this);
 interstitialAd.setAdUnitId(INTERSTITIAL_ID);
 interstitialAd.setAdListener(new InterstitialListener());
 interstitialAd.loadAd(adRequest);
@@ -297,7 +297,7 @@ AdRequest adRequest = new AdRequest.Builder()
         .build();
 
 //Create new RewardedVideoAd instance and load
-rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
+RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
 rewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoListener());
 rewardedVideoAd.loadAd(REWARDED_ID, adRequest);
 ```
@@ -473,13 +473,13 @@ private void loadInterstitial() {
     InterstitialRequest interstitialRequest = new InterstitialRequest.Builder()
             .setListener(new InterstitialRequest.AdRequestListener() {
                 @Override
-                public void onRequestSuccess(@NonNull InterstitialRequest bannerRequest,
+                public void onRequestSuccess(@NonNull InterstitialRequest interstitialRequest,
                                              @NonNull AuctionResult auctionResult) {
                     // If you want, change the price rounding logic before BidMachineFetcher.fetch
                     // more info in "Work with price"
 
                     // Fetch BidMachine Ads
-                    Map<String, String> fetchParams = BidMachineFetcher.fetch(bannerRequest);
+                    Map<String, String> fetchParams = BidMachineFetcher.fetch(interstitialRequest);
                     if (fetchParams != null) {
                         //Request callbacks run in background thread, but you should call AdMob load methods on UI thread
                         runOnUiThread(() -> loadAdMobInterstitial(fetchParams));
@@ -492,7 +492,7 @@ private void loadInterstitial() {
                 }
 
                 @Override
-                public void onRequestFailed(@NonNull InterstitialRequest bannerRequest,
+                public void onRequestFailed(@NonNull InterstitialRequest interstitialRequest,
                                             @NonNull BMError bmError) {
                     runOnUiThread(() -> Toast.makeText(
                             BidMachineAdMobFetchActivity.this,
@@ -501,7 +501,7 @@ private void loadInterstitial() {
                 }
 
                 @Override
-                public void onRequestExpired(@NonNull InterstitialRequest bannerRequest) {
+                public void onRequestExpired(@NonNull InterstitialRequest interstitialRequest) {
                     //ignore
                 }
             })
@@ -541,13 +541,13 @@ private void loadRewardedVideo() {
     RewardedRequest rewardedRequest = new RewardedRequest.Builder()
             .setListener(new RewardedRequest.AdRequestListener() {
                 @Override
-                public void onRequestSuccess(@NonNull RewardedRequest bannerRequest,
+                public void onRequestSuccess(@NonNull RewardedRequest rewardedRequest,
                                              @NonNull AuctionResult auctionResult) {
                     // If you want, change the price rounding logic before BidMachineFetcher.fetch
                     // more info in "Work with price"
 
                     // Fetch BidMachine Ads
-                    Map<String, String> fetchParams = BidMachineFetcher.fetch(bannerRequest);
+                    Map<String, String> fetchParams = BidMachineFetcher.fetch(rewardedRequest);
                     if (fetchParams != null) {
                         //Request callbacks run in background thread, but you should call AdMob load methods on UI thread
                         runOnUiThread(() -> loadAdMobRewardedVideo(fetchParams));
@@ -560,7 +560,7 @@ private void loadRewardedVideo() {
                 }
 
                 @Override
-                public void onRequestFailed(@NonNull RewardedRequest bannerRequest,
+                public void onRequestFailed(@NonNull RewardedRequest rewardedRequest,
                                             @NonNull BMError bmError) {
                     runOnUiThread(() -> Toast.makeText(
                             BidMachineAdMobFetchActivity.this,
@@ -569,7 +569,7 @@ private void loadRewardedVideo() {
                 }
 
                 @Override
-                public void onRequestExpired(@NonNull RewardedRequest bannerRequest) {
+                public void onRequestExpired(@NonNull RewardedRequest rewardedRequest) {
                     //ignore
                 }
             })
@@ -608,13 +608,13 @@ private void loadNative() {
     NativeRequest nativeRequest = new NativeRequest.Builder()
             .setListener(new NativeRequest.AdRequestListener() {
                 @Override
-                public void onRequestSuccess(@NonNull NativeRequest bannerRequest,
+                public void onRequestSuccess(@NonNull NativeRequest nativeRequest,
                                              @NonNull AuctionResult auctionResult) {
                     // If you want, change the price rounding logic before BidMachineFetcher.fetch
                     // more info in "Work with price"
 
                     // Fetch BidMachine Ads
-                    Map<String, String> fetchParams = BidMachineFetcher.fetch(bannerRequest);
+                    Map<String, String> fetchParams = BidMachineFetcher.fetch(nativeRequest);
                     if (fetchParams != null) {
                         //Request callbacks run in background thread, but you should call AdMob load methods on UI thread
                         runOnUiThread(() -> loadAdMobNative(fetchParams));
@@ -627,7 +627,7 @@ private void loadNative() {
                 }
 
                 @Override
-                public void onRequestFailed(@NonNull NativeRequest bannerRequest,
+                public void onRequestFailed(@NonNull NativeRequest nativeRequest,
                                             @NonNull BMError bmError) {
                     runOnUiThread(() -> Toast.makeText(
                             BidMachineAdMobFetchActivity.this,
@@ -636,7 +636,7 @@ private void loadNative() {
                 }
 
                 @Override
-                public void onRequestExpired(@NonNull NativeRequest bannerRequest) {
+                public void onRequestExpired(@NonNull NativeRequest nativeRequest) {
                     //ignore
                 }
             })

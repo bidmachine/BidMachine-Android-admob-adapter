@@ -356,7 +356,7 @@ public class BidMachineAdMobActivity extends Activity {
      */
     private void destroyNative() {
         if (nativeAd != null) {
-            Log.d(TAG, "InterstitialAd destroyInterstitial");
+            Log.d(TAG, "UnifiedNativeAd destroyNative");
 
             nativeAd.destroy();
             nativeAd = null;

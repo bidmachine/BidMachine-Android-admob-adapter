@@ -244,10 +244,10 @@ public class BidMachineAdMobFetchActivity extends Activity {
         InterstitialRequest interstitialRequest = new InterstitialRequest.Builder()
                 .setListener(new InterstitialRequest.AdRequestListener() {
                     @Override
-                    public void onRequestSuccess(@NonNull InterstitialRequest bannerRequest,
+                    public void onRequestSuccess(@NonNull InterstitialRequest interstitialRequest,
                                                  @NonNull AuctionResult auctionResult) {
                         // Fetch BidMachine Ads
-                        Map<String, String> fetchParams = BidMachineFetcher.fetch(bannerRequest);
+                        Map<String, String> fetchParams = BidMachineFetcher.fetch(interstitialRequest);
                         if (fetchParams != null) {
                             //Request callbacks run in background thread, but you should call AdMob load methods on UI thread
                             runOnUiThread(() -> loadAdMobInterstitial(fetchParams));
@@ -260,7 +260,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                     }
 
                     @Override
-                    public void onRequestFailed(@NonNull InterstitialRequest bannerRequest,
+                    public void onRequestFailed(@NonNull InterstitialRequest interstitialRequest,
                                                 @NonNull BMError bmError) {
                         runOnUiThread(() -> Toast.makeText(
                                 BidMachineAdMobFetchActivity.this,
@@ -269,7 +269,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                     }
 
                     @Override
-                    public void onRequestExpired(@NonNull InterstitialRequest bannerRequest) {
+                    public void onRequestExpired(@NonNull InterstitialRequest interstitialRequest) {
                         //ignore
                     }
                 })
@@ -339,10 +339,10 @@ public class BidMachineAdMobFetchActivity extends Activity {
         RewardedRequest rewardedRequest = new RewardedRequest.Builder()
                 .setListener(new RewardedRequest.AdRequestListener() {
                     @Override
-                    public void onRequestSuccess(@NonNull RewardedRequest bannerRequest,
+                    public void onRequestSuccess(@NonNull RewardedRequest rewardedRequest,
                                                  @NonNull AuctionResult auctionResult) {
                         // Fetch BidMachine Ads
-                        Map<String, String> fetchParams = BidMachineFetcher.fetch(bannerRequest);
+                        Map<String, String> fetchParams = BidMachineFetcher.fetch(rewardedRequest);
                         if (fetchParams != null) {
                             //Request callbacks run in background thread, but you should call AdMob load methods on UI thread
                             runOnUiThread(() -> loadAdMobRewardedVideo(fetchParams));
@@ -355,7 +355,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                     }
 
                     @Override
-                    public void onRequestFailed(@NonNull RewardedRequest bannerRequest,
+                    public void onRequestFailed(@NonNull RewardedRequest rewardedRequest,
                                                 @NonNull BMError bmError) {
                         runOnUiThread(() -> Toast.makeText(
                                 BidMachineAdMobFetchActivity.this,
@@ -364,7 +364,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                     }
 
                     @Override
-                    public void onRequestExpired(@NonNull RewardedRequest bannerRequest) {
+                    public void onRequestExpired(@NonNull RewardedRequest rewardedRequest) {
                         //ignore
                     }
                 })
@@ -434,10 +434,10 @@ public class BidMachineAdMobFetchActivity extends Activity {
         NativeRequest nativeRequest = new NativeRequest.Builder()
                 .setListener(new NativeRequest.AdRequestListener() {
                     @Override
-                    public void onRequestSuccess(@NonNull NativeRequest bannerRequest,
+                    public void onRequestSuccess(@NonNull NativeRequest nativeRequest,
                                                  @NonNull AuctionResult auctionResult) {
                         // Fetch BidMachine Ads
-                        Map<String, String> fetchParams = BidMachineFetcher.fetch(bannerRequest);
+                        Map<String, String> fetchParams = BidMachineFetcher.fetch(nativeRequest);
                         if (fetchParams != null) {
                             //Request callbacks run in background thread, but you should call AdMob load methods on UI thread
                             runOnUiThread(() -> loadAdMobNative(fetchParams));
@@ -450,7 +450,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                     }
 
                     @Override
-                    public void onRequestFailed(@NonNull NativeRequest bannerRequest,
+                    public void onRequestFailed(@NonNull NativeRequest nativeRequest,
                                                 @NonNull BMError bmError) {
                         runOnUiThread(() -> Toast.makeText(
                                 BidMachineAdMobFetchActivity.this,
@@ -459,7 +459,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                     }
 
                     @Override
-                    public void onRequestExpired(@NonNull NativeRequest bannerRequest) {
+                    public void onRequestExpired(@NonNull NativeRequest nativeRequest) {
                         //ignore
                     }
                 })
@@ -543,7 +543,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
      */
     private void destroyNative() {
         if (nativeAd != null) {
-            Log.d(TAG, "InterstitialAd destroyInterstitial");
+            Log.d(TAG, "UnifiedNativeAd destroyNative");
 
             nativeAd.destroy();
             nativeAd = null;
