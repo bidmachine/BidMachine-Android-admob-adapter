@@ -12,6 +12,7 @@ import com.google.android.gms.ads.mediation.MediationAdRequest;
 import com.google.android.gms.ads.mediation.customevent.CustomEventBanner;
 import com.google.android.gms.ads.mediation.customevent.CustomEventBannerListener;
 
+import io.bidmachine.AdsType;
 import io.bidmachine.banner.BannerListener;
 import io.bidmachine.banner.BannerRequest;
 import io.bidmachine.banner.BannerSize;
@@ -41,33 +42,51 @@ public final class BidMachineCustomEventBanner implements CustomEventBanner {
             customEventBannerListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
-        BannerSize bannerSize = transformToBannerSize(adSize);
-        if (bannerSize == null) {
-            Log.d(TAG, "Failed to request ad. Input AdSize not supported");
+        Bundle serverExtras = BidMachineUtils.transformToBundle(serverParameters);
+        if (BidMachineUtils.isPreBidIntegration(localExtras)
+                && !BidMachineUtils.isServerExtrasValid(serverExtras, localExtras)) {
+            customEventBannerListener.onAdFailedToLoad(AdRequest.ERROR_CODE_NO_FILL);
+            return;
+        }
+        Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverExtras, localExtras);
+        if (!BidMachineUtils.prepareBidMachine(context, fusedBundle, mediationAdRequest)) {
             customEventBannerListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
 
-        Bundle fusedBundle = BidMachineUtils.getFusedBundle(
-                serverParameters,
-                localExtras);
-        BidMachineUtils.updateCoppa(
-                fusedBundle,
-                mediationAdRequest.taggedForChildDirectedTreatment());
-        BidMachineUtils.updateGDPR(fusedBundle);
-        if (!BidMachineUtils.prepareBidMachine(context, fusedBundle)) {
-            customEventBannerListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
-            return;
+        BannerRequest request = null;
+        BannerSize bannerSize = null;
+        int errorCode = AdRequest.ERROR_CODE_INVALID_REQUEST;
+        if (BidMachineUtils.isPreBidIntegration(fusedBundle)) {
+            request = BidMachineUtils.obtainCachedRequest(AdsType.Banner, fusedBundle);
+            if (request == null) {
+                errorCode = AdRequest.ERROR_CODE_NO_FILL;
+                Log.d(TAG, "Fetched AdRequest not found");
+            } else {
+                request.notifyMediationWin();
+                bannerSize = request.getSize();
+                Log.d(TAG, "Fetched request resolved: " + request.getAuctionResult());
+            }
+        } else {
+            bannerSize = transformToBannerSize(adSize);
+            if (bannerSize == null) {
+                Log.d(TAG, "Failed to request ad. Input AdSize not supported");
+            } else {
+                request = new BannerRequest.Builder()
+                        .setSize(bannerSize)
+                        .setTargetingParams(BidMachineUtils.createTargetingParams(fusedBundle))
+                        .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle))
+                        .build();
+            }
         }
-
-        BannerRequest bannerRequest = new BannerRequest.Builder()
-                .setSize(bannerSize)
-                .setTargetingParams(BidMachineUtils.createTargetingParams(fusedBundle))
-                .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle))
-                .build();
-        bannerView = new BannerView(context);
-        bannerView.setListener(new BidMachineAdListener(customEventBannerListener));
-        bannerView.load(bannerRequest);
+        if (request != null) {
+            bannerView = new BannerView(context);
+            bannerView.setListener(new BidMachineAdListener(customEventBannerListener));
+            bannerView.load(request);
+            Log.d(TAG, "Attempt load banner with size " + bannerSize);
+        } else {
+            customEventBannerListener.onAdFailedToLoad(errorCode);
+        }
     }
 
     @Override

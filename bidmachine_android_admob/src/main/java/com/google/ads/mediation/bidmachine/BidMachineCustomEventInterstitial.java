@@ -12,6 +12,7 @@ import com.google.android.gms.ads.mediation.customevent.CustomEventInterstitial;
 import com.google.android.gms.ads.mediation.customevent.CustomEventInterstitialListener;
 
 import io.bidmachine.AdContentType;
+import io.bidmachine.AdsType;
 import io.bidmachine.interstitial.InterstitialAd;
 import io.bidmachine.interstitial.InterstitialListener;
 import io.bidmachine.interstitial.InterstitialRequest;
@@ -34,29 +35,47 @@ public final class BidMachineCustomEventInterstitial implements CustomEventInter
             customEventInterstitialListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
-
-        Bundle fusedBundle = BidMachineUtils.getFusedBundle(
-                serverParameters,
-                localExtras);
-        BidMachineUtils.updateCoppa(
-                fusedBundle,
-                mediationAdRequest.taggedForChildDirectedTreatment());
-        BidMachineUtils.updateGDPR(fusedBundle);
-        if (!BidMachineUtils.prepareBidMachine(context, fusedBundle)) {
+        Bundle serverExtras = BidMachineUtils.transformToBundle(serverParameters);
+        if (BidMachineUtils.isPreBidIntegration(localExtras)
+                && !BidMachineUtils.isServerExtrasValid(serverExtras, localExtras)) {
+            customEventInterstitialListener.onAdFailedToLoad(AdRequest.ERROR_CODE_NO_FILL);
+            return;
+        }
+        Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverExtras, localExtras);
+        if (!BidMachineUtils.prepareBidMachine(context, fusedBundle, mediationAdRequest)) {
             customEventInterstitialListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
 
-        InterstitialRequest.Builder interstitialRequestBuilder = new InterstitialRequest.Builder()
-                .setTargetingParams(BidMachineUtils.createTargetingParams(fusedBundle))
-                .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle));
-        AdContentType adContentType = getAdContentType(fusedBundle);
-        if (adContentType != null) {
-            interstitialRequestBuilder.setAdContentType(adContentType);
+        InterstitialRequest request;
+        int errorCode = AdRequest.ERROR_CODE_INVALID_REQUEST;
+        if (BidMachineUtils.isPreBidIntegration(fusedBundle)) {
+            request = BidMachineUtils.obtainCachedRequest(AdsType.Interstitial, fusedBundle);
+            if (request == null) {
+                errorCode = AdRequest.ERROR_CODE_NO_FILL;
+                Log.d(TAG, "Fetched AdRequest not found");
+            } else {
+                request.notifyMediationWin();
+                Log.d(TAG, "Fetched request resolved: " + request.getAuctionResult());
+            }
+        } else {
+            InterstitialRequest.Builder interstitialRequestBuilder = new InterstitialRequest.Builder()
+                    .setTargetingParams(BidMachineUtils.createTargetingParams(fusedBundle))
+                    .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle));
+            AdContentType adContentType = getAdContentType(fusedBundle);
+            if (adContentType != null) {
+                interstitialRequestBuilder.setAdContentType(adContentType);
+            }
+            request = interstitialRequestBuilder.build();
         }
-        interstitialAd = new InterstitialAd(context);
-        interstitialAd.setListener(new BidMachineAdListener(customEventInterstitialListener));
-        interstitialAd.load(interstitialRequestBuilder.build());
+        if (request != null) {
+            interstitialAd = new InterstitialAd(context);
+            interstitialAd.setListener(new BidMachineAdListener(customEventInterstitialListener));
+            interstitialAd.load(request);
+            Log.d(TAG, "Attempt load interstitial");
+        } else {
+            customEventInterstitialListener.onAdFailedToLoad(errorCode);
+        }
     }
 
     @Override
