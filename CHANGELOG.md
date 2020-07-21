@@ -1,3 +1,7 @@
+## Version 1.5.1.6 (July 21, 2020)
+**Features**:
+* Added HeaderBidding implementation
+
 ## Version 1.5.1.5 (July 16, 2020)
 **Features**:
 * Updated BidMachine version to 1.5.1

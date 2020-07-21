@@ -13,13 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
+
         <activity android:name=".BidMachineAdMobActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".BidMachineAdMobFetchActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -30,4 +33,5 @@
             android:value="YOUR_APPLICATION_ID" />
 
     </application>
+
 </manifest>

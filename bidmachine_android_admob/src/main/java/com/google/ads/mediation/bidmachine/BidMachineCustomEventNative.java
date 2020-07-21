@@ -13,7 +13,7 @@ import com.google.android.gms.ads.mediation.customevent.CustomEventNativeListene
 
 import java.lang.ref.WeakReference;
 
-import io.bidmachine.MediaAssetType;
+import io.bidmachine.AdsType;
 import io.bidmachine.nativead.NativeAd;
 import io.bidmachine.nativead.NativeListener;
 import io.bidmachine.nativead.NativeRequest;
@@ -38,26 +38,43 @@ public class BidMachineCustomEventNative implements CustomEventNative {
             customEventNativeListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
-
-        Bundle fusedBundle = BidMachineUtils.getFusedBundle(
-                serverParameters,
-                localExtras);
-        BidMachineUtils.updateCoppa(
-                fusedBundle,
-                nativeMediationAdRequest.taggedForChildDirectedTreatment());
-        BidMachineUtils.updateGDPR(fusedBundle);
-        if (!BidMachineUtils.prepareBidMachine(context, fusedBundle)) {
+        Bundle serverExtras = BidMachineUtils.transformToBundle(serverParameters);
+        if (BidMachineUtils.isPreBidIntegration(localExtras)
+                && !BidMachineUtils.isServerExtrasValid(serverExtras, localExtras)) {
+            customEventNativeListener.onAdFailedToLoad(AdRequest.ERROR_CODE_NO_FILL);
+            return;
+        }
+        Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverExtras, localExtras);
+        if (!BidMachineUtils.prepareBidMachine(context, fusedBundle, nativeMediationAdRequest)) {
             customEventNativeListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
-        NativeRequest nativeRequest = new NativeRequest.Builder()
-                .setTargetingParams(BidMachineUtils.createTargetingParams(fusedBundle))
-                .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle))
-                .setMediaAssetTypes(MediaAssetType.All)
-                .build();
-        nativeAd = new NativeAd(context);
-        nativeAd.setListener(new BidMachineAdListener(context, customEventNativeListener));
-        nativeAd.load(nativeRequest);
+
+        NativeRequest request;
+        int errorCode = AdRequest.ERROR_CODE_INVALID_REQUEST;
+        if (BidMachineUtils.isPreBidIntegration(fusedBundle)) {
+            request = BidMachineUtils.obtainCachedRequest(AdsType.Native, fusedBundle);
+            if (request == null) {
+                errorCode = AdRequest.ERROR_CODE_NO_FILL;
+                Log.d(TAG, "Fetched AdRequest not found");
+            } else {
+                request.notifyMediationWin();
+                Log.d(TAG, "Fetched request resolved: " + request.getAuctionResult());
+            }
+        } else {
+            request = new NativeRequest.Builder()
+                    .setTargetingParams(BidMachineUtils.createTargetingParams(fusedBundle))
+                    .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle))
+                    .build();
+        }
+        if (request != null) {
+            nativeAd = new NativeAd(context);
+            nativeAd.setListener(new BidMachineAdListener(context, customEventNativeListener));
+            nativeAd.load(request);
+            Log.d(TAG, "Attempt load native");
+        } else {
+            customEventNativeListener.onAdFailedToLoad(errorCode);
+        }
     }
 
     @Override

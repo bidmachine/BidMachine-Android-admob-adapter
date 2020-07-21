@@ -18,7 +18,9 @@ import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.Locale;
 
+import io.bidmachine.AdsType;
 import io.bidmachine.BidMachine;
+import io.bidmachine.BidMachineFetcher;
 import io.bidmachine.PriceFloorParams;
 import io.bidmachine.TargetingParams;
 import io.bidmachine.utils.BMError;
@@ -63,7 +65,9 @@ class BidMachineUtils {
      *               5. {@link BidMachineUtils#ENDPOINT}.
      * @return was initialize or not
      */
-    static boolean prepareBidMachine(Context context, @NonNull Bundle extras) {
+    static boolean prepareBidMachine(Context context,
+                                     @NonNull Bundle extras,
+                                     @Nullable MediationAdRequest mediationAdRequest) {
         Boolean loggingEnabled = getBoolean(extras, LOGGING_ENABLED);
         if (loggingEnabled != null) {
             BidMachine.setLoggingEnabled(loggingEnabled);
@@ -76,6 +80,11 @@ class BidMachineUtils {
         if (!TextUtils.isEmpty(endpoint)) {
             BidMachine.setEndpoint(endpoint);
         }
+        BidMachineUtils.updateCoppa(extras,
+                                    mediationAdRequest != null
+                                            ? mediationAdRequest.taggedForChildDirectedTreatment()
+                                            : MediationAdRequest.TAG_FOR_CHILD_DIRECTED_TREATMENT_UNSPECIFIED);
+        BidMachineUtils.updateGDPR(extras);
         if (!BidMachine.isInitialized()) {
             String jsonData = getString(extras, MEDIATION_CONFIG);
             if (jsonData != null) {
@@ -152,19 +161,31 @@ class BidMachineUtils {
         }
     }
 
+    static boolean isPreBidIntegration(@Nullable Bundle extras) {
+        return extras != null && extras.containsKey(BidMachineFetcher.KEY_ID);
+    }
+
+    static boolean isServerExtrasValid(@Nullable Bundle serverExtras,
+                                       @Nullable Bundle localExtras) {
+        String serverPrice = serverExtras != null ? serverExtras.getString("bm_pf") : null;
+        String localPrice = localExtras != null ? localExtras.getString("bm_pf") : null;
+        return !TextUtils.isEmpty(serverPrice)
+                && !TextUtils.isEmpty(localPrice)
+                && serverPrice.equals(localPrice);
+    }
+
     /**
      * Prepare fused bundle from serverExtras and localExtras
      *
-     * @param serverParameters - parameters from server
-     * @param localExtras      - bundle with local parameters
+     * @param serverExtras - bundle with server parameters
+     * @param localExtras  - bundle with local parameters
      * @return fused bundle which contains serverExtras and localExtras
      */
-    static Bundle getFusedBundle(@Nullable String serverParameters, @Nullable Bundle localExtras) {
+    static Bundle getFusedBundle(@Nullable Bundle serverExtras, @Nullable Bundle localExtras) {
         Bundle fusedExtras = new Bundle();
         if (localExtras != null) {
             fusedExtras.putAll(localExtras);
         }
-        Bundle serverExtras = transformToBundle(serverParameters);
         if (serverExtras != null) {
             fusedExtras.putAll(serverExtras);
         }
@@ -289,7 +310,7 @@ class BidMachineUtils {
      * @param serverParameters - parameters from server
      * @return equivalent server string in {@link Bundle}
      */
-    private static Bundle transformToBundle(@Nullable String serverParameters) {
+    static Bundle transformToBundle(@Nullable String serverParameters) {
         if (TextUtils.isEmpty(serverParameters)) {
             return null;
         }
@@ -411,6 +432,19 @@ class BidMachineUtils {
             }
         }
         return -1;
+    }
+
+    @Nullable
+    static <T extends io.bidmachine.AdRequest> T obtainCachedRequest(@NonNull AdsType adsType,
+                                                                     @NonNull Bundle fusedBundle) {
+        return obtainCachedRequest(adsType, fusedBundle.get(BidMachineFetcher.KEY_ID));
+    }
+
+    @Nullable
+    @SuppressWarnings("unchecked")
+    static <T extends io.bidmachine.AdRequest> T obtainCachedRequest(@NonNull AdsType adsType,
+                                                                     @Nullable Object id) {
+        return id != null ? (T) BidMachineFetcher.release(adsType, String.valueOf(id)) : null;
     }
 
 }

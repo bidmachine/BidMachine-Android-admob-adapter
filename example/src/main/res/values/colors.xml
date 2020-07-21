@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+
+    <color name="colorPrimary">@color/bid_machine_gray</color>
+    <color name="colorPrimaryDark">@color/bid_machine_blue</color>
+    <color name="colorAccent">@color/bid_machine_yellow</color>
+    <color name="colorText">@color/bid_machine_yellow_dark</color>
+
+    <color name="bid_machine_red">#E84039</color>
+    <color name="bid_machine_yellow">#FCBE46</color>
+    <color name="bid_machine_yellow_dark">#f08234</color>
+    <color name="bid_machine_blue">#223551</color>
+    <color name="bid_machine_gray">#6E7B8D</color>
+
 </resources>
