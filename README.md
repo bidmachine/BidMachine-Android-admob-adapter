@@ -1,7 +1,7 @@
 # BidMachine Android AdMobAdapter
 
-[<img src="https://img.shields.io/badge/SDK%20Version-1.5.1-brightgreen">](https://github.com/bidmachine/BidMachine-Android-SDK)
-[<img src="https://img.shields.io/badge/Adapter%20Version-1.5.1.6-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.5.1.6/)
+[<img src="https://img.shields.io/badge/SDK%20Version-1.5.2-brightgreen">](https://github.com/bidmachine/BidMachine-Android-SDK)
+[<img src="https://img.shields.io/badge/Adapter%20Version-1.5.2.7-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.5.2.7/)
 
 * [Useful links](#useful-links)
 * [Integration](#integration)
@@ -34,11 +34,11 @@ repositories {
 
 dependencies {
     //Add BidMachine SDK dependency
-    implementation 'io.bidmachine:ads:1.5.1'
+    implementation 'io.bidmachine:ads:1.5.2'
     //Add BidMachine SDK AdMob Adapter dependency
-    implementation 'io.bidmachine:ads.adapters.admob:1.5.1.6'
+    implementation 'io.bidmachine:ads.adapters.admob:1.5.2.7'
     //Add AdMob SDK dependency
-    implementation 'com.google.android.gms:play-services-ads:19.2.0'
+    implementation 'com.google.android.gms:play-services-ads:19.3.0'
     ...
 }
 ```

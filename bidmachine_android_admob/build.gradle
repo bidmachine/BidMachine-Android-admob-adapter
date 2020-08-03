@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 6
-        versionName "1.5.1.$versionCode"
+        versionCode 7
+        versionName "1.5.2.$versionCode"
     }
 
     buildTypes {
@@ -20,6 +20,6 @@ android {
 }
 
 dependencies {
-    compileOnly 'io.bidmachine:ads:1.5.1'
-    compileOnly 'com.google.android.gms:play-services-ads:19.2.0'
+    compileOnly 'io.bidmachine:ads:1.5.2'
+    compileOnly 'com.google.android.gms:play-services-ads:19.3.0'
 }

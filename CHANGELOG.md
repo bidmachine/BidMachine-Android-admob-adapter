@@ -1,3 +1,8 @@
+## Version 1.5.2.7 (August 3, 2020)
+**Features**:
+* Updated BidMachine version to 1.5.2
+* Updated AdMob version to 19.3.0
+
 ## Version 1.5.1.6 (July 21, 2020)
 **Features**:
 * Added HeaderBidding implementation

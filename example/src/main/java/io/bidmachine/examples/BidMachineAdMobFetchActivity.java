@@ -26,6 +26,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.formats.MediaView;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
@@ -567,8 +568,10 @@ public class BidMachineAdMobFetchActivity extends Activity {
         }
 
         @Override
-        public void onAdFailedToLoad(int i) {
-            Log.d(TAG, "AdView onBannerFailedToLoad with errorCode - " + i + ")");
+        public void onAdFailedToLoad(LoadAdError loadAdError) {
+            Log.d(TAG, "AdView onBannerFailedToLoad with errorCode - "
+                    + loadAdError.getCode()
+                    + ")");
             Toast.makeText(
                     BidMachineAdMobFetchActivity.this,
                     "BannerFailedToLoad",
@@ -619,8 +622,10 @@ public class BidMachineAdMobFetchActivity extends Activity {
         }
 
         @Override
-        public void onAdFailedToLoad(int i) {
-            Log.d(TAG, "InterstitialAd onInterstitialFailedToLoad with errorCode - " + i + ")");
+        public void onAdFailedToLoad(LoadAdError loadAdError) {
+            Log.d(TAG, "InterstitialAd onInterstitialFailedToLoad with errorCode - "
+                    + loadAdError.getCode()
+                    + ")");
             Toast.makeText(
                     BidMachineAdMobFetchActivity.this,
                     "InterstitialFailedToLoad",
@@ -728,8 +733,10 @@ public class BidMachineAdMobFetchActivity extends Activity {
         }
 
         @Override
-        public void onAdFailedToLoad(int errorCode) {
-            Log.d(TAG, "NativeAd onNativeAdFailedToLoad with errorCode - " + errorCode + ")");
+        public void onAdFailedToLoad(LoadAdError loadAdError) {
+            Log.d(TAG, "NativeAd onNativeAdFailedToLoad with errorCode - "
+                    + loadAdError.getCode()
+                    + ")");
             Toast.makeText(
                     BidMachineAdMobFetchActivity.this,
                     "NativeAdFailedToLoad",
