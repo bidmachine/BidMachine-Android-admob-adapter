@@ -131,12 +131,12 @@ public class BidMachineAdMobFetchActivity extends Activity {
      * Method for load banner from AdMob
      */
     private void loadBanner() {
+        Log.d(TAG, "AdMob loadBanner");
+
         bShowBanner.setEnabled(false);
 
         //Destroy previous AdView
         destroyBanner();
-
-        Log.d(TAG, "AdMob loadBanner");
 
         BannerRequest bannerRequest = new BannerRequest.Builder()
                 .setSize(BannerSize.Size_320x50)
@@ -235,12 +235,12 @@ public class BidMachineAdMobFetchActivity extends Activity {
      * Method for load interstitial from AdMob
      */
     private void loadInterstitial() {
+        Log.d(TAG, "InterstitialAd loadInterstitial");
+
         bShowInterstitial.setEnabled(false);
 
         //Destroy previous InterstitialAd
         destroyInterstitial();
-
-        Log.d(TAG, "InterstitialAd loadInterstitial");
 
         InterstitialRequest interstitialRequest = new InterstitialRequest.Builder()
                 .setListener(new InterstitialRequest.AdRequestListener() {
@@ -330,12 +330,12 @@ public class BidMachineAdMobFetchActivity extends Activity {
      * Method for load rewarded video from AdMob
      */
     private void loadRewardedVideo() {
+        Log.d(TAG, "RewardedVideoAd loadRewardedVideo");
+
         bShowRewardedVideo.setEnabled(false);
 
         //Destroy previous RewardedVideoAd
         destroyRewardedVideo();
-
-        Log.d(TAG, "RewardedVideoAd loadRewardedVideo");
 
         RewardedRequest rewardedRequest = new RewardedRequest.Builder()
                 .setListener(new RewardedRequest.AdRequestListener() {
@@ -425,12 +425,12 @@ public class BidMachineAdMobFetchActivity extends Activity {
      * Method for load native from AdMob
      */
     private void loadNative() {
+        Log.d(TAG, "UnifiedNativeAd loadNative");
+
         bShowNative.setEnabled(false);
 
         //Destroy previous NativeAd
         destroyNative();
-
-        Log.d(TAG, "UnifiedNativeAd loadNative");
 
         NativeRequest nativeRequest = new NativeRequest.Builder()
                 .setListener(new NativeRequest.AdRequestListener() {
@@ -569,8 +569,8 @@ public class BidMachineAdMobFetchActivity extends Activity {
 
         @Override
         public void onAdFailedToLoad(LoadAdError loadAdError) {
-            Log.d(TAG, "AdView onBannerFailedToLoad with errorCode - "
-                    + loadAdError.getCode()
+            Log.d(TAG, "AdView onBannerFailedToLoad with message - "
+                    + loadAdError.getMessage()
                     + ")");
             Toast.makeText(
                     BidMachineAdMobFetchActivity.this,
@@ -623,8 +623,8 @@ public class BidMachineAdMobFetchActivity extends Activity {
 
         @Override
         public void onAdFailedToLoad(LoadAdError loadAdError) {
-            Log.d(TAG, "InterstitialAd onInterstitialFailedToLoad with errorCode - "
-                    + loadAdError.getCode()
+            Log.d(TAG, "InterstitialAd onInterstitialFailedToLoad with message - "
+                    + loadAdError.getMessage()
                     + ")");
             Toast.makeText(
                     BidMachineAdMobFetchActivity.this,
@@ -734,8 +734,8 @@ public class BidMachineAdMobFetchActivity extends Activity {
 
         @Override
         public void onAdFailedToLoad(LoadAdError loadAdError) {
-            Log.d(TAG, "NativeAd onNativeAdFailedToLoad with errorCode - "
-                    + loadAdError.getCode()
+            Log.d(TAG, "NativeAd onNativeAdFailedToLoad with message - "
+                    + loadAdError.getMessage()
                     + ")");
             Toast.makeText(
                     BidMachineAdMobFetchActivity.this,

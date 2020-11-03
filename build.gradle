@@ -9,10 +9,8 @@ buildscript {
         }
     }
     dependencies {
-        dependencies {
-            classpath 'com.android.tools.build:gradle:3.2.0'
-            classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.12"
-        }
+        classpath 'com.android.tools.build:gradle:3.5.4'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.3"
     }
 }
 

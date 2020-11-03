@@ -34,32 +34,38 @@ public class BidMachineCustomEventNative implements CustomEventNative {
                                 NativeMediationAdRequest nativeMediationAdRequest,
                                 Bundle localExtras) {
         if (context == null) {
-            Log.d(TAG, "Failed to request ad. Context is null");
-            customEventNativeListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
+            BidMachineUtils.onAdFailedToLoad(customEventNativeListener,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Failed to request ad. Context is null");
             return;
         }
         Bundle serverExtras = BidMachineUtils.transformToBundle(serverParameters);
         if (BidMachineUtils.isPreBidIntegration(localExtras)
                 && !BidMachineUtils.isServerExtrasValid(serverExtras, localExtras)) {
-            customEventNativeListener.onAdFailedToLoad(AdRequest.ERROR_CODE_NO_FILL);
+            BidMachineUtils.onAdFailedToLoad(customEventNativeListener,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Local or Server extras invalid");
             return;
         }
         Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverExtras, localExtras);
         if (!BidMachineUtils.prepareBidMachine(context, fusedBundle, nativeMediationAdRequest)) {
-            customEventNativeListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
+            BidMachineUtils.onAdFailedToLoad(customEventNativeListener,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Check BidMachine integration");
             return;
         }
 
         NativeRequest request;
-        int errorCode = AdRequest.ERROR_CODE_INVALID_REQUEST;
         if (BidMachineUtils.isPreBidIntegration(fusedBundle)) {
             request = BidMachineUtils.obtainCachedRequest(AdsType.Native, fusedBundle);
             if (request == null) {
-                errorCode = AdRequest.ERROR_CODE_NO_FILL;
-                Log.d(TAG, "Fetched AdRequest not found");
+                BidMachineUtils.onAdFailedToLoad(customEventNativeListener,
+                                                 AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                                 "Fetched AdRequest not found");
+                return;
             } else {
-                request.notifyMediationWin();
                 Log.d(TAG, "Fetched request resolved: " + request.getAuctionResult());
+                request.notifyMediationWin();
             }
         } else {
             request = new NativeRequest.Builder()
@@ -67,14 +73,11 @@ public class BidMachineCustomEventNative implements CustomEventNative {
                     .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle))
                     .build();
         }
-        if (request != null) {
-            nativeAd = new NativeAd(context);
-            nativeAd.setListener(new BidMachineAdListener(context, customEventNativeListener));
-            nativeAd.load(request);
-            Log.d(TAG, "Attempt load native");
-        } else {
-            customEventNativeListener.onAdFailedToLoad(errorCode);
-        }
+
+        nativeAd = new NativeAd(context);
+        nativeAd.setListener(new BidMachineAdListener(context, customEventNativeListener));
+        nativeAd.load(request);
+        Log.d(TAG, "Attempt load native");
     }
 
     @Override
@@ -117,7 +120,9 @@ public class BidMachineCustomEventNative implements CustomEventNative {
                                                                            nativeMediaView);
                 customEventNativeListener.onAdLoaded(mapper);
             } else {
-                customEventNativeListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INTERNAL_ERROR);
+                BidMachineUtils.onAdFailedToLoad(customEventNativeListener,
+                                                 AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                                 "Failed to request ad. Context is null");
             }
         }
 

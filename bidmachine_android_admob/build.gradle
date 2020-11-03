@@ -2,13 +2,13 @@ apply plugin: 'com.android.library'
 apply from: "publish.gradle"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 29
-        versionCode 7
-        versionName "1.5.2.$versionCode"
+        targetSdkVersion 30
+        versionCode 8
+        versionName "1.6.1.$versionCode"
     }
 
     buildTypes {
@@ -20,6 +20,6 @@ android {
 }
 
 dependencies {
-    compileOnly 'io.bidmachine:ads:1.5.2'
-    compileOnly 'com.google.android.gms:play-services-ads:19.3.0'
+    compileOnly 'io.bidmachine:ads:1.6.1'
+    compileOnly 'com.google.android.gms:play-services-ads:19.5.0'
 }

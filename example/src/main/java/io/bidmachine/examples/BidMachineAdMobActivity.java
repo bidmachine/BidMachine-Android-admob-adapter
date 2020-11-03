@@ -27,6 +27,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.formats.MediaView;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
@@ -95,12 +96,12 @@ public class BidMachineAdMobActivity extends Activity {
      */
     @SuppressLint("MissingPermission")
     private void loadBanner() {
+        Log.d(TAG, "AdMob loadBanner");
+
         bShowBanner.setEnabled(false);
 
         //Destroy previous AdView
         destroyBanner();
-
-        Log.d(TAG, "AdMob loadBanner");
 
         //Prepare bundle for set to AdRequest
         Bundle bundle = new BidMachineBundleBuilder()
@@ -160,12 +161,12 @@ public class BidMachineAdMobActivity extends Activity {
      */
     @SuppressLint("MissingPermission")
     private void loadInterstitial() {
+        Log.d(TAG, "InterstitialAd loadInterstitial");
+
         bShowInterstitial.setEnabled(false);
 
         //Destroy previous InterstitialAd
         destroyInterstitial();
-
-        Log.d(TAG, "InterstitialAd loadInterstitial");
 
         //Prepare bundle for set to AdRequest
         Bundle bundle = new BidMachineBundleBuilder()
@@ -217,12 +218,12 @@ public class BidMachineAdMobActivity extends Activity {
      * Method for load rewarded video from AdMob
      */
     private void loadRewardedVideo() {
+        Log.d(TAG, "RewardedVideoAd loadRewardedVideo");
+
         bShowRewardedVideo.setEnabled(false);
 
         //Destroy previous RewardedVideoAd
         destroyRewardedVideo();
-
-        Log.d(TAG, "RewardedVideoAd loadRewardedVideo");
 
         //Prepare bundle for set to AdRequest
         Bundle bundle = new BidMachineBundleBuilder()
@@ -274,12 +275,12 @@ public class BidMachineAdMobActivity extends Activity {
      */
     @SuppressLint("MissingPermission")
     private void loadNative() {
+        Log.d(TAG, "UnifiedNativeAd loadNative");
+
         bShowNative.setEnabled(false);
 
         //Destroy previous NativeAd
         destroyNative();
-
-        Log.d(TAG, "UnifiedNativeAd loadNative");
 
         //Prepare bundle for set to AdRequest
         Bundle bundle = new BidMachineBundleBuilder()
@@ -380,8 +381,10 @@ public class BidMachineAdMobActivity extends Activity {
         }
 
         @Override
-        public void onAdFailedToLoad(int i) {
-            Log.d(TAG, "AdView onBannerFailedToLoad with errorCode - " + i + ")");
+        public void onAdFailedToLoad(LoadAdError loadAdError) {
+            Log.d(TAG, "AdView onBannerFailedToLoad with message - "
+                    + loadAdError.getMessage()
+                    + ")");
             Toast.makeText(
                     BidMachineAdMobActivity.this,
                     "BannerFailedToLoad",
@@ -432,8 +435,10 @@ public class BidMachineAdMobActivity extends Activity {
         }
 
         @Override
-        public void onAdFailedToLoad(int i) {
-            Log.d(TAG, "InterstitialAd onInterstitialFailedToLoad with errorCode - " + i + ")");
+        public void onAdFailedToLoad(LoadAdError loadAdError) {
+            Log.d(TAG, "InterstitialAd onInterstitialFailedToLoad with message - "
+                    + loadAdError.getMessage()
+                    + ")");
             Toast.makeText(
                     BidMachineAdMobActivity.this,
                     "InterstitialFailedToLoad",
@@ -541,8 +546,10 @@ public class BidMachineAdMobActivity extends Activity {
         }
 
         @Override
-        public void onAdFailedToLoad(int errorCode) {
-            Log.d(TAG, "NativeAd onNativeAdFailedToLoad with errorCode - " + errorCode + ")");
+        public void onAdFailedToLoad(LoadAdError loadAdError) {
+            Log.d(TAG, "NativeAd onNativeAdFailedToLoad with message - "
+                    + loadAdError.getMessage()
+                    + ")");
             Toast.makeText(
                     BidMachineAdMobActivity.this,
                     "NativeAdFailedToLoad",

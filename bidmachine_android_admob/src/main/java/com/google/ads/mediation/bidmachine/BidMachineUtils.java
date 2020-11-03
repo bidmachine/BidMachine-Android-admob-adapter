@@ -8,8 +8,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.mediation.MediationAdRequest;
+import com.google.android.gms.ads.mediation.customevent.CustomEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,6 +31,7 @@ import io.bidmachine.utils.Gender;
 class BidMachineUtils {
 
     private static final String TAG = BidMachineUtils.class.getSimpleName();
+    private static final String ERROR_DOMAIN = "com.google.ads.mediation.bidmachine";
 
     static final String SELLER_ID = "seller_id";
     static final String MEDIATION_CONFIG = "mediation_config";
@@ -53,6 +56,19 @@ class BidMachineUtils {
     static final String BADV = "badv";
     static final String BAPPS = "bapps";
     static final String PRICE_FLOORS = "price_floors";
+
+    static void onAdFailedToLoad(@NonNull CustomEventListener listener, @NonNull BMError bmError) {
+        onAdFailedToLoad(listener,
+                         transformToAdMobErrorCode(bmError),
+                         bmError.getMessage());
+    }
+
+    static void onAdFailedToLoad(@NonNull CustomEventListener listener,
+                                 int errorCode,
+                                 @NonNull String errorMessage) {
+        Log.d(TAG, errorMessage);
+        listener.onAdFailedToLoad(new AdError(errorCode, errorMessage, ERROR_DOMAIN));
+    }
 
     /**
      * Preparing BidMachine before it may be used

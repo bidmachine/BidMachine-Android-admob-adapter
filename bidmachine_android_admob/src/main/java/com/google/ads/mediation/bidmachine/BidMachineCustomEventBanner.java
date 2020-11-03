@@ -33,44 +33,52 @@ public final class BidMachineCustomEventBanner implements CustomEventBanner {
                                 MediationAdRequest mediationAdRequest,
                                 Bundle localExtras) {
         if (context == null) {
-            Log.d(TAG, "Failed to request ad. Context is null");
-            customEventBannerListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
+            BidMachineUtils.onAdFailedToLoad(customEventBannerListener,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Failed to request ad. Context is null");
             return;
         }
         if (adSize == null) {
-            Log.d(TAG, "Failed to request ad. AdSize is null");
-            customEventBannerListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
+            BidMachineUtils.onAdFailedToLoad(customEventBannerListener,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Failed to request ad. AdSize is null");
             return;
         }
         Bundle serverExtras = BidMachineUtils.transformToBundle(serverParameters);
         if (BidMachineUtils.isPreBidIntegration(localExtras)
                 && !BidMachineUtils.isServerExtrasValid(serverExtras, localExtras)) {
-            customEventBannerListener.onAdFailedToLoad(AdRequest.ERROR_CODE_NO_FILL);
+            BidMachineUtils.onAdFailedToLoad(customEventBannerListener,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Local or Server extras invalid");
             return;
         }
         Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverExtras, localExtras);
         if (!BidMachineUtils.prepareBidMachine(context, fusedBundle, mediationAdRequest)) {
-            customEventBannerListener.onAdFailedToLoad(AdRequest.ERROR_CODE_INVALID_REQUEST);
+            BidMachineUtils.onAdFailedToLoad(customEventBannerListener,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Check BidMachine integration");
             return;
         }
 
-        BannerRequest request = null;
-        BannerSize bannerSize = null;
-        int errorCode = AdRequest.ERROR_CODE_INVALID_REQUEST;
+        BannerRequest request;
         if (BidMachineUtils.isPreBidIntegration(fusedBundle)) {
             request = BidMachineUtils.obtainCachedRequest(AdsType.Banner, fusedBundle);
             if (request == null) {
-                errorCode = AdRequest.ERROR_CODE_NO_FILL;
-                Log.d(TAG, "Fetched AdRequest not found");
+                BidMachineUtils.onAdFailedToLoad(customEventBannerListener,
+                                                 AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                                 "Fetched AdRequest not found");
+                return;
             } else {
-                request.notifyMediationWin();
-                bannerSize = request.getSize();
                 Log.d(TAG, "Fetched request resolved: " + request.getAuctionResult());
+                request.notifyMediationWin();
             }
         } else {
-            bannerSize = transformToBannerSize(adSize);
+            BannerSize bannerSize = transformToBannerSize(adSize);
             if (bannerSize == null) {
-                Log.d(TAG, "Failed to request ad. Input AdSize not supported");
+                BidMachineUtils.onAdFailedToLoad(customEventBannerListener,
+                                                 AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                                 "Input AdSize not supported");
+                return;
             } else {
                 request = new BannerRequest.Builder()
                         .setSize(bannerSize)
@@ -79,14 +87,11 @@ public final class BidMachineCustomEventBanner implements CustomEventBanner {
                         .build();
             }
         }
-        if (request != null) {
-            bannerView = new BannerView(context);
-            bannerView.setListener(new BidMachineAdListener(customEventBannerListener));
-            bannerView.load(request);
-            Log.d(TAG, "Attempt load banner with size " + bannerSize);
-        } else {
-            customEventBannerListener.onAdFailedToLoad(errorCode);
-        }
+
+        bannerView = new BannerView(context);
+        bannerView.setListener(new BidMachineAdListener(customEventBannerListener));
+        bannerView.load(request);
+        Log.d(TAG, "Attempt load banner with size - " + request.getSize());
     }
 
     @Override
@@ -137,8 +142,7 @@ public final class BidMachineCustomEventBanner implements CustomEventBanner {
         @Override
         public void onAdLoadFailed(@NonNull BannerView bannerView,
                                    @NonNull BMError bmError) {
-            customEventBannerListener.onAdFailedToLoad(
-                    BidMachineUtils.transformToAdMobErrorCode(bmError));
+            BidMachineUtils.onAdFailedToLoad(customEventBannerListener, bmError);
         }
 
         @Override
@@ -160,8 +164,7 @@ public final class BidMachineCustomEventBanner implements CustomEventBanner {
 
         @Override
         public void onAdExpired(@NonNull BannerView bannerView) {
-            customEventBannerListener.onAdFailedToLoad(
-                    BidMachineUtils.transformToAdMobErrorCode(BMError.Expired));
+            BidMachineUtils.onAdFailedToLoad(customEventBannerListener, BMError.Expired);
         }
 
     }
