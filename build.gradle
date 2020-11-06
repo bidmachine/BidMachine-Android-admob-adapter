@@ -9,8 +9,8 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.0'
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.12"
+        classpath 'com.android.tools.build:gradle:3.3.3'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.3"
     }
 }
 
@@ -22,10 +22,6 @@ allprojects {
         maven {
             name 'BidMachine Ads maven repository'
             url 'https://artifactory.bidmachine.io/bidmachine'
-        }
-        // Add Criteo maven repository for Criteo adapter
-        maven {
-            url "https://pubsdk-bin.criteo.com/publishersdk/android"
         }
     }
 }
