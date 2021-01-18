@@ -1,7 +1,7 @@
 # BidMachine Android AdMobAdapter
 
-[<img src="https://img.shields.io/badge/SDK%20Version-1.6.1-brightgreen">](https://github.com/bidmachine/BidMachine-Android-SDK)
-[<img src="https://img.shields.io/badge/Adapter%20Version-1.6.1.8-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.6.1.8/)
+[<img src="https://img.shields.io/badge/SDK%20Version-1.6.3-brightgreen">](https://github.com/bidmachine/BidMachine-Android-SDK)
+[<img src="https://img.shields.io/badge/Adapter%20Version-1.6.3.9-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.6.3.9/)
 [<img src="https://img.shields.io/badge/AdMob%20Version-19.5.0-blue">](https://developers.google.com/admob/android/quick-start)
 
 * [Useful links](#useful-links)
@@ -35,9 +35,9 @@ repositories {
 
 dependencies {
     //Add BidMachine SDK dependency
-    implementation 'io.bidmachine:ads:1.6.1'
+    implementation 'io.bidmachine:ads:1.6.3'
     //Add BidMachine SDK AdMob Adapter dependency
-    implementation 'io.bidmachine:ads.adapters.admob:1.6.1.8'
+    implementation 'io.bidmachine:ads.adapters.admob:1.6.3.9'
     //Add AdMob SDK dependency
     implementation 'com.google.android.gms:play-services-ads:19.5.0'
     ...
@@ -132,7 +132,7 @@ adView.setAdSize(AdSize.BANNER);
 adView.setAdListener(new BannerViewListener());
 adView.loadAd(adRequest);
 ```
-[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L97)
+[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L98)
 
 ### Interstitial implementation
 Server configuration sample:
@@ -218,7 +218,7 @@ interstitialAd.setAdUnitId(INTERSTITIAL_ID);
 interstitialAd.setAdListener(new InterstitialListener());
 interstitialAd.loadAd(adRequest);
 ```
-[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L162)
+[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L163)
 
 ### RewardedVideo implementation
 Server configuration sample:
@@ -302,7 +302,7 @@ RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
 rewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoListener());
 rewardedVideoAd.loadAd(REWARDED_ID, adRequest);
 ```
-[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L219)
+[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L220)
 
 ### Native implementation
 Server configuration sample:
@@ -388,7 +388,7 @@ AdLoader adLoader = new AdLoader.Builder(this, NATIVE_ID)
         .build();
 adLoader.loadAd(adRequest);
 ```
-[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L276)
+[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L277)
 
 
 ## HeaderBidding implementation
@@ -465,7 +465,7 @@ private void loadAdMobBanner(@NonNull Map<String, String> fetchParams) {
     adView.loadAd(adRequest);
 }
 ```
-[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L132)
+[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L133)
 
 ### Interstitial implementation
 ```java
@@ -533,7 +533,7 @@ private void loadAdMobInterstitial(@NonNull Map<String, String> fetchParams) {
     interstitialAd.loadAd(adRequest);
 }
 ```
-[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L236)
+[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L237)
 
 ### RewardedVideo implementation
 ```java
@@ -600,7 +600,7 @@ private void loadAdMobRewardedVideo(@NonNull Map<String, String> fetchParams) {
     rewardedVideoAd.loadAd(REWARDED_ID, adRequest);
 }
 ```
-[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L331)
+[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L332)
 
 ### Native implementation
 ```java
@@ -668,7 +668,7 @@ private void loadAdMobNative(@NonNull Map<String, String> fetchParams) {
     adLoader.loadAd(adRequest);
 }
 ```
-[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L426)
+[*Example*](example/src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L427)
 
 ### Work with price
 When **BidMachineFetcher.fetch(...)** is called, price rounding occurs. By default, RoundingMode is **RoundingMode.CEILING**, but if you want specific RoundingMode, you can change it with help **BidMachineFetcher.setPriceRounding(...)**. You can try your rounding configuration via call **BidMachineFetcher.roundPrice(...)**. More info about RoundingMode [here](https://developer.android.com/reference/java/math/RoundingMode).
