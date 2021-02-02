@@ -1,6 +1,5 @@
 # HeaderBidding AdMob implementation
 
-* [Home](../../../..)
 * [Useful links](#useful-links)
 * [Banner implementation](#banner-implementation)
 * [Interstitial implementation](#interstitial-implementation)
