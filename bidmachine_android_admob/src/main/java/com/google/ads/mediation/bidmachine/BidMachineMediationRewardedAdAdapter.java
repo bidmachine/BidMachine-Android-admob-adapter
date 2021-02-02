@@ -21,6 +21,7 @@ import io.bidmachine.rewarded.RewardedListener;
 import io.bidmachine.rewarded.RewardedRequest;
 import io.bidmachine.utils.BMError;
 
+@Deprecated
 public final class BidMachineMediationRewardedAdAdapter
         implements MediationRewardedVideoAdAdapter, OnContextChangedListener {
 

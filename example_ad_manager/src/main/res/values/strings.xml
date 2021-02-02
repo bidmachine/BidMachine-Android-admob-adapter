@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="app_name">BidMachineAdManagerExample</string>
+    <string name="initialize">Initialize</string>
+    <string name="load_banner">Load Banner</string>
+    <string name="show_banner">Show Banner</string>
+    <string name="load_interstitial">Load Interstitial</string>
+    <string name="show_interstitial">Show Interstitial</string>
+    <string name="load_rewarded">Load Rewarded</string>
+    <string name="show_rewarded">Show Rewarded</string>
+
+</resources>
