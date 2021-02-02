@@ -6,9 +6,7 @@
 
 * [Useful links](#useful-links)
 * [Integration](#integration)
-* [Classic AdMob implementation](example_admob)
-* [HeaderBidding AdMob implementation](example_admob_fetch)
-* [HeaderBidding AdManager implementation](example_ad_manager)
+* [Types of integration](#types-of-integration)
 * [Work with price](#work-with-price)
 * [What's new in last version](#whats-new-in-last-version)
 
@@ -34,6 +32,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:19.7.0'
 }
 ```
+
+## Types of integration
+* [Classic AdMob implementation](example_admob)
+* [HeaderBidding AdMob implementation](example_admob_fetch)
+* [HeaderBidding AdManager implementation](example_ad_manager)
 
 ## Work with price
 When **BidMachineFetcher.fetch(...)** is called, price rounding occurs. By default, RoundingMode is **RoundingMode.CEILING**, but if you want specific RoundingMode, you can change it with help **BidMachineFetcher.setPriceRounding(...)**. You can try your rounding configuration via call **BidMachineFetcher.roundPrice(...)**. More info about RoundingMode [here](https://developer.android.com/reference/java/math/RoundingMode).

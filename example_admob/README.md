@@ -1,10 +1,14 @@
 # Classic AdMob implementation
 
-* [Home](..)
+* [Home](../../../..)
+* [Useful links](#useful-links)
 * [Banner implementation](#banner-implementation)
 * [Interstitial implementation](#interstitial-implementation)
 * [RewardedVideo implementation](#rewardedvideo-implementation)
 * [Native implementation](#native-implementation)
+
+## Useful links
+* [AdMob integration](https://wiki.appodeal.com/display/BID/BidMachine+AdMob+custom+network+integration+guide)
 
 ## Banner implementation
 Server configuration sample:

@@ -1,9 +1,13 @@
 # HeaderBidding AdManager implementation
 
-* [Home](..)
+* [Home](../../../..)
+* [Useful links](#useful-links)
 * [Banner implementation](#banner-implementation)
 * [Interstitial implementation](#interstitial-implementation)
 * [RewardedVideo implementation](#rewardedvideo-implementation)
+
+## Useful links
+* [AdManager integration](https://wiki.appodeal.com/display/BID/BidMachine+SDK+Google+AdManager+integration)
 
 ## Banner implementation
 ```java
