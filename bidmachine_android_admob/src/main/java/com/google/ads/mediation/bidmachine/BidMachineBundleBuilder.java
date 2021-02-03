@@ -4,8 +4,6 @@ import android.os.Bundle;
 
 import org.json.JSONArray;
 
-import java.util.Map;
-
 import io.bidmachine.AdContentType;
 import io.bidmachine.utils.Gender;
 
@@ -138,11 +136,6 @@ public class BidMachineBundleBuilder {
      */
     private JSONArray priceFloors;
 
-    /**
-     * Map of parameters from AdRequest
-     */
-    private Map<String, ?> fetchParams;
-
     public BidMachineBundleBuilder setSellerId(String sellerId) {
         this.sellerId = sellerId;
         return this;
@@ -261,15 +254,6 @@ public class BidMachineBundleBuilder {
         return this;
     }
 
-    public BidMachineBundleBuilder setFetchParams(Map<String, ?> fetchParams) {
-        this.fetchParams = fetchParams;
-        return this;
-    }
-
-    Map<String, ?> getFetchParams() {
-        return fetchParams;
-    }
-
     public Bundle build() {
         Bundle extras = new Bundle();
         if (sellerId != null) {
@@ -340,14 +324,6 @@ public class BidMachineBundleBuilder {
         }
         if (priceFloors != null) {
             extras.putString(BidMachineUtils.PRICE_FLOORS, priceFloors.toString());
-        }
-        if (fetchParams != null) {
-            for (Map.Entry<String, ?> entry : fetchParams.entrySet()) {
-                extras.putString(entry.getKey(),
-                                 entry.getValue() != null
-                                         ? String.valueOf(entry.getValue())
-                                         : null);
-            }
         }
         return extras;
     }

@@ -10,8 +10,14 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.admanager.AdManagerAdRequest;
+import com.google.android.gms.ads.admanager.AdManagerAdView;
+import com.google.android.gms.ads.admanager.AdManagerInterstitialAd;
+import com.google.android.gms.ads.mediation.MediationAdLoadCallback;
 import com.google.android.gms.ads.mediation.MediationAdRequest;
+import com.google.android.gms.ads.mediation.MediationRewardedAdConfiguration;
 import com.google.android.gms.ads.mediation.customevent.CustomEventListener;
+import com.google.android.gms.ads.rewarded.RewardedAd;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,19 +25,29 @@ import org.json.JSONObject;
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 import io.bidmachine.AdsType;
 import io.bidmachine.BidMachine;
 import io.bidmachine.BidMachineFetcher;
 import io.bidmachine.PriceFloorParams;
 import io.bidmachine.TargetingParams;
+import io.bidmachine.banner.BannerRequest;
+import io.bidmachine.interstitial.InterstitialRequest;
+import io.bidmachine.nativead.NativeRequest;
+import io.bidmachine.rewarded.RewardedRequest;
 import io.bidmachine.utils.BMError;
 import io.bidmachine.utils.Gender;
 
-class BidMachineUtils {
+public class BidMachineUtils {
 
     private static final String TAG = BidMachineUtils.class.getSimpleName();
     private static final String ERROR_DOMAIN = "com.google.ads.mediation.bidmachine";
+
+    public static final String DEFAULT_BANNER_KEY = "bidmachine-banner";
+    public static final String DEFAULT_INTERSTITIAL_KEY = "bidmachine-interstitial";
+    public static final String DEFAULT_REWARDED_KEY = "bidmachine-rewarded";
+    public static final long DEFAULT_DELAY = 100;
 
     static final String SELLER_ID = "seller_id";
     static final String MEDIATION_CONFIG = "mediation_config";
@@ -67,7 +83,25 @@ class BidMachineUtils {
                                  int errorCode,
                                  @NonNull String errorMessage) {
         Log.d(TAG, errorMessage);
-        listener.onAdFailedToLoad(new AdError(errorCode, errorMessage, ERROR_DOMAIN));
+        listener.onAdFailedToLoad(createAdError(errorCode, errorMessage));
+    }
+
+    static void onAdFailedToLoad(@NonNull MediationAdLoadCallback<?, ?> mediationAdLoadCallback,
+                                 @NonNull BMError bmError) {
+        onAdFailedToLoad(mediationAdLoadCallback,
+                         transformToAdMobErrorCode(bmError),
+                         bmError.getMessage());
+    }
+
+    static void onAdFailedToLoad(@NonNull MediationAdLoadCallback<?, ?> mediationAdLoadCallback,
+                                 int errorCode,
+                                 @NonNull String errorMessage) {
+        Log.d(TAG, errorMessage);
+        mediationAdLoadCallback.onFailure(createAdError(errorCode, errorMessage));
+    }
+
+    static AdError createAdError(int errorCode, @NonNull String errorMessage) {
+        return new AdError(errorCode, errorMessage, ERROR_DOMAIN);
     }
 
     /**
@@ -81,9 +115,22 @@ class BidMachineUtils {
      *               5. {@link BidMachineUtils#ENDPOINT}.
      * @return was initialize or not
      */
-    static boolean prepareBidMachine(Context context,
+    static boolean prepareBidMachine(@NonNull Context context,
                                      @NonNull Bundle extras,
                                      @Nullable MediationAdRequest mediationAdRequest) {
+        BidMachineUtils.updateCoppa(extras, taggedForChildDirectedTreatment(mediationAdRequest));
+        return prepareBidMachine(context, extras);
+    }
+
+    static boolean prepareBidMachine(@NonNull Context context,
+                                     @NonNull Bundle extras,
+                                     @Nullable MediationRewardedAdConfiguration mediationRewardedAdConfiguration) {
+        BidMachineUtils.updateCoppa(extras,
+                                    taggedForChildDirectedTreatment(mediationRewardedAdConfiguration));
+        return prepareBidMachine(context, extras);
+    }
+
+    private static boolean prepareBidMachine(@NonNull Context context, @NonNull Bundle extras) {
         Boolean loggingEnabled = getBoolean(extras, LOGGING_ENABLED);
         if (loggingEnabled != null) {
             BidMachine.setLoggingEnabled(loggingEnabled);
@@ -96,10 +143,6 @@ class BidMachineUtils {
         if (!TextUtils.isEmpty(endpoint)) {
             BidMachine.setEndpoint(endpoint);
         }
-        BidMachineUtils.updateCoppa(extras,
-                                    mediationAdRequest != null
-                                            ? mediationAdRequest.taggedForChildDirectedTreatment()
-                                            : MediationAdRequest.TAG_FOR_CHILD_DIRECTED_TREATMENT_UNSPECIFIED);
         BidMachineUtils.updateGDPR(extras);
         if (!BidMachine.isInitialized()) {
             String jsonData = getString(extras, MEDIATION_CONFIG);
@@ -116,6 +159,18 @@ class BidMachineUtils {
             }
         }
         return true;
+    }
+
+    private static int taggedForChildDirectedTreatment(@Nullable MediationAdRequest mediationAdRequest) {
+        return mediationAdRequest != null
+                ? mediationAdRequest.taggedForChildDirectedTreatment()
+                : MediationAdRequest.TAG_FOR_CHILD_DIRECTED_TREATMENT_UNSPECIFIED;
+    }
+
+    private static int taggedForChildDirectedTreatment(@Nullable MediationRewardedAdConfiguration mediationRewardedAdConfiguration) {
+        return mediationRewardedAdConfiguration != null
+                ? mediationRewardedAdConfiguration.taggedForChildDirectedTreatment()
+                : MediationRewardedAdConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_UNSPECIFIED;
     }
 
     /**
@@ -461,6 +516,218 @@ class BidMachineUtils {
     static <T extends io.bidmachine.AdRequest> T obtainCachedRequest(@NonNull AdsType adsType,
                                                                      @Nullable Object id) {
         return id != null ? (T) BidMachineFetcher.release(adsType, String.valueOf(id)) : null;
+    }
+
+    @Nullable
+    public static String getRewardedAdKey(RewardedAd rewardedAd) {
+        Bundle metadata = rewardedAd.getAdMetadata();
+        return metadata.getString("AdTitle");
+    }
+
+    @NonNull
+    private static Bundle fetch(@NonNull io.bidmachine.AdRequest<?, ?> adRequest) {
+        Bundle bundle = new Bundle();
+        Map<String, String> fetchParams = BidMachineFetcher.fetch(adRequest);
+        if (fetchParams != null) {
+            for (Map.Entry<String, String> entry : fetchParams.entrySet()) {
+                bundle.putString(entry.getKey(), entry.getValue());
+            }
+        }
+        return bundle;
+    }
+
+
+    /**
+     * {@link AdRequest} creation method based on {@link io.bidmachine.AdRequest}
+     *
+     * @param adRequest - loaded {@link io.bidmachine.AdRequest}
+     * @return {@link AdRequest} ready to loading
+     */
+    @NonNull
+    public static AdRequest createAdRequest(@NonNull io.bidmachine.AdRequest<?, ?> adRequest) {
+        return createAdRequestBuilder(adRequest).build();
+    }
+
+    /**
+     * {@link AdRequest.Builder} creation method based on {@link io.bidmachine.AdRequest}
+     *
+     * @param adRequest - loaded {@link io.bidmachine.AdRequest}
+     * @return {@link AdRequest.Builder} ready to building and loading
+     */
+    @NonNull
+    public static AdRequest.Builder createAdRequestBuilder(@NonNull io.bidmachine.AdRequest<?, ?> adRequest) {
+        AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+        appendRequest(adRequestBuilder, adRequest);
+        return adRequestBuilder;
+    }
+
+    /**
+     * Append extras to {@link AdRequest.Builder} from loaded {@link io.bidmachine.AdRequest}
+     *
+     * @param builder   - {@link AdRequest.Builder} that will be built and loaded
+     * @param adRequest - loaded {@link io.bidmachine.AdRequest}
+     */
+    public static void appendRequest(@NonNull AdRequest.Builder builder,
+                                     @NonNull io.bidmachine.AdRequest<?, ?> adRequest) {
+        if (adRequest instanceof BannerRequest) {
+            builder.addCustomEventExtrasBundle(BidMachineCustomEventBanner.class,
+                                               fetch(adRequest));
+        } else if (adRequest instanceof InterstitialRequest) {
+            builder.addCustomEventExtrasBundle(BidMachineCustomEventInterstitial.class,
+                                               fetch(adRequest));
+        } else if (adRequest instanceof RewardedRequest) {
+            builder.addNetworkExtrasBundle(BidMachineAdapter.class,
+                                           fetch(adRequest));
+        } else if (adRequest instanceof NativeRequest) {
+            builder.addCustomEventExtrasBundle(BidMachineCustomEventNative.class,
+                                               fetch(adRequest));
+        } else {
+            Log.d(TAG, "Unknown AdRequest realization");
+        }
+    }
+
+
+    /**
+     * {@link AdManagerAdRequest} creation method based on {@link io.bidmachine.AdRequest}
+     *
+     * @param adRequest - loaded {@link io.bidmachine.AdRequest}
+     * @return {@link AdManagerAdRequest} ready to loading
+     */
+    @NonNull
+    public static AdManagerAdRequest createAdManagerRequest(@NonNull io.bidmachine.AdRequest<?, ?> adRequest) {
+        return createAdManagerRequestBuilder(adRequest).build();
+    }
+
+    /**
+     * {@link AdManagerAdRequest.Builder} creation method based on {@link io.bidmachine.AdRequest}
+     *
+     * @param adRequest - loaded {@link io.bidmachine.AdRequest}
+     * @return {@link AdManagerAdRequest.Builder} ready to building and loading
+     */
+    @NonNull
+    public static AdManagerAdRequest.Builder createAdManagerRequestBuilder(@NonNull io.bidmachine.AdRequest<?, ?> adRequest) {
+        AdManagerAdRequest.Builder adRequestBuilder = new AdManagerAdRequest.Builder();
+        appendRequest(adRequestBuilder, adRequest);
+        return adRequestBuilder;
+    }
+
+    /**
+     * Fill {@link AdManagerAdRequest.Builder} by loaded {@link io.bidmachine.AdRequest}
+     *
+     * @param builder   - {@link AdManagerAdRequest.Builder} that will be built and loaded
+     * @param adRequest - loaded {@link io.bidmachine.AdRequest}
+     */
+    public static void appendRequest(@NonNull AdManagerAdRequest.Builder builder,
+                                     @NonNull io.bidmachine.AdRequest<?, ?> adRequest) {
+        appendCustomTargeting(builder, adRequest);
+    }
+
+    /**
+     * Append custom targeting to {@link AdManagerAdRequest.Builder}
+     * from loaded {@link io.bidmachine.AdRequest}
+     *
+     * @param builder   - {@link AdManagerAdRequest.Builder} that will be built and loaded
+     * @param adRequest - loaded {@link io.bidmachine.AdRequest}
+     */
+    public static void appendCustomTargeting(@NonNull AdManagerAdRequest.Builder builder,
+                                             @NonNull io.bidmachine.AdRequest<?, ?> adRequest) {
+        Map<String, String> map = BidMachineFetcher.toMap(adRequest);
+        appendCustomTargeting(builder, map);
+    }
+
+    /**
+     * Append custom targeting to {@link AdManagerAdRequest.Builder}
+     * from loaded {@link io.bidmachine.AdRequest}
+     *
+     * @param builder - {@link AdManagerAdRequest.Builder} that will be built and loaded
+     * @param map     - parameters to be added as custom targeting
+     */
+    public static void appendCustomTargeting(@NonNull AdManagerAdRequest.Builder builder,
+                                             @NonNull Map<String, String> map) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            builder.addCustomTargeting(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * Checking whether it is BidMachine creative or not
+     *
+     * @param adManagerAdView - loaded ad object
+     * @param listener        - to transfer the result
+     */
+    public static void isBidMachineBanner(@NonNull AdManagerAdView adManagerAdView,
+                                          @NonNull ResultListener listener) {
+        isBidMachineBanner(adManagerAdView,
+                           listener,
+                           DEFAULT_BANNER_KEY,
+                           DEFAULT_DELAY);
+    }
+
+    /**
+     * Checking whether it is BidMachine creative or not
+     *
+     * @param adManagerAdView - loaded ad object
+     * @param listener        - to transfer the result
+     * @param bidMachineKey   - key from creative
+     * @param delay           - maximum check time
+     */
+    public static void isBidMachineBanner(@NonNull AdManagerAdView adManagerAdView,
+                                          @NonNull ResultListener listener,
+                                          @NonNull String bidMachineKey,
+                                          long delay) {
+        BidMachineAppEvent.setListener(adManagerAdView, listener, bidMachineKey, delay);
+    }
+
+    /**
+     * Checking whether it is BidMachine creative or not
+     *
+     * @param adManagerInterstitialAd - loaded ad object
+     * @param listener                - to transfer the result
+     */
+    public static void isBidMachineInterstitial(@NonNull AdManagerInterstitialAd adManagerInterstitialAd,
+                                                @NonNull ResultListener listener) {
+        isBidMachineInterstitial(adManagerInterstitialAd,
+                                 listener,
+                                 DEFAULT_INTERSTITIAL_KEY,
+                                 DEFAULT_DELAY);
+    }
+
+    /**
+     * Checking whether it is BidMachine creative or not
+     *
+     * @param adManagerInterstitialAd - loaded ad object
+     * @param listener                - to transfer the result
+     * @param bidMachineKey           - key from creative
+     * @param delay                   - maximum check time
+     */
+    public static void isBidMachineInterstitial(@NonNull AdManagerInterstitialAd adManagerInterstitialAd,
+                                                @NonNull ResultListener listener,
+                                                @NonNull String bidMachineKey,
+                                                long delay) {
+        BidMachineAppEvent.setListener(adManagerInterstitialAd, listener, bidMachineKey, delay);
+    }
+
+    /**
+     * Checking whether it is BidMachine creative or not
+     *
+     * @param rewardedAd - loaded ad object
+     * @return is BidMachine creative or not
+     */
+    public static boolean isBidMachineRewarded(@NonNull RewardedAd rewardedAd) {
+        return isBidMachineRewarded(rewardedAd, DEFAULT_REWARDED_KEY);
+    }
+
+    /**
+     * Checking whether it is BidMachine creative or not
+     *
+     * @param rewardedAd    - loaded ad object
+     * @param bidMachineKey - key from creative
+     * @return is BidMachine creative or not
+     */
+    public static boolean isBidMachineRewarded(@NonNull RewardedAd rewardedAd,
+                                               @NonNull String bidMachineKey) {
+        String key = BidMachineUtils.getRewardedAdKey(rewardedAd);
+        return TextUtils.equals(bidMachineKey, key);
     }
 
 }

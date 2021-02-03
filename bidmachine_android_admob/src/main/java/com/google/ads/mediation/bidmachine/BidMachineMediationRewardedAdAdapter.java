@@ -21,8 +21,8 @@ import io.bidmachine.rewarded.RewardedListener;
 import io.bidmachine.rewarded.RewardedRequest;
 import io.bidmachine.utils.BMError;
 
-public final class BidMachineMediationRewardedAdAdapter
-        implements MediationRewardedVideoAdAdapter, OnContextChangedListener {
+@Deprecated
+public final class BidMachineMediationRewardedAdAdapter implements MediationRewardedVideoAdAdapter, OnContextChangedListener {
 
     private static final String TAG = BidMachineMediationRewardedAdAdapter.class.getSimpleName();
 
@@ -39,21 +39,18 @@ public final class BidMachineMediationRewardedAdAdapter
                            Bundle localExtras) {
         if (context == null) {
             Log.d(TAG, "Failed to request ad. Context is null");
-            mediationRewardedVideoAdListener.onInitializationFailed(
-                    this,
-                    AdRequest.ERROR_CODE_INVALID_REQUEST);
+            mediationRewardedVideoAdListener.onInitializationFailed(this,
+                                                                    AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
 
-        String serverParameters = BidMachineUtils.getString(
-                mediationServerExtras,
-                CUSTOM_EVENT_SERVER_PARAMETER_FIELD);
+        String serverParameters = BidMachineUtils.getString(mediationServerExtras,
+                                                            CUSTOM_EVENT_SERVER_PARAMETER_FIELD);
         Bundle serverExtras = BidMachineUtils.transformToBundle(serverParameters);
         Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverExtras, localExtras);
         if (!BidMachineUtils.prepareBidMachine(context, fusedBundle, mediationAdRequest)) {
-            mediationRewardedVideoAdListener.onAdFailedToLoad(
-                    this,
-                    AdRequest.ERROR_CODE_INVALID_REQUEST);
+            mediationRewardedVideoAdListener.onAdFailedToLoad(this,
+                                                              AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
 
@@ -69,27 +66,23 @@ public final class BidMachineMediationRewardedAdAdapter
         Context context = contextWeakReference != null ? contextWeakReference.get() : null;
         if (context == null) {
             Log.d(TAG, "Failed to request ad. Context is null");
-            mediationRewardedVideoAdListener.onAdFailedToLoad(
-                    this,
-                    AdRequest.ERROR_CODE_INVALID_REQUEST);
+            mediationRewardedVideoAdListener.onAdFailedToLoad(this,
+                                                              AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
-        String serverParameters = BidMachineUtils.getString(
-                mediationServerExtras,
-                CUSTOM_EVENT_SERVER_PARAMETER_FIELD);
+        String serverParameters = BidMachineUtils.getString(mediationServerExtras,
+                                                            CUSTOM_EVENT_SERVER_PARAMETER_FIELD);
         Bundle serverExtras = BidMachineUtils.transformToBundle(serverParameters);
         if (BidMachineUtils.isPreBidIntegration(localExtras)
                 && !BidMachineUtils.isServerExtrasValid(serverExtras, localExtras)) {
-            mediationRewardedVideoAdListener.onAdFailedToLoad(
-                    this,
-                    AdRequest.ERROR_CODE_NO_FILL);
+            mediationRewardedVideoAdListener.onAdFailedToLoad(this,
+                                                              AdRequest.ERROR_CODE_NO_FILL);
             return;
         }
         Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverExtras, localExtras);
         if (!BidMachineUtils.prepareBidMachine(context, fusedBundle, mediationAdRequest)) {
-            mediationRewardedVideoAdListener.onAdFailedToLoad(
-                    this,
-                    AdRequest.ERROR_CODE_INVALID_REQUEST);
+            mediationRewardedVideoAdListener.onAdFailedToLoad(this,
+                                                              AdRequest.ERROR_CODE_INVALID_REQUEST);
             return;
         }
 
@@ -112,15 +105,13 @@ public final class BidMachineMediationRewardedAdAdapter
         }
         if (request != null) {
             rewardedAd = new RewardedAd(context);
-            rewardedAd.setListener(new BidMachineAdListener(
-                    this,
-                    mediationRewardedVideoAdListener));
+            rewardedAd.setListener(new BidMachineAdListener(this,
+                                                            mediationRewardedVideoAdListener));
             rewardedAd.load(request);
             Log.d(TAG, "Attempt load rewarded");
         } else {
-            mediationRewardedVideoAdListener.onAdFailedToLoad(
-                    this,
-                    errorCode);
+            mediationRewardedVideoAdListener.onAdFailedToLoad(this,
+                                                              errorCode);
         }
     }
 
@@ -215,19 +206,8 @@ public final class BidMachineMediationRewardedAdAdapter
         @Override
         public void onAdRewarded(@NonNull RewardedAd rewardedAd) {
             mediationRewardedVideoAdListener.onVideoCompleted(mediationRewardedVideoAdAdapter);
-            mediationRewardedVideoAdListener.onRewarded(
-                    mediationRewardedVideoAdAdapter,
-                    new RewardItem() {
-                        @Override
-                        public String getType() {
-                            return "";
-                        }
-
-                        @Override
-                        public int getAmount() {
-                            return 0;
-                        }
-                    });
+            mediationRewardedVideoAdListener.onRewarded(mediationRewardedVideoAdAdapter,
+                                                        new BidMachineReward());
         }
 
         @Override
@@ -236,6 +216,20 @@ public final class BidMachineMediationRewardedAdAdapter
                     mediationRewardedVideoAdAdapter,
                     BidMachineUtils.transformToAdMobErrorCode(BMError.Expired));
         }
+    }
+
+    private static final class BidMachineReward implements RewardItem {
+
+        @Override
+        public String getType() {
+            return "";
+        }
+
+        @Override
+        public int getAmount() {
+            return 0;
+        }
+
     }
 
 }
