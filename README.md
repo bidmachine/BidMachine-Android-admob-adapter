@@ -39,7 +39,7 @@ dependencies {
 * [HeaderBidding AdManager implementation](example_ad_manager)
 
 ## Work with price
-BidMachine supports server-side price rounding.
+BidMachine supports server-side price rounding.<br>
 Contact your manager to set up your own rounding rules.
 
 ## What's new in last version
