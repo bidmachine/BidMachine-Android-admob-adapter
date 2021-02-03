@@ -122,7 +122,7 @@ public class BidMachineAdMobActivity extends Activity {
                 .addCustomEventExtrasBundle(BidMachineCustomEventBanner.class, bundle)
                 .build();
 
-        // Create new AdView instance and load
+        // Create new AdView instance and load it
         adView = new AdView(this);
         adView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                                           ViewGroup.LayoutParams.MATCH_PARENT));

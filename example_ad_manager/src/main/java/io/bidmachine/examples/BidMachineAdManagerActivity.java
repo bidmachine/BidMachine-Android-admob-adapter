@@ -148,7 +148,7 @@ public class BidMachineAdManagerActivity extends Activity {
                 })
                 .build();
 
-        // Request BidMachine Ads without load it
+        // Request an ad from BidMachine without loading it
         bannerRequest.request(this);
 
         Log.d(TAG, "loadBanner");
@@ -166,7 +166,7 @@ public class BidMachineAdManagerActivity extends Activity {
         // Append BidMachine BannerRequest to AdManagerAdRequest
         BidMachineUtils.appendRequest(adRequestBuilder, bannerRequest);
 
-        // Create new AdView instance and load
+        // Create new AdView instance and load it
         adManagerAdView = new AdManagerAdView(this);
         adManagerAdView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                                                    ViewGroup.LayoutParams.MATCH_PARENT));
@@ -182,7 +182,7 @@ public class BidMachineAdManagerActivity extends Activity {
     private void loadBidMachineBanner() {
         Log.d(TAG, "loadBidMachineBanner");
 
-        // Create BannerView for load with previously loaded BannerRequest
+        // Create BannerView to load an ad from loaded BidMachine BannerRequest
         bidMachineBannerView = new BannerView(this);
         bidMachineBannerView.setListener(new BidMachineBannerListener());
         bidMachineBannerView.load(bannerRequest);
@@ -196,7 +196,7 @@ public class BidMachineAdManagerActivity extends Activity {
 
         bShowBanner.setEnabled(false);
 
-        // Checking for can show before showing ads
+        // Check if an ad can be shown before actual impression
         if (bidMachineBannerView != null
                 && bidMachineBannerView.canShow()
                 && bidMachineBannerView.getParent() == null) {
@@ -265,7 +265,7 @@ public class BidMachineAdManagerActivity extends Activity {
                 })
                 .build();
 
-        // Request BidMachine Ads without load it
+        // Request an ad from BidMachine without loading it
         interstitialRequest.request(this);
 
         Log.d(TAG, "loadInterstitial");
@@ -310,7 +310,7 @@ public class BidMachineAdManagerActivity extends Activity {
 
         bShowInterstitial.setEnabled(false);
 
-        // Checking for can show before showing ads
+        // Check if an ad can be shown before actual impression
         if (bidMachineInterstitialAd != null && bidMachineInterstitialAd.canShow()) {
             bidMachineInterstitialAd.show();
         } else {
@@ -370,7 +370,7 @@ public class BidMachineAdManagerActivity extends Activity {
                 })
                 .build();
 
-        // Request BidMachine Ads without load it
+        // Request an ad from BidMachine without loading it
         rewardedRequest.request(this);
 
         Log.d(TAG, "loadRewarded");
@@ -415,7 +415,7 @@ public class BidMachineAdManagerActivity extends Activity {
 
         bShowRewarded.setEnabled(false);
 
-        // Checking for can show before showing ads
+        // Check if an ad can be shown before actual impression
         if (bidMachineRewardedAd != null && bidMachineRewardedAd.canShow()) {
             bidMachineRewardedAd.show();
         } else {
@@ -452,12 +452,12 @@ public class BidMachineAdManagerActivity extends Activity {
             // Checking whether it is BidMachine or not
             BidMachineUtils.isBidMachineBanner(adManagerAdView, isSuccess -> {
                 if (isSuccess) {
-                    // If isSuccess is true, then BidMachine won the mediation.
+                    // If isSuccess is true, then BidMachine has won the mediation.
                     // Load BidMachine ad object, before show BidMachine ad
                     loadBidMachineBanner();
                 } else {
-                    // If isSuccess is false, then BidMachine lost the mediation.
-                    // No need load BidMachine ad object.
+                    // If isSuccess is false, then BidMachine has lost the mediation.
+                    // No need to load BidMachine ad object.
                     // Process the OnAdLoaded callback in standard mode
                     onError("Invalid key");
                 }
@@ -556,12 +556,12 @@ public class BidMachineAdManagerActivity extends Activity {
             // Checking whether it is BidMachine or not
             BidMachineUtils.isBidMachineInterstitial(adManagerInterstitialAd, isSuccess -> {
                 if (isSuccess) {
-                    // If isSuccess is true, then BidMachine won the mediation.
+                    // If isSuccess is true, then BidMachine has won the mediation.
                     // Load BidMachine ad object, before show BidMachine ad
                     loadBidMachineInterstitial();
                 } else {
-                    // If isSuccess is false, then BidMachine lost the mediation.
-                    // No need load BidMachine ad object.
+                    // If isSuccess is false, then BidMachine has lost the mediation.
+                    // No need to load BidMachine ad object.
                     // Process the OnAdLoaded callback in standard mode
                     onError("Invalid key");
                 }
@@ -649,12 +649,12 @@ public class BidMachineAdManagerActivity extends Activity {
         public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
             // Checking whether it is BidMachine or not
             if (BidMachineUtils.isBidMachineRewarded(rewardedAd)) {
-                // If isSuccess is true, then BidMachine won the mediation.
+                // If isSuccess is true, then BidMachine has won the mediation.
                 // Load BidMachine ad object, before show BidMachine ad
                 loadBidMachineRewarded();
             } else {
-                // If isSuccess is false, then BidMachine lost the mediation.
-                // No need load BidMachine ad object.
+                // If isSuccess is false, then BidMachine has lost the mediation.
+                // No need to load BidMachine ad object.
                 // Process the OnAdLoaded callback in standard mode
                 onError("Invalid key");
             }

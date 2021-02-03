@@ -6,6 +6,7 @@
 * [Banner implementation](#banner-implementation)
 * [Interstitial implementation](#interstitial-implementation)
 * [RewardedVideo implementation](#rewardedvideo-implementation)
+* [Utils](#utils)
 
 ## Useful links
 * [AdManager documentation](https://developers.google.com/ad-manager/mobile-ads-sdk/android/quick-start)
@@ -26,7 +27,7 @@ private void loadBanner() {
             })
             .build();
 
-    // Request BidMachine Ads without load it
+    // Request an ad from BidMachine without loading it
     bannerRequest.request(this);
 }
 
@@ -37,7 +38,7 @@ private void loadAdManagerBanner() {
     // Append BidMachine BannerRequest to AdManagerAdRequest
     BidMachineUtils.appendRequest(adRequestBuilder, bannerRequest);
 
-    // Create new AdView instance and load
+    // Create new AdView instance and load it
     AdManagerAdView adManagerAdView = new AdManagerAdView(this);
     adManagerAdView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                                                ViewGroup.LayoutParams.MATCH_PARENT));
@@ -49,12 +50,12 @@ private void loadAdManagerBanner() {
             // Checking whether it is BidMachine or not
             BidMachineUtils.isBidMachineBanner(adManagerAdView, isSuccess -> {
                 if (isSuccess) {
-                    // If isSuccess is true, then BidMachine won the mediation.
+                    // If isSuccess is true, then BidMachine has won the mediation.
                     // Load BidMachine ad object, before show BidMachine ad
                     loadBidMachineBanner();
                 } else {
-                    // If isSuccess is false, then BidMachine lost the mediation.
-                    // No need load BidMachine ad object.
+                    // If isSuccess is false, then BidMachine has lost the mediation.
+                    // No need to load BidMachine ad object.
                     // Process the OnAdLoaded callback in standard mode
                 }
             });
@@ -64,14 +65,14 @@ private void loadAdManagerBanner() {
 }
 
 private void loadBidMachineBanner() {
-    // Create BannerView for load with previously loaded BannerRequest
+    // Create BannerView to load an ad from loaded BidMachine BannerRequest
     bidMachineBannerView = new BannerView(this);
     bidMachineBannerView.setListener(new BidMachineBannerListener());
     bidMachineBannerView.load(bannerRequest);
 }
 
 private void showBanner() {
-    // Checking for can show before showing ads
+    // Check if an ad can be shown before actual impression
     if (bidMachineBannerView != null && bidMachineBannerView.canShow()) {
         adContainer.removeAllViews();
         adContainer.addView(bidMachineBannerView);
@@ -95,7 +96,7 @@ private void loadInterstitial() {
             })
             .build();
 
-    // Request BidMachine Ads without load it
+    // Request an ad from BidMachine without loading it
     interstitialRequest.request(this);
 }
 
@@ -116,12 +117,12 @@ private void loadAdManagerInterstitial() {
                                          // Checking whether it is BidMachine or not
                                          BidMachineUtils.isBidMachineInterstitial(adManagerInterstitialAd, isSuccess -> {
                                              if (isSuccess) {
-                                                 // If isSuccess is true, then BidMachine won the mediation.
+                                                 // If isSuccess is true, then BidMachine has won the mediation.
                                                  // Load BidMachine ad object, before show BidMachine ad
                                                  loadBidMachineInterstitial();
                                              } else {
-                                                 // If isSuccess is false, then BidMachine lost the mediation.
-                                                 // No need load BidMachine ad object.
+                                                 // If isSuccess is false, then BidMachine has lost the mediation.
+                                                 // No need to load BidMachine ad object.
                                                  // Process the OnAdLoaded callback in standard mode
                                              }
                                          });
@@ -137,7 +138,7 @@ private void loadBidMachineInterstitial() {
 }
 
 private void showInterstitial() {
-    // Checking for can show before showing ads
+    // Check if an ad can be shown before actual impression
     if (bidMachineInterstitialAd != null && bidMachineInterstitialAd.canShow()) {
         bidMachineInterstitialAd.show();
     }
@@ -159,7 +160,7 @@ private void loadRewardedVideo() {
             })
             .build();
 
-    // Request BidMachine Ads without load it
+    // Request an ad from BidMachine without loading it
     rewardedRequest.request(this);
 }
 
@@ -179,12 +180,12 @@ private void loadAdManagerRewarded() {
                         public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
                             // Checking whether it is BidMachine or not
                             if (BidMachineUtils.isBidMachineRewarded(rewardedAd)) {
-                                // If isSuccess is true, then BidMachine won the mediation.
+                                // If isSuccess is true, then BidMachine has won the mediation.
                                 // Load BidMachine ad object, before show BidMachine ad
                                 loadBidMachineRewarded();
                             } else {
-                                // If isSuccess is false, then BidMachine lost the mediation.
-                                // No need load BidMachine ad object.
+                                // If isSuccess is false, then BidMachine has lost the mediation.
+                                // No need to load BidMachine ad object.
                                 // Process the OnAdLoaded callback in standard mode
                             }
                         }
@@ -199,7 +200,7 @@ private void loadBidMachineRewarded() {
 }
 
 private void showRewarded() {
-    // Checking for can show before showing ads
+    // Check if an ad can be shown before actual impression
     if (bidMachineRewardedAd != null && bidMachineRewardedAd.canShow()) {
         bidMachineRewardedAd.show();
     }

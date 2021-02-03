@@ -82,12 +82,12 @@ Bundle bundle = new BidMachineBundleBuilder()
         .setPriceFloors(priceFloors)
         .build();
 
-//Set bundle to custom event banner
+// Set bundle to custom event banner
 AdRequest adRequest = new AdRequest.Builder()
         .addCustomEventExtrasBundle(BidMachineCustomEventBanner.class, bundle)
         .build();
 
-//Create new AdView instance and load
+// Create new AdView instance and load it
 AdView adView = new AdView(this);
 adView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                                   ViewGroup.LayoutParams.MATCH_PARENT));
@@ -171,12 +171,12 @@ Bundle bundle = new BidMachineBundleBuilder()
         .setPriceFloors(priceFloors)
         .build();
 
-//Set bundle to custom event interstitial
+// Set bundle to custom event interstitial
 AdRequest adRequest = new AdRequest.Builder()
         .addCustomEventExtrasBundle(BidMachineCustomEventInterstitial.class, bundle)
         .build();
 
-//Create new InterstitialAd instance and load
+// Create new InterstitialAd instance and load
 InterstitialAd interstitialAd = new InterstitialAd(this);
 interstitialAd.setAdUnitId(INTERSTITIAL_ID);
 interstitialAd.setAdListener(new InterstitialListener());
@@ -256,12 +256,12 @@ Bundle bundle = new BidMachineBundleBuilder()
         .setPriceFloors(priceFloors)
         .build();
 
-//Set bundle to mediation rewarded video ad adapter
+// Set bundle to mediation rewarded video ad adapter
 AdRequest adRequest = new AdRequest.Builder()
         .addNetworkExtrasBundle(BidMachineMediationRewardedAdAdapter.class, bundle)
         .build();
 
-//Create new RewardedVideoAd instance and load
+// Create new RewardedVideoAd instance and load
 RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
 rewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoListener());
 rewardedVideoAd.loadAd(REWARDED_ID, adRequest);
@@ -340,12 +340,12 @@ Bundle bundle = new BidMachineBundleBuilder()
         .setPriceFloors(priceFloors)
         .build();
 
-//Set bundle to mediation native ad adapter
+// Set bundle to mediation native ad adapter
 AdRequest adRequest = new AdRequest.Builder()
         .addCustomEventExtrasBundle(BidMachineCustomEventNative.class, bundle)
         .build();
 
-//Create new AdLoader instance and load
+// Create new AdLoader instance and load
 AdLoader adLoader = new AdLoader.Builder(this, NATIVE_ID)
         .forUnifiedNativeAd(nativeListener)
         .withAdListener(nativeListener)

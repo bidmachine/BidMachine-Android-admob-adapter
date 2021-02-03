@@ -25,7 +25,7 @@ private void loadBanner() {
             })
             .build();
 
-    // Request BidMachine Ads without load it
+    // Request an ad from BidMachine without loading it
     bannerRequest.request(this);
 }
 
@@ -33,7 +33,7 @@ private void loadAdMobBanner(@NonNull BannerRequest bannerRequest) {
     // Create AdRequest
     AdRequest adRequest = BidMachineUtils.createAdRequest(bannerRequest);
 
-    // Create new AdView instance and load
+    // Create new AdView instance and load it
     AdView adView = new AdView(this);
     adView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                                       ViewGroup.LayoutParams.MATCH_PARENT));
@@ -60,7 +60,7 @@ private void loadInterstitial() {
             })
             .build();
 
-    // Request BidMachine Ads without load it
+    // Request an ad from BidMachine without loading it
     interstitialRequest.request(this);
 }
 
@@ -88,7 +88,7 @@ private void loadRewardedVideo() {
             })
             .build();
 
-    // Request BidMachine Ads without load it
+    // Request an ad from BidMachine without loading it
     rewardedRequest.request(this);
 }
 
@@ -116,7 +116,7 @@ private void loadNative() {
             })
             .build();
 
-    // Request BidMachine Ads without load it
+    // Request an ad from BidMachine without loading it
     nativeRequest.request(this);
 }
 

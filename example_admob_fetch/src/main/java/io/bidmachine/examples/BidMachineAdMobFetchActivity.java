@@ -169,7 +169,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                 })
                 .build();
 
-        // Request BidMachine Ads without load it
+        // Request an ad from BidMachine without loading it
         bannerRequest.request(this);
 
         Log.d(TAG, "loadBanner");
@@ -184,7 +184,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
         // Create AdRequest
         AdRequest adRequest = BidMachineUtils.createAdRequest(bannerRequest);
 
-        // Create new AdView instance and load
+        // Create new AdView instance and load it
         adView = new AdView(this);
         adView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                                           ViewGroup.LayoutParams.MATCH_PARENT));
@@ -259,7 +259,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                 })
                 .build();
 
-        // Request BidMachine Ads without load it
+        // Request an ad from BidMachine without loading it
         interstitialRequest.request(this);
 
         Log.d(TAG, "loadInterstitial");
@@ -342,7 +342,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                 })
                 .build();
 
-        // Request BidMachine Ads without load it
+        // Request an ad from BidMachine without loading it
         rewardedRequest.request(this);
 
         Log.d(TAG, "loadRewarded");
@@ -425,7 +425,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
                 })
                 .build();
 
-        // Request BidMachine Ads without load it
+        // Request an ad from BidMachine without loading it
         nativeRequest.request(this);
 
         Log.d(TAG, "loadNative");
