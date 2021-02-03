@@ -73,7 +73,7 @@ private void loadAdMobInterstitial(@NonNull InterstitialRequest interstitialRequ
     InterstitialAd.load(this, INTERSTITIAL_ID, adRequest, new InterstitialLoadListener());
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L241)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L229)
 
 ## RewardedVideo implementation
 ```java
@@ -101,7 +101,7 @@ private void loadAdMobRewarded(@NonNull RewardedRequest rewardedRequest) {
     RewardedAd.load(this, REWARDED_ID, adRequest, new RewardedLoadListener());
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L336)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L312)
 
 ## Native implementation
 ```java
@@ -134,7 +134,7 @@ private void loadAdMobNative(@NonNull NativeRequest nativeRequest) {
     adLoader.loadAd(adRequest);
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L431)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L395)
 
 ## Utils
 Ways to set up AdRequest by BidMachine AdRequest:

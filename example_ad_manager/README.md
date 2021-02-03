@@ -144,7 +144,7 @@ private void showInterstitial() {
     }
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L247)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L235)
 
 ## RewardedVideo implementation
 ```java
@@ -206,7 +206,7 @@ private void showRewarded() {
     }
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L364)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L340)
 
 ## Utils
 Ways to set up AdManagerAdRequest by BidMachine AdRequest:
