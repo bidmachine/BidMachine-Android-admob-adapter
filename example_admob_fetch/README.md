@@ -5,6 +5,7 @@
 * [Interstitial implementation](#interstitial-implementation)
 * [RewardedVideo implementation](#rewardedvideo-implementation)
 * [Native implementation](#native-implementation)
+* [Utils](#utils)
 
 ## Useful links
 * [AdMob documentation](https://developers.google.com/admob/android/quick-start)
@@ -134,3 +135,18 @@ private void loadAdMobNative(@NonNull NativeRequest nativeRequest) {
 }
 ```
 [*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L431)
+
+## Utils
+Ways to set up AdRequest by BidMachine AdRequest:
+1. Create new AdRequest instance
+```java
+    AdRequest adRequest = BidMachineUtils.createAdRequest(bidMachineAdRequest);
+```
+2. Create new AdRequest.Builder instance
+```java
+    AdRequest.Builder adRequestBuilder = BidMachineUtils.createAdRequestBuilder(bidMachineAdRequest);
+```
+3. Fill existing AdRequest.Builder by BidMachine AdRequest
+```java
+    BidMachineUtils.appendRequest(adRequestBuilder, bidMachineAdRequest);
+```

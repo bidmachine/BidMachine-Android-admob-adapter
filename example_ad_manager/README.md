@@ -212,13 +212,13 @@ private void showRewarded() {
 Ways to set up AdManagerAdRequest by BidMachine AdRequest:
 1. Create new AdManagerAdRequest instance
 ```java
-    AdManagerAdRequest adRequest = BidMachineUtils.createAdManagerRequest(bannerRequest);
+    AdManagerAdRequest adRequest = BidMachineUtils.createAdManagerRequest(bidMachineAdRequest);
 ```
 2. Create new AdManagerAdRequest.Builder instance
 ```java
-    AdManagerAdRequest.Builder adRequestBuilder = BidMachineUtils.createAdManagerRequestBuilder(bannerRequest);
+    AdManagerAdRequest.Builder adRequestBuilder = BidMachineUtils.createAdManagerRequestBuilder(bidMachineAdRequest);
 ```
 3. Fill existing AdManagerAdRequest.Builder by BidMachine AdRequest
 ```java
-    BidMachineUtils.appendRequest(adRequestBuilder, bannerRequest);
+    BidMachineUtils.appendRequest(adRequestBuilder, bidMachineAdRequest);
 ```
