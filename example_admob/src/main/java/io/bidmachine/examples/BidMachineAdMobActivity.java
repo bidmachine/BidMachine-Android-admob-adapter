@@ -232,7 +232,7 @@ public class BidMachineAdMobActivity extends Activity {
         // Prepare bundle for set to AdRequest
         Bundle bundle = new BidMachineBundleBuilder()
                 .setSellerId(BID_MACHINE_SELLER_ID)
-                .setCoppa(false)
+                .setCoppa(true)
                 .setLoggingEnabled(true)
                 .setTestMode(true)
                 .build();

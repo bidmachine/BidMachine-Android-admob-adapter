@@ -31,10 +31,9 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
                        MediationAdLoadCallback<MediationRewardedAd, MediationRewardedAdCallback> mediationAdLoadCallback) {
         Context context = mediationRewardedAdConfiguration.getContext();
         if (context == null) {
-            Log.d(TAG, "Failed to request ad. Context is null");
-            mediationAdLoadCallback.onFailure(new AdError(AdRequest.ERROR_CODE_INVALID_REQUEST,
-                                                          "Context is null",
-                                                          AdError.UNDEFINED_DOMAIN));
+            BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Failed to request ad. Context is null");
             return;
         }
 
@@ -44,33 +43,29 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
         Bundle localExtras = mediationRewardedAdConfiguration.getMediationExtras();
         if (BidMachineUtils.isPreBidIntegration(localExtras)
                 && !BidMachineUtils.isServerExtrasValid(serverParameterExtras, localExtras)) {
-            Log.d(TAG, "Server parameters are configured incorrectly");
-            mediationAdLoadCallback.onFailure(new AdError(AdRequest.ERROR_CODE_NO_FILL,
-                                                          "Server parameters are configured incorrectly",
-                                                          AdError.UNDEFINED_DOMAIN));
+            BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Local or Server extras invalid");
             return;
         }
         Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverParameterExtras, localExtras);
         if (!BidMachineUtils.prepareBidMachine(context,
                                                fusedBundle,
                                                mediationRewardedAdConfiguration)) {
-            mediationAdLoadCallback.onFailure(new AdError(AdRequest.ERROR_CODE_INVALID_REQUEST,
-                                                          "prepareBidMachine ended with false",
-                                                          AdError.UNDEFINED_DOMAIN));
+            BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback,
+                                             AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                             "Check BidMachine integration");
             return;
         }
 
         RewardedRequest request;
-        AdError adError = new AdError(AdRequest.ERROR_CODE_INVALID_REQUEST,
-                                      "RewardedAd failed to load",
-                                      AdError.UNDEFINED_DOMAIN);
         if (BidMachineUtils.isPreBidIntegration(fusedBundle)) {
             request = BidMachineUtils.obtainCachedRequest(AdsType.Rewarded, fusedBundle);
             if (request == null) {
-                adError = new AdError(AdRequest.ERROR_CODE_NO_FILL,
-                                      "Fetched AdRequest not found",
-                                      AdError.UNDEFINED_DOMAIN);
-                Log.d(TAG, "Fetched AdRequest not found");
+                BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback,
+                                                 AdRequest.ERROR_CODE_INVALID_REQUEST,
+                                                 "Fetched AdRequest not found");
+                return;
             } else {
                 request.notifyMediationWin();
                 Log.d(TAG, "Fetched request resolved: " + request.getAuctionResult());
@@ -81,14 +76,11 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
                     .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle))
                     .build();
         }
-        if (request != null) {
-            rewardedAd = new RewardedAd(context);
-            rewardedAd.setListener(new Listener(this, mediationAdLoadCallback));
-            rewardedAd.load(request);
-            Log.d(TAG, "Attempt load rewarded");
-        } else {
-            mediationAdLoadCallback.onFailure(adError);
-        }
+
+        rewardedAd = new RewardedAd(context);
+        rewardedAd.setListener(new Listener(this, mediationAdLoadCallback));
+        rewardedAd.load(request);
+        Log.d(TAG, "Attempt load rewarded");
     }
 
     @Override
@@ -126,7 +118,7 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
 
         @Override
         public void onAdLoadFailed(@NonNull RewardedAd rewardedAd, @NonNull BMError bmError) {
-            onError(bmError);
+            BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback, bmError);
         }
 
         @Override
@@ -137,9 +129,9 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
 
         @Override
         public void onAdShowFailed(@NonNull RewardedAd rewardedAd, @NonNull BMError bmError) {
-            mediationRewardedAdCallback.onAdFailedToShow(new AdError(AdRequest.ERROR_CODE_INTERNAL_ERROR,
-                                                                     bmError.getMessage(),
-                                                                     AdError.UNDEFINED_DOMAIN));
+            AdError adError = BidMachineUtils.createAdError(AdRequest.ERROR_CODE_INTERNAL_ERROR,
+                                                            bmError.getMessage());
+            mediationRewardedAdCallback.onAdFailedToShow(adError);
         }
 
         @Override
@@ -167,19 +159,10 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
 
         @Override
         public void onAdExpired(@NonNull RewardedAd rewardedAd) {
-            onError(BMError.Expired);
-        }
-
-        private void onError(BMError bmError) {
-            int errorCode = BidMachineUtils.transformToAdMobErrorCode(bmError);
-            mediationAdLoadCallback.onFailure(new AdError(errorCode,
-                                                          bmError.getMessage(),
-                                                          AdError.UNDEFINED_DOMAIN));
-            bidMachineRewardedAd.destroy();
+            BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback, BMError.Expired);
         }
 
     }
-
 
     private static final class BidMachineReward implements RewardItem {
 

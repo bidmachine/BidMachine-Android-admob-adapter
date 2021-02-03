@@ -17,6 +17,8 @@ import com.google.android.gms.ads.reward.mediation.MediationRewardedVideoAdAdapt
 
 import java.util.List;
 
+import io.bidmachine.BidMachine;
+
 public final class BidMachineAdapter extends Adapter {
 
     private static final String TAG = BidMachineAdapter.class.getSimpleName();
@@ -25,7 +27,7 @@ public final class BidMachineAdapter extends Adapter {
 
     @Override
     public VersionInfo getSDKVersionInfo() {
-        String versionString = io.bidmachine.BuildConfig.VERSION_NAME;
+        String versionString = BidMachine.VERSION;
         String[] splits = versionString.split("\\.");
         int major = Integer.parseInt(splits[0]);
         int minor = Integer.parseInt(splits[1]);

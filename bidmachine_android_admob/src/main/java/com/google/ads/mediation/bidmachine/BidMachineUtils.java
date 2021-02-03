@@ -13,6 +13,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.admanager.AdManagerAdView;
 import com.google.android.gms.ads.admanager.AdManagerInterstitialAd;
+import com.google.android.gms.ads.mediation.MediationAdLoadCallback;
 import com.google.android.gms.ads.mediation.MediationAdRequest;
 import com.google.android.gms.ads.mediation.MediationRewardedAdConfiguration;
 import com.google.android.gms.ads.mediation.customevent.CustomEventListener;
@@ -82,7 +83,25 @@ public class BidMachineUtils {
                                  int errorCode,
                                  @NonNull String errorMessage) {
         Log.d(TAG, errorMessage);
-        listener.onAdFailedToLoad(new AdError(errorCode, errorMessage, ERROR_DOMAIN));
+        listener.onAdFailedToLoad(createAdError(errorCode, errorMessage));
+    }
+
+    static void onAdFailedToLoad(@NonNull MediationAdLoadCallback<?, ?> mediationAdLoadCallback,
+                                 @NonNull BMError bmError) {
+        onAdFailedToLoad(mediationAdLoadCallback,
+                         transformToAdMobErrorCode(bmError),
+                         bmError.getMessage());
+    }
+
+    static void onAdFailedToLoad(@NonNull MediationAdLoadCallback<?, ?> mediationAdLoadCallback,
+                                 int errorCode,
+                                 @NonNull String errorMessage) {
+        Log.d(TAG, errorMessage);
+        mediationAdLoadCallback.onFailure(createAdError(errorCode, errorMessage));
+    }
+
+    static AdError createAdError(int errorCode, @NonNull String errorMessage) {
+        return new AdError(errorCode, errorMessage, ERROR_DOMAIN);
     }
 
     /**
