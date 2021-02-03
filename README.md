@@ -39,17 +39,8 @@ dependencies {
 * [HeaderBidding AdManager implementation](example_ad_manager)
 
 ## Work with price
-When **BidMachineFetcher.fetch(...)** is called, price rounding occurs. By default, RoundingMode is **RoundingMode.CEILING**, but if you want specific RoundingMode, you can change it with help **BidMachineFetcher.setPriceRounding(...)**. You can try your rounding configuration via call **BidMachineFetcher.roundPrice(...)**. More info about RoundingMode [here](https://developer.android.com/reference/java/math/RoundingMode).
-
-**Attention**:  RoundingMode.UNNECESSARY is not supported.
-
-Price rounding examples:
-
-| Round mode | Result |
-| ---------- | ------ |
-| BidMachineFetcher.setPriceRounding(0.01) | 0.01 -> 0.01 <br> 0.99 -> 0.99 <br> 1.212323 -> 1.22 <br> 1.34538483 -> 1.35 <br> 1.4 -> 1.40 <br> 1.58538483 -> 1.59 |
-| BidMachineFetcher.setPriceRounding(0.1) | 0.01 -> 0.1 <br> 0.99 -> 1.0 <br> 1.212323 -> 1.3 <br> 1.34538483 -> 1.4 <br> 1.4 -> 1.4 <br> 1.58538483 -> 1.6 |
-| BidMachineFetcher.setPriceRounding(0.01, RoundingMode.FLOOR) | 0.01 -> 0.01 <br> 0.99 -> 0.99 <br> 1.212323 -> 1.21 <br> 1.34538483 -> 1.34 <br> 1.4 -> 1.40 <br> 1.58538483 -> 1.58 |
+BidMachine supports server-side price rounding.
+Contact your manager to set up your own rounding rules.
 
 ## What's new in last version
 Please view the [changelog](CHANGELOG.md) for details.

@@ -7,6 +7,7 @@
 * [Native implementation](#native-implementation)
 
 ## Useful links
+* [AdMob documentation](https://developers.google.com/admob/android/quick-start)
 * [AdMob integration](https://wiki.appodeal.com/display/BID/BidMachine+AdMob+custom+network+integration+guide)
 
 ## Banner implementation
@@ -29,18 +30,6 @@ private void loadBanner() {
 }
 
 private void loadAdMobBanner(@NonNull BannerRequest bannerRequest) {
-    /*
-    You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-    before creating AdRequest object
-    For example:
-    double price = bannerRequest.getAuctionResult().getPrice();
-    if (price <= 1) {
-        BidMachineFetcher.setPriceRounding(0.2);
-    } else {
-        BidMachineFetcher.setPriceRounding(1);
-    }
-    */
-
     // Create AdRequest
     AdRequest adRequest = BidMachineUtils.createAdRequest(bannerRequest);
 
@@ -76,18 +65,6 @@ private void loadInterstitial() {
 }
 
 private void loadAdMobInterstitial(@NonNull InterstitialRequest interstitialRequest) {
-    /*
-    You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-    before creating AdRequest object
-    For example:
-    double price = bannerRequest.getAuctionResult().getPrice();
-    if (price <= 1) {
-        BidMachineFetcher.setPriceRounding(0.2);
-    } else {
-        BidMachineFetcher.setPriceRounding(1);
-    }
-    */
-
     // Create AdRequest
     AdRequest adRequest = BidMachineUtils.createAdRequest(interstitialRequest);
 
@@ -116,18 +93,6 @@ private void loadRewardedVideo() {
 }
 
 private void loadAdMobRewarded(@NonNull RewardedRequest rewardedRequest) {
-    /*
-    You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-    before creating AdRequest object
-    For example:
-    double price = bannerRequest.getAuctionResult().getPrice();
-    if (price <= 1) {
-        BidMachineFetcher.setPriceRounding(0.2);
-    } else {
-        BidMachineFetcher.setPriceRounding(1);
-    }
-    */
-
     // Create AdRequest
     AdRequest adRequest = BidMachineUtils.createAdRequest(rewardedRequest);
 
@@ -156,18 +121,6 @@ private void loadNative() {
 }
 
 private void loadAdMobNative(@NonNull NativeRequest nativeRequest) {
-    /*
-    You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-    before creating AdRequest object
-    For example:
-    double price = bannerRequest.getAuctionResult().getPrice();
-    if (price <= 1) {
-        BidMachineFetcher.setPriceRounding(0.2);
-    } else {
-        BidMachineFetcher.setPriceRounding(1);
-    }
-    */
-
     // Create AdRequest
     AdRequest adRequest = BidMachineUtils.createAdRequest(nativeRequest);
 

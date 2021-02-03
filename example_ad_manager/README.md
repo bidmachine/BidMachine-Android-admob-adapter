@@ -1,11 +1,14 @@
 # HeaderBidding AdManager implementation
 
+> AdManager implementation support starts from version 19.7.0
+
 * [Useful links](#useful-links)
 * [Banner implementation](#banner-implementation)
 * [Interstitial implementation](#interstitial-implementation)
 * [RewardedVideo implementation](#rewardedvideo-implementation)
 
 ## Useful links
+* [AdManager documentation](https://developers.google.com/ad-manager/mobile-ads-sdk/android/quick-start)
 * [AdManager integration](https://wiki.appodeal.com/display/BID/BidMachine+SDK+Google+AdManager+integration)
 
 ## Banner implementation
@@ -28,18 +31,6 @@ private void loadBanner() {
 }
 
 private void loadAdManagerBanner() {
-    /*
-    You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-    before creating AdRequest object
-    For example:
-    double price = bannerRequest.getAuctionResult().getPrice();
-    if (price <= 1) {
-        BidMachineFetcher.setPriceRounding(0.2);
-    } else {
-        BidMachineFetcher.setPriceRounding(1);
-    }
-    */
-
     // Create AdManagerAdRequest builder
     AdManagerAdRequest.Builder adRequestBuilder = new AdManagerAdRequest.Builder();
 
@@ -58,7 +49,13 @@ private void loadAdManagerBanner() {
             // Checking whether it is BidMachine or not
             BidMachineUtils.isBidMachineBanner(adManagerAdView, isSuccess -> {
                 if (isSuccess) {
+                    // If isSuccess is true, then BidMachine won the mediation.
+                    // Load BidMachine ad object, before show BidMachine ad
                     loadBidMachineBanner();
+                } else {
+                    // If isSuccess is false, then BidMachine lost the mediation.
+                    // No need load BidMachine ad object.
+                    // Process the OnAdLoaded callback in standard mode
                 }
             });
         }
@@ -103,18 +100,6 @@ private void loadInterstitial() {
 }
 
 private void loadAdManagerInterstitial() {
-    /*
-    You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-    before creating AdRequest object
-    For example:
-    double price = bannerRequest.getAuctionResult().getPrice();
-    if (price <= 1) {
-        BidMachineFetcher.setPriceRounding(0.2);
-    } else {
-        BidMachineFetcher.setPriceRounding(1);
-    }
-    */
-
     // Create AdManagerAdRequest builder
     AdManagerAdRequest.Builder adRequestBuilder = new AdManagerAdRequest.Builder();
 
@@ -125,13 +110,19 @@ private void loadAdManagerInterstitial() {
     AdManagerInterstitialAd.load(this,
                                  INTERSTITIAL_ID,
                                  adRequestBuilder.build(),
-                                 new AdManagerInterstitialAdLoadCallback(){
+                                 new AdManagerInterstitialAdLoadCallback() {
                                      @Override
                                      public void onAdLoaded(@NonNull AdManagerInterstitialAd adManagerInterstitialAd) {
                                          // Checking whether it is BidMachine or not
                                          BidMachineUtils.isBidMachineInterstitial(adManagerInterstitialAd, isSuccess -> {
                                              if (isSuccess) {
+                                                 // If isSuccess is true, then BidMachine won the mediation.
+                                                 // Load BidMachine ad object, before show BidMachine ad
                                                  loadBidMachineInterstitial();
+                                             } else {
+                                                 // If isSuccess is false, then BidMachine lost the mediation.
+                                                 // No need load BidMachine ad object.
+                                                 // Process the OnAdLoaded callback in standard mode
                                              }
                                          });
                                      }
@@ -173,18 +164,6 @@ private void loadRewardedVideo() {
 }
 
 private void loadAdManagerRewarded() {
-    /*
-    You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-    before creating AdRequest object
-    For example:
-    double price = bannerRequest.getAuctionResult().getPrice();
-    if (price <= 1) {
-        BidMachineFetcher.setPriceRounding(0.2);
-    } else {
-        BidMachineFetcher.setPriceRounding(1);
-    }
-    */
-
     // Create AdManagerAdRequest builder
     AdManagerAdRequest.Builder adRequestBuilder = new AdManagerAdRequest.Builder();
 
@@ -200,7 +179,13 @@ private void loadAdManagerRewarded() {
                         public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
                             // Checking whether it is BidMachine or not
                             if (BidMachineUtils.isBidMachineRewarded(rewardedAd)) {
+                                // If isSuccess is true, then BidMachine won the mediation.
+                                // Load BidMachine ad object, before show BidMachine ad
                                 loadBidMachineRewarded();
+                            } else {
+                                // If isSuccess is false, then BidMachine lost the mediation.
+                                // No need load BidMachine ad object.
+                                // Process the OnAdLoaded callback in standard mode
                             }
                         }
                     });
@@ -221,3 +206,18 @@ private void showRewarded() {
 }
 ```
 [*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L364)
+
+## Utils
+Ways to set up AdManagerAdRequest by BidMachine AdRequest:
+1. Create new AdManagerAdRequest instance
+```java
+    AdManagerAdRequest adRequest = BidMachineUtils.createAdManagerRequest(bannerRequest);
+```
+2. Create new AdManagerAdRequest.Builder instance
+```java
+    AdManagerAdRequest.Builder adRequestBuilder = BidMachineUtils.createAdManagerRequestBuilder(bannerRequest);
+```
+3. Fill existing AdManagerAdRequest.Builder by BidMachine AdRequest
+```java
+    BidMachineUtils.appendRequest(adRequestBuilder, bannerRequest);
+```

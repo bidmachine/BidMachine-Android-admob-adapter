@@ -160,18 +160,6 @@ public class BidMachineAdManagerActivity extends Activity {
     private void loadAdManagerBanner() {
         Log.d(TAG, "loadAdManagerBanner");
 
-        /*
-        You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-        before creating AdRequest object
-        For example:
-        double price = bannerRequest.getAuctionResult().getPrice();
-        if (price <= 1) {
-            BidMachineFetcher.setPriceRounding(0.2);
-        } else {
-            BidMachineFetcher.setPriceRounding(1);
-        }
-        */
-
         // Create AdManagerAdRequest builder
         AdManagerAdRequest.Builder adRequestBuilder = new AdManagerAdRequest.Builder();
 
@@ -289,18 +277,6 @@ public class BidMachineAdManagerActivity extends Activity {
     private void loadAdManagerInterstitial() {
         Log.d(TAG, "loadAdManagerInterstitial");
 
-        /*
-        You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-        before creating AdRequest object
-        For example:
-        double price = bannerRequest.getAuctionResult().getPrice();
-        if (price <= 1) {
-            BidMachineFetcher.setPriceRounding(0.2);
-        } else {
-            BidMachineFetcher.setPriceRounding(1);
-        }
-        */
-
         // Create AdManagerAdRequest builder
         AdManagerAdRequest.Builder adRequestBuilder = new AdManagerAdRequest.Builder();
 
@@ -406,18 +382,6 @@ public class BidMachineAdManagerActivity extends Activity {
     private void loadAdManagerRewarded() {
         Log.d(TAG, "loadAdManagerRewarded");
 
-        /*
-        You need to set up price rounding with method BidMachineFetcher.setPriceRounding
-        before creating AdRequest object
-        For example:
-        double price = bannerRequest.getAuctionResult().getPrice();
-        if (price <= 1) {
-            BidMachineFetcher.setPriceRounding(0.2);
-        } else {
-            BidMachineFetcher.setPriceRounding(1);
-        }
-        */
-
         // Create AdManagerAdRequest builder
         AdManagerAdRequest.Builder adRequestBuilder = new AdManagerAdRequest.Builder();
 
@@ -488,8 +452,13 @@ public class BidMachineAdManagerActivity extends Activity {
             // Checking whether it is BidMachine or not
             BidMachineUtils.isBidMachineBanner(adManagerAdView, isSuccess -> {
                 if (isSuccess) {
+                    // If isSuccess is true, then BidMachine won the mediation.
+                    // Load BidMachine ad object, before show BidMachine ad
                     loadBidMachineBanner();
                 } else {
+                    // If isSuccess is false, then BidMachine lost the mediation.
+                    // No need load BidMachine ad object.
+                    // Process the OnAdLoaded callback in standard mode
                     onError("Invalid key");
                 }
             });
@@ -587,8 +556,13 @@ public class BidMachineAdManagerActivity extends Activity {
             // Checking whether it is BidMachine or not
             BidMachineUtils.isBidMachineInterstitial(adManagerInterstitialAd, isSuccess -> {
                 if (isSuccess) {
+                    // If isSuccess is true, then BidMachine won the mediation.
+                    // Load BidMachine ad object, before show BidMachine ad
                     loadBidMachineInterstitial();
                 } else {
+                    // If isSuccess is false, then BidMachine lost the mediation.
+                    // No need load BidMachine ad object.
+                    // Process the OnAdLoaded callback in standard mode
                     onError("Invalid key");
                 }
             });
@@ -675,8 +649,13 @@ public class BidMachineAdManagerActivity extends Activity {
         public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
             // Checking whether it is BidMachine or not
             if (BidMachineUtils.isBidMachineRewarded(rewardedAd)) {
+                // If isSuccess is true, then BidMachine won the mediation.
+                // Load BidMachine ad object, before show BidMachine ad
                 loadBidMachineRewarded();
             } else {
+                // If isSuccess is false, then BidMachine lost the mediation.
+                // No need load BidMachine ad object.
+                // Process the OnAdLoaded callback in standard mode
                 onError("Invalid key");
             }
         }
