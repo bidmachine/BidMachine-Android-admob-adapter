@@ -176,11 +176,8 @@ AdRequest adRequest = new AdRequest.Builder()
         .addCustomEventExtrasBundle(BidMachineCustomEventInterstitial.class, bundle)
         .build();
 
-// Create new InterstitialAd instance and load
-InterstitialAd interstitialAd = new InterstitialAd(this);
-interstitialAd.setAdUnitId(INTERSTITIAL_ID);
-interstitialAd.setAdListener(new InterstitialListener());
-interstitialAd.loadAd(adRequest);
+// Load InterstitialAd
+InterstitialAd.load(this, INTERSTITIAL_ID, adRequest, new InterstitialLoadListener());
 ```
 [*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L169)
 
@@ -258,13 +255,11 @@ Bundle bundle = new BidMachineBundleBuilder()
 
 // Set bundle to mediation rewarded video ad adapter
 AdRequest adRequest = new AdRequest.Builder()
-        .addNetworkExtrasBundle(BidMachineMediationRewardedAdAdapter.class, bundle)
+        .addNetworkExtrasBundle(BidMachineAdapter.class, bundle)
         .build();
 
-// Create new RewardedVideoAd instance and load
-RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this);
-rewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoListener());
-rewardedVideoAd.loadAd(REWARDED_ID, adRequest);
+// Load RewardedAd
+RewardedAd.load(this, REWARDED_ID, adRequest, new RewardedLoadListener());
 ```
 [*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L226)
 
@@ -346,8 +341,9 @@ AdRequest adRequest = new AdRequest.Builder()
         .build();
 
 // Create new AdLoader instance and load
+NativeListener nativeListener = new NativeListener();
 AdLoader adLoader = new AdLoader.Builder(this, NATIVE_ID)
-        .forUnifiedNativeAd(nativeListener)
+        .forNativeAd(nativeListener)
         .withAdListener(nativeListener)
         .build();
 adLoader.loadAd(adRequest);
