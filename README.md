@@ -1,7 +1,7 @@
 # BidMachine Android AdMobAdapter
 
 [<img src="https://img.shields.io/badge/SDK%20Version-1.6.3-brightgreen">](https://github.com/bidmachine/BidMachine-Android-SDK)
-[<img src="https://img.shields.io/badge/Adapter%20Version-1.6.3.10-brightgreen">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.6.3.10/)
+[<img src="https://img.shields.io/badge/Adapter%20Version-1.6.3.10-green">](https://artifactory.bidmachine.io/bidmachine/io/bidmachine/ads.adapters.admob/1.6.3.10/)
 [<img src="https://img.shields.io/badge/AdMob%20Version-19.7.0-blue">](https://developers.google.com/admob/android/quick-start)
 
 * [Useful links](#useful-links)
