@@ -9,7 +9,6 @@
 
 ## Useful links
 * [AdMob documentation](https://developers.google.com/admob/android/quick-start)
-* [AdMob integration](https://wiki.appodeal.com/display/BID/BidMachine+AdMob+custom+network+integration+guide)
 
 ## Banner implementation
 ```java
