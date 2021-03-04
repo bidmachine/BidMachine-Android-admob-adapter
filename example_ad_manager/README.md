@@ -4,6 +4,7 @@
 
 * [Useful links](#useful-links)
 * [Banner implementation](#banner-implementation)
+* [Mrec implementation](#mrec-implementation)
 * [Interstitial implementation](#interstitial-implementation)
 * [RewardedVideo implementation](#rewardedvideo-implementation)
 * [Utils](#utils)
@@ -16,7 +17,7 @@
 ```java
 private void loadBanner() {
     // Create new BidMachine request
-    BannerRequest bannerRequest = new BannerRequest.Builder()
+    bannerRequest = new BannerRequest.Builder()
             .setSize(...)
             .setListener(new BannerRequest.AdRequestListener() {
                 @Override
@@ -52,11 +53,14 @@ private void loadAdManagerBanner() {
                 if (isSuccess) {
                     // If isSuccess is true, then BidMachine has won the mediation.
                     // Load BidMachine ad object, before show BidMachine ad
+                    bannerRequest.notifyMediationWin();
+
                     loadBidMachineBanner();
                 } else {
                     // If isSuccess is false, then BidMachine has lost the mediation.
                     // No need to load BidMachine ad object.
                     // Process the OnAdLoaded callback in standard mode
+                    bannerRequest.notifyMediationLoss();
                 }
             });
         }
@@ -79,13 +83,85 @@ private void showBanner() {
     }
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L117)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L130)
+
+## Mrec implementation
+```java
+private void loadMrec() {
+    // Create new BidMachine request
+    mrecRequest = new BannerRequest.Builder()
+            .setSize(BannerSize.Size_300x250)
+            .setListener(new BannerRequest.AdRequestListener() {
+                @Override
+                public void onRequestSuccess(@NonNull BannerRequest bannerRequest,
+                                             @NonNull AuctionResult auctionResult) {
+                    runOnUiThread(() -> loadAdManagerMrec());
+                }
+            })
+            .build();
+
+    // Request an ad from BidMachine without loading it
+    mrecRequest.request(this);
+}
+
+private void loadAdManagerMrec() {
+    // Create AdManagerAdRequest builder
+    AdManagerAdRequest.Builder adRequestBuilder = new AdManagerAdRequest.Builder();
+
+    // Append BidMachine BannerRequest to AdManagerAdRequest
+    BidMachineUtils.appendRequest(adRequestBuilder, mrecRequest);
+
+    // Create new AdView instance and load it
+    AdManagerAdView adManagerAdView = new AdManagerAdView(this);
+    adManagerAdView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                               ViewGroup.LayoutParams.MATCH_PARENT));
+    adManagerAdView.setAdUnitId(MREC_ID);
+    adManagerAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
+    adManagerAdView.setAdListener(new AdListener() {
+        @Override
+        public void onAdLoaded() {
+            // Checking whether it is BidMachine or not
+            BidMachineUtils.isBidMachineBanner(adManagerAdView, isSuccess -> {
+                if (isSuccess) {
+                    // If isSuccess is true, then BidMachine has won the mediation.
+                    // Load BidMachine ad object, before show BidMachine ad
+                    mrecRequest.notifyMediationWin();
+
+                    loadBidMachineBanner();
+                } else {
+                    // If isSuccess is false, then BidMachine has lost the mediation.
+                    // No need to load BidMachine ad object.
+                    // Process the OnAdLoaded callback in standard mode
+                    mrecRequest.notifyMediationLoss();
+                }
+            });
+        }
+    });
+    adManagerAdView.loadAd(adRequestBuilder.build());
+}
+
+private void loadBidMachineMrec() {
+    // Create BannerView to load an ad from loaded BidMachine BannerRequest
+    bidMachineMrecView = new BannerView(this);
+    bidMachineMrecView.setListener(new BidMachineMrecListener());
+    bidMachineMrecView.load(mrecRequest);
+}
+
+private void showMrec() {
+    // Check if an ad can be shown before actual impression
+    if (bidMachineMrecView != null && bidMachineMrecView.canShow()) {
+        adContainer.removeAllViews();
+        adContainer.addView(bidMachineMrecView);
+    }
+}
+```
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L248)
 
 ## Interstitial implementation
 ```java
 private void loadInterstitial() {
     // Create new BidMachine request
-    InterstitialRequest interstitialRequest = new InterstitialRequest.Builder()
+    interstitialRequest = new InterstitialRequest.Builder()
             .setAdContentType(...)
             .setListener(new InterstitialRequest.AdRequestListener() {
                 @Override
@@ -119,11 +195,14 @@ private void loadAdManagerInterstitial() {
                                              if (isSuccess) {
                                                  // If isSuccess is true, then BidMachine has won the mediation.
                                                  // Load BidMachine ad object, before show BidMachine ad
+                                                 interstitialRequest.notifyMediationWin();
+
                                                  loadBidMachineInterstitial();
                                              } else {
                                                  // If isSuccess is false, then BidMachine has lost the mediation.
                                                  // No need to load BidMachine ad object.
                                                  // Process the OnAdLoaded callback in standard mode
+                                                 interstitialRequest.notifyMediationLoss();
                                              }
                                          });
                                      }
@@ -144,13 +223,13 @@ private void showInterstitial() {
     }
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L235)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L366)
 
 ## RewardedVideo implementation
 ```java
 private void loadRewardedVideo() {
     // Create new BidMachine request
-    RewardedRequest rewardedRequest = new RewardedRequest.Builder()
+    rewardedRequest = new RewardedRequest.Builder()
             .setListener(new RewardedRequest.AdRequestListener() {
                 @Override
                 public void onRequestSuccess(@NonNull RewardedRequest rewardedRequest,
@@ -182,11 +261,14 @@ private void loadAdManagerRewarded() {
                             if (BidMachineUtils.isBidMachineRewarded(rewardedAd)) {
                                 // If isSuccess is true, then BidMachine has won the mediation.
                                 // Load BidMachine ad object, before show BidMachine ad
+                                rewardedRequest.notifyMediationWin();
+
                                 loadBidMachineRewarded();
                             } else {
                                 // If isSuccess is false, then BidMachine has lost the mediation.
                                 // No need to load BidMachine ad object.
                                 // Process the OnAdLoaded callback in standard mode
+                                rewardedRequest.notifyMediationLoss();
                             }
                         }
                     });
@@ -206,7 +288,7 @@ private void showRewarded() {
     }
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L340)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L471)
 
 ## Utils
 Ways to set up AdManagerAdRequest by BidMachine AdRequest:

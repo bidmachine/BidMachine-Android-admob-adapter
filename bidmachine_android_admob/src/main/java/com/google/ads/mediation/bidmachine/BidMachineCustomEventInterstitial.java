@@ -13,6 +13,7 @@ import com.google.android.gms.ads.mediation.customevent.CustomEventInterstitialL
 
 import io.bidmachine.AdContentType;
 import io.bidmachine.AdsType;
+import io.bidmachine.Utils;
 import io.bidmachine.interstitial.InterstitialAd;
 import io.bidmachine.interstitial.InterstitialListener;
 import io.bidmachine.interstitial.InterstitialRequest;
@@ -110,21 +111,14 @@ public final class BidMachineCustomEventInterstitial implements CustomEventInter
     private AdContentType getAdContentType(@NonNull Bundle extras) {
         try {
             String value = BidMachineUtils.getString(extras, BidMachineUtils.AD_CONTENT_TYPE);
-            if (value == null) {
-                return null;
+            if (value != null) {
+                String adContentType = Utils.capitalize(value);
+                return AdContentType.valueOf(adContentType);
             }
-            if (AdContentType.All.name().equals(value)) {
-                return AdContentType.All;
-            } else if (AdContentType.Static.name().equals(value)) {
-                return AdContentType.Static;
-            } else if (AdContentType.Video.name().equals(value)) {
-                return AdContentType.Video;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            return null;
+        } catch (Exception ignore) {
         }
+
+        return null;
     }
 
     private static class BidMachineAdListener implements InterstitialListener {

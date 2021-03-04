@@ -37,12 +37,15 @@ public class BidMachineAdManagerActivity extends Activity {
     private static final String TAG = BidMachineAdManagerActivity.class.getSimpleName();
     private static final String BID_MACHINE_SELLER_ID = "5";
     private static final String BANNER_ID = "YOUR_BANNER_ID";
+    private static final String MREC_ID = "YOUR_MREC_ID";
     private static final String INTERSTITIAL_ID = "YOUR_INTERSTITIAL_ID";
     private static final String REWARDED_ID = "YOUR_REWARDED_ID";
 
     private Button bInitialize;
     private Button bLoadBanner;
     private Button bShowBanner;
+    private Button bLoadMrec;
+    private Button bShowMrec;
     private Button bLoadInterstitial;
     private Button bShowInterstitial;
     private Button bLoadRewarded;
@@ -50,8 +53,12 @@ public class BidMachineAdManagerActivity extends Activity {
     private FrameLayout adContainer;
 
     private BannerRequest bannerRequest;
-    private AdManagerAdView adManagerAdView;
+    private AdManagerAdView bannerAdManagerAdView;
     private BannerView bidMachineBannerView;
+
+    private BannerRequest mrecRequest;
+    private AdManagerAdView mrecAdManagerAdView;
+    private BannerView bidMachineMrecView;
 
     private InterstitialRequest interstitialRequest;
     private InterstitialAd bidMachineInterstitialAd;
@@ -70,6 +77,10 @@ public class BidMachineAdManagerActivity extends Activity {
         bLoadBanner.setOnClickListener(v -> loadBanner());
         bShowBanner = findViewById(R.id.bShowBanner);
         bShowBanner.setOnClickListener(v -> showBanner());
+        bLoadMrec = findViewById(R.id.bLoadMrec);
+        bLoadMrec.setOnClickListener(v -> loadMrec());
+        bShowMrec = findViewById(R.id.bShowMrec);
+        bShowMrec.setOnClickListener(v -> showMrec());
         bLoadInterstitial = findViewById(R.id.bLoadInterstitial);
         bLoadInterstitial.setOnClickListener(v -> loadInterstitial());
         bShowInterstitial = findViewById(R.id.bShowInterstitial);
@@ -91,6 +102,7 @@ public class BidMachineAdManagerActivity extends Activity {
         super.onDestroy();
 
         destroyBanner();
+        destroyMrec();
         destroyInterstitial();
         destroyRewarded();
     }
@@ -107,6 +119,7 @@ public class BidMachineAdManagerActivity extends Activity {
 
     private void enableButton() {
         bLoadBanner.setEnabled(true);
+        bLoadMrec.setEnabled(true);
         bLoadInterstitial.setEnabled(true);
         bLoadRewarded.setEnabled(true);
     }
@@ -167,13 +180,13 @@ public class BidMachineAdManagerActivity extends Activity {
         BidMachineUtils.appendRequest(adRequestBuilder, bannerRequest);
 
         // Create new AdView instance and load it
-        adManagerAdView = new AdManagerAdView(this);
-        adManagerAdView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                                                   ViewGroup.LayoutParams.MATCH_PARENT));
-        adManagerAdView.setAdUnitId(BANNER_ID);
-        adManagerAdView.setAdSizes(AdSize.BANNER);
-        adManagerAdView.setAdListener(new BannerListener());
-        adManagerAdView.loadAd(adRequestBuilder.build());
+        bannerAdManagerAdView = new AdManagerAdView(this);
+        bannerAdManagerAdView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                         ViewGroup.LayoutParams.MATCH_PARENT));
+        bannerAdManagerAdView.setAdUnitId(BANNER_ID);
+        bannerAdManagerAdView.setAdSizes(AdSize.BANNER);
+        bannerAdManagerAdView.setAdListener(new BannerListener());
+        bannerAdManagerAdView.loadAd(adRequestBuilder.build());
     }
 
     /**
@@ -219,13 +232,131 @@ public class BidMachineAdManagerActivity extends Activity {
             bidMachineBannerView.destroy();
             bidMachineBannerView = null;
         }
-        if (adManagerAdView != null) {
-            adManagerAdView.setAdListener(null);
-            adManagerAdView.destroy();
-            adManagerAdView = null;
+        if (bannerAdManagerAdView != null) {
+            bannerAdManagerAdView.setAdListener(null);
+            bannerAdManagerAdView.destroy();
+            bannerAdManagerAdView = null;
         }
         if (bannerRequest != null) {
             bannerRequest = null;
+        }
+    }
+
+    /**
+     * Method for load BannerRequest
+     */
+    private void loadMrec() {
+        bShowMrec.setEnabled(false);
+
+        // Destroy previous ad
+        destroyMrec();
+
+        // Create new BidMachine request
+        mrecRequest = new BannerRequest.Builder()
+                .setSize(BannerSize.Size_300x250)
+                .setListener(new BannerRequest.AdRequestListener() {
+                    @Override
+                    public void onRequestSuccess(@NonNull BannerRequest bannerRequest,
+                                                 @NonNull AuctionResult auctionResult) {
+                        runOnUiThread(() -> loadAdManagerMrec());
+                    }
+
+                    @Override
+                    public void onRequestFailed(@NonNull BannerRequest bannerRequest,
+                                                @NonNull BMError bmError) {
+                        runOnUiThread(() -> {
+                            Log.d(TAG, "BannerRequestListener - onRequestFailed");
+                            Toast.makeText(BidMachineAdManagerActivity.this,
+                                           "BannerFetchFailed",
+                                           Toast.LENGTH_SHORT).show();
+                        });
+                    }
+
+                    @Override
+                    public void onRequestExpired(@NonNull BannerRequest bannerRequest) {
+                        //ignore
+                    }
+                })
+                .build();
+
+        // Request an ad from BidMachine without loading it
+        mrecRequest.request(this);
+
+        Log.d(TAG, "loadMrec");
+    }
+
+    /**
+     * Method for load AdManagerAdView
+     */
+    private void loadAdManagerMrec() {
+        Log.d(TAG, "loadAdManagerMrec");
+
+        // Create AdManagerAdRequest builder
+        AdManagerAdRequest.Builder adRequestBuilder = new AdManagerAdRequest.Builder();
+
+        // Append BidMachine BannerRequest to AdManagerAdRequest
+        BidMachineUtils.appendRequest(adRequestBuilder, mrecRequest);
+
+        // Create new AdView instance and load it
+        mrecAdManagerAdView = new AdManagerAdView(this);
+        mrecAdManagerAdView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                       ViewGroup.LayoutParams.MATCH_PARENT));
+        mrecAdManagerAdView.setAdUnitId(MREC_ID);
+        mrecAdManagerAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
+        mrecAdManagerAdView.setAdListener(new MrecListener());
+        mrecAdManagerAdView.loadAd(adRequestBuilder.build());
+    }
+
+    /**
+     * Method for load BannerView
+     */
+    private void loadBidMachineMrec() {
+        Log.d(TAG, "loadBidMachineMrec");
+
+        // Create BannerView to load an ad from loaded BidMachine BannerRequest
+        bidMachineMrecView = new BannerView(this);
+        bidMachineMrecView.setListener(new BidMachineMrecListener());
+        bidMachineMrecView.load(mrecRequest);
+    }
+
+    /**
+     * Method for show BidMachine BannerView
+     */
+    private void showMrec() {
+        Log.d(TAG, "showMrec");
+
+        bShowMrec.setEnabled(false);
+
+        // Check if an ad can be shown before actual impression
+        if (bidMachineMrecView != null
+                && bidMachineMrecView.canShow()
+                && bidMachineMrecView.getParent() == null) {
+            adContainer.removeAllViews();
+            adContainer.addView(bidMachineMrecView);
+        } else {
+            Log.d(TAG, "show error - mrec object is null");
+        }
+    }
+
+    /**
+     * Method for destroy mrec
+     */
+    private void destroyMrec() {
+        Log.d(TAG, "destroyMrec");
+
+        adContainer.removeAllViews();
+        if (bidMachineMrecView != null) {
+            bidMachineMrecView.setListener(null);
+            bidMachineMrecView.destroy();
+            bidMachineMrecView = null;
+        }
+        if (mrecAdManagerAdView != null) {
+            mrecAdManagerAdView.setAdListener(null);
+            mrecAdManagerAdView.destroy();
+            mrecAdManagerAdView = null;
+        }
+        if (mrecRequest != null) {
+            mrecRequest = null;
         }
     }
 
@@ -450,15 +581,19 @@ public class BidMachineAdManagerActivity extends Activity {
             Log.d(TAG, "BannerListener - onAdLoaded");
 
             // Checking whether it is BidMachine or not
-            BidMachineUtils.isBidMachineBanner(adManagerAdView, isSuccess -> {
+            BidMachineUtils.isBidMachineBanner(bannerAdManagerAdView, isSuccess -> {
                 if (isSuccess) {
                     // If isSuccess is true, then BidMachine has won the mediation.
                     // Load BidMachine ad object, before show BidMachine ad
+                    bannerRequest.notifyMediationWin();
+
                     loadBidMachineBanner();
                 } else {
                     // If isSuccess is false, then BidMachine has lost the mediation.
                     // No need to load BidMachine ad object.
                     // Process the OnAdLoaded callback in standard mode
+                    bannerRequest.notifyMediationLoss();
+
                     onError("Invalid key");
                 }
             });
@@ -545,6 +680,114 @@ public class BidMachineAdManagerActivity extends Activity {
     }
 
     /**
+     * Class for definition behavior AdManagerAdView
+     */
+    private class MrecListener extends AdListener {
+
+        @Override
+        public void onAdLoaded() {
+            Log.d(TAG, "MrecListener - onAdLoaded");
+
+            // Checking whether it is BidMachine or not
+            BidMachineUtils.isBidMachineBanner(mrecAdManagerAdView, isSuccess -> {
+                if (isSuccess) {
+                    // If isSuccess is true, then BidMachine has won the mediation.
+                    // Load BidMachine ad object, before show BidMachine ad
+                    mrecRequest.notifyMediationWin();
+
+                    loadBidMachineMrec();
+                } else {
+                    // If isSuccess is false, then BidMachine has lost the mediation.
+                    // No need to load BidMachine ad object.
+                    // Process the OnAdLoaded callback in standard mode
+                    mrecRequest.notifyMediationLoss();
+
+                    onError("Invalid key");
+                }
+            });
+        }
+
+        @Override
+        public void onAdFailedToLoad(LoadAdError loadAdError) {
+            onError(loadAdError.getMessage());
+        }
+
+        @Override
+        public void onAdOpened() {
+            Log.d(TAG, "MrecListener - onAdOpened");
+        }
+
+        @Override
+        public void onAdImpression() {
+            Log.d(TAG, "MrecListener - onAdImpression");
+        }
+
+        @Override
+        public void onAdClicked() {
+            Log.d(TAG, "MrecListener - onAdClicked");
+        }
+
+        @Override
+        public void onAdClosed() {
+            Log.d(TAG, "MrecListener - onAdClosed");
+        }
+
+        private void onError(@NonNull String message) {
+            Log.d(TAG, "MrecListener - onAdFailedToLoad with message: " + message);
+            Toast.makeText(BidMachineAdManagerActivity.this,
+                           "MrecFailedToLoad",
+                           Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    /**
+     * Class for definition behavior BidMachine BannerView
+     */
+    private class BidMachineMrecListener implements io.bidmachine.banner.BannerListener {
+
+        @Override
+        public void onAdLoaded(@NonNull BannerView bannerView) {
+            bShowMrec.setEnabled(true);
+
+            Log.d(TAG, "BidMachineMrecListener - onAdLoaded");
+            Toast.makeText(BidMachineAdManagerActivity.this,
+                           "MrecLoaded",
+                           Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onAdLoadFailed(@NonNull BannerView bannerView, @NonNull BMError bmError) {
+            Log.d(TAG, "BidMachineMrecListener - onAdLoadFailed with message: "
+                    + bmError.getMessage());
+            Toast.makeText(BidMachineAdManagerActivity.this,
+                           "MrecFailedToLoad",
+                           Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onAdShown(@NonNull BannerView bannerView) {
+            Log.d(TAG, "BidMachineMrecListener - onAdShown");
+        }
+
+        @Override
+        public void onAdImpression(@NonNull BannerView bannerView) {
+            Log.d(TAG, "BidMachineMrecListener - onAdImpression");
+        }
+
+        @Override
+        public void onAdClicked(@NonNull BannerView bannerView) {
+            Log.d(TAG, "BidMachineMrecListener - onAdClicked");
+        }
+
+        @Override
+        public void onAdExpired(@NonNull BannerView bannerView) {
+            Log.d(TAG, "BidMachineMrecListener - onAdExpired");
+        }
+
+    }
+
+    /**
      * Class for definition behavior InterstitialAd
      */
     private class InterstitialLoadListener extends AdManagerInterstitialAdLoadCallback {
@@ -558,11 +801,15 @@ public class BidMachineAdManagerActivity extends Activity {
                 if (isSuccess) {
                     // If isSuccess is true, then BidMachine has won the mediation.
                     // Load BidMachine ad object, before show BidMachine ad
+                    interstitialRequest.notifyMediationWin();
+
                     loadBidMachineInterstitial();
                 } else {
                     // If isSuccess is false, then BidMachine has lost the mediation.
                     // No need to load BidMachine ad object.
                     // Process the OnAdLoaded callback in standard mode
+                    interstitialRequest.notifyMediationLoss();
+
                     onError("Invalid key");
                 }
             });
@@ -651,11 +898,15 @@ public class BidMachineAdManagerActivity extends Activity {
             if (BidMachineUtils.isBidMachineRewarded(rewardedAd)) {
                 // If isSuccess is true, then BidMachine has won the mediation.
                 // Load BidMachine ad object, before show BidMachine ad
+                rewardedRequest.notifyMediationWin();
+
                 loadBidMachineRewarded();
             } else {
                 // If isSuccess is false, then BidMachine has lost the mediation.
                 // No need to load BidMachine ad object.
                 // Process the OnAdLoaded callback in standard mode
+                rewardedRequest.notifyMediationLoss();
+
                 onError("Invalid key");
             }
         }

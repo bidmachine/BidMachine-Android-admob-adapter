@@ -2,6 +2,7 @@
 
 * [Useful links](#useful-links)
 * [Banner implementation](#banner-implementation)
+* [Mrec implementation](#mrec-implementation)
 * [Interstitial implementation](#interstitial-implementation)
 * [RewardedVideo implementation](#rewardedvideo-implementation)
 * [Native implementation](#native-implementation)
@@ -43,7 +44,42 @@ private void loadAdMobBanner(@NonNull BannerRequest bannerRequest) {
     adView.loadAd(adRequest);
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L138)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L148)
+
+## Mrec implementation
+```java
+private void loadMrec() {
+    // Create new BidMachine request
+    BannerRequest bannerRequest = new BannerRequest.Builder()
+            .setSize(BannerSize.Size_300x250)
+            .setListener(new BannerRequest.AdRequestListener() {
+                @Override
+                public void onRequestSuccess(@NonNull BannerRequest bannerRequest,
+                                             @NonNull AuctionResult auctionResult) {
+                    runOnUiThread(() -> loadAdMobMrec(bannerRequest));
+                }
+            })
+            .build();
+
+    // Request an ad from BidMachine without loading it
+    bannerRequest.request(this);
+}
+
+private void loadAdMobMrec(@NonNull BannerRequest bannerRequest) {
+    // Create AdRequest
+    AdRequest adRequest = BidMachineUtils.createAdRequest(bannerRequest);
+
+    // Create new AdView instance and load it
+    AdView adView = new AdView(this);
+    adView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                      ViewGroup.LayoutParams.MATCH_PARENT));
+    adView.setAdUnitId(MREC_ID);
+    adView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+    adView.setAdListener(new MrecViewListener());
+    adView.loadAd(adRequest);
+}
+```
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L239)
 
 ## Interstitial implementation
 ```java
@@ -72,7 +108,7 @@ private void loadAdMobInterstitial(@NonNull InterstitialRequest interstitialRequ
     InterstitialAd.load(this, INTERSTITIAL_ID, adRequest, new InterstitialLoadListener());
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L229)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L330)
 
 ## RewardedVideo implementation
 ```java
@@ -100,7 +136,7 @@ private void loadAdMobRewarded(@NonNull RewardedRequest rewardedRequest) {
     RewardedAd.load(this, REWARDED_ID, adRequest, new RewardedLoadListener());
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L312)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L413)
 
 ## Native implementation
 ```java
@@ -133,7 +169,7 @@ private void loadAdMobNative(@NonNull NativeRequest nativeRequest) {
     adLoader.loadAd(adRequest);
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L395)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L496)
 
 ## Utils
 Ways to set up AdRequest by BidMachine AdRequest:

@@ -31,6 +31,7 @@ import io.bidmachine.AdsType;
 import io.bidmachine.BidMachine;
 import io.bidmachine.BidMachineFetcher;
 import io.bidmachine.PriceFloorParams;
+import io.bidmachine.Publisher;
 import io.bidmachine.TargetingParams;
 import io.bidmachine.banner.BannerRequest;
 import io.bidmachine.interstitial.InterstitialRequest;
@@ -59,6 +60,7 @@ public class BidMachineUtils {
     static final String CONSENT_STRING = "consent_string";
     static final String ENDPOINT = "endpoint";
     static final String AD_CONTENT_TYPE = "ad_content_type";
+    static final String MEDIA_ASSET_TYPES = "media_asset_types";
     static final String USER_ID = "user_id";
     static final String GENDER = "gender";
     static final String YOB = "yob";
@@ -67,11 +69,18 @@ public class BidMachineUtils {
     static final String CITY = "city";
     static final String ZIP = "zip";
     static final String STURL = "sturl";
+    static final String STORE_CAT = "store_cat";
+    static final String STORE_SUB_CAT = "store_subcat";
+    static final String FMW_NAME = "fmw_name";
     static final String PAID = "paid";
     static final String BCAT = "bcat";
     static final String BADV = "badv";
     static final String BAPPS = "bapps";
     static final String PRICE_FLOORS = "price_floors";
+    static final String PUBLISHER_ID = "pubid";
+    static final String PUBLISHER_NAME = "pubname";
+    static final String PUBLISHER_DOMAIN = "pubdomain";
+    static final String PUBLISHER_CATEGORIES = "pubcat";
 
     static void onAdFailedToLoad(@NonNull CustomEventListener listener, @NonNull BMError bmError) {
         onAdFailedToLoad(listener,
@@ -141,8 +150,10 @@ public class BidMachineUtils {
         }
         String endpoint = getString(extras, ENDPOINT);
         if (!TextUtils.isEmpty(endpoint)) {
+            assert endpoint != null;
             BidMachine.setEndpoint(endpoint);
         }
+        BidMachine.setPublisher(createPublisher(extras));
         BidMachineUtils.updateGDPR(extras);
         if (!BidMachine.isInitialized()) {
             String jsonData = getString(extras, MEDIATION_CONFIG);
@@ -151,6 +162,7 @@ public class BidMachineUtils {
             }
             String sellerId = getString(extras, SELLER_ID);
             if (!TextUtils.isEmpty(sellerId)) {
+                assert sellerId != null;
                 BidMachine.initialize(context, sellerId);
                 return true;
             } else {
@@ -306,6 +318,18 @@ public class BidMachineUtils {
         if (sturl != null) {
             targetingParams.setStoreUrl(sturl);
         }
+        String storeCategory = getString(extras, STORE_CAT);
+        if (storeCategory != null) {
+            targetingParams.setStoreCategory(storeCategory);
+        }
+        String storeSubCategories = getString(extras, STORE_SUB_CAT);
+        if (storeSubCategories != null) {
+            targetingParams.setStoreSubCategories(splitString(storeSubCategories));
+        }
+        String frameworkName = getString(extras, FMW_NAME);
+        if (frameworkName != null) {
+            targetingParams.setFramework(frameworkName);
+        }
         Boolean paid = getBoolean(extras, PAID);
         if (paid != null) {
             targetingParams.setPaid(paid);
@@ -313,19 +337,19 @@ public class BidMachineUtils {
         String bcat = getString(extras, BCAT);
         if (bcat != null) {
             for (String value : splitString(bcat)) {
-                targetingParams.addBlockedAdvertiserIABCategory(value);
+                targetingParams.addBlockedAdvertiserIABCategory(value.trim());
             }
         }
         String badv = getString(extras, BADV);
         if (badv != null) {
             for (String value : splitString(badv)) {
-                targetingParams.addBlockedAdvertiserDomain(value);
+                targetingParams.addBlockedAdvertiserDomain(value.trim());
             }
         }
         String bapps = getString(extras, BAPPS);
         if (bapps != null) {
             for (String value : splitString(bapps)) {
-                targetingParams.addBlockedApplication(value);
+                targetingParams.addBlockedApplication(value.trim());
             }
         }
         return targetingParams;
@@ -376,6 +400,27 @@ public class BidMachineUtils {
     }
 
     /**
+     * Publisher parameters must be set with help {@link BidMachineBundleBuilder}
+     *
+     * @param extras - map where are the necessary parameters for {@link Publisher}
+     * @return {@link Publisher} with parameters from extras
+     */
+    @NonNull
+    private static Publisher createPublisher(@NonNull Bundle extras) {
+        Publisher.Builder publisherBuilder = new Publisher.Builder();
+        publisherBuilder.setId(getString(extras, PUBLISHER_ID));
+        publisherBuilder.setName(getString(extras, PUBLISHER_NAME));
+        publisherBuilder.setDomain(getString(extras, PUBLISHER_DOMAIN));
+        String publisherCategories = getString(extras, PUBLISHER_CATEGORIES);
+        if (publisherCategories != null) {
+            for (String value : splitString(publisherCategories)) {
+                publisherBuilder.addCategory(value.trim());
+            }
+        }
+        return publisherBuilder.build();
+    }
+
+    /**
      * Transform server parameters from string to {@link Bundle}
      *
      * @param serverParameters - parameters from server
@@ -385,6 +430,7 @@ public class BidMachineUtils {
         if (TextUtils.isEmpty(serverParameters)) {
             return null;
         }
+        assert serverParameters != null;
         try {
             JSONObject jsonObject = new JSONObject(serverParameters);
             Bundle bundle = new Bundle();
@@ -468,7 +514,8 @@ public class BidMachineUtils {
         }
     }
 
-    private static String[] splitString(String value) {
+    @NonNull
+    static String[] splitString(String value) {
         if (TextUtils.isEmpty(value)) {
             return new String[0];
         }

@@ -2,6 +2,7 @@ package com.google.ads.mediation.bidmachine;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -12,8 +13,12 @@ import com.google.android.gms.ads.mediation.customevent.CustomEventNative;
 import com.google.android.gms.ads.mediation.customevent.CustomEventNativeListener;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.bidmachine.AdsType;
+import io.bidmachine.MediaAssetType;
+import io.bidmachine.Utils;
 import io.bidmachine.nativead.NativeAd;
 import io.bidmachine.nativead.NativeListener;
 import io.bidmachine.nativead.NativeRequest;
@@ -71,6 +76,7 @@ public class BidMachineCustomEventNative implements CustomEventNative {
             request = new NativeRequest.Builder()
                     .setTargetingParams(BidMachineUtils.createTargetingParams(fusedBundle))
                     .setPriceFloorParams(BidMachineUtils.createPriceFloorParams(fusedBundle))
+                    .setMediaAssetTypes(getMediaAssetTypes(fusedBundle))
                     .build();
         }
 
@@ -99,6 +105,26 @@ public class BidMachineCustomEventNative implements CustomEventNative {
             nativeAd.destroy();
             nativeAd = null;
         }
+    }
+
+    @NonNull
+    private MediaAssetType[] getMediaAssetTypes(@NonNull Bundle extras) {
+        List<MediaAssetType> mediaAssetTypeList = new ArrayList<>();
+        String value = BidMachineUtils.getString(extras, BidMachineUtils.MEDIA_ASSET_TYPES);
+        String[] mediaAssetTypeStringArray = BidMachineUtils.splitString(value);
+        for (String mediaAssetTypeString : mediaAssetTypeStringArray) {
+            if (TextUtils.isEmpty(mediaAssetTypeString)) {
+                continue;
+            }
+            assert mediaAssetTypeString != null;
+            try {
+                String resultValue = Utils.capitalize(mediaAssetTypeString.trim());
+                MediaAssetType mediaAssetType = MediaAssetType.valueOf(resultValue);
+                mediaAssetTypeList.add(mediaAssetType);
+            } catch (Exception ignore) {
+            }
+        }
+        return mediaAssetTypeList.toArray(new MediaAssetType[0]);
     }
 
     private final class BidMachineAdListener implements NativeListener {

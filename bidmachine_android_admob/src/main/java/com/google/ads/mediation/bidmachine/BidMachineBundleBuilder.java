@@ -5,6 +5,7 @@ import android.os.Bundle;
 import org.json.JSONArray;
 
 import io.bidmachine.AdContentType;
+import io.bidmachine.MediaAssetType;
 import io.bidmachine.utils.Gender;
 
 public class BidMachineBundleBuilder {
@@ -69,6 +70,11 @@ public class BidMachineBundleBuilder {
     private AdContentType adContentType;
 
     /**
+     *
+     */
+    private MediaAssetType[] mediaAssetTypes;
+
+    /**
      * Vendor-specific ID for the user
      */
     private String userId;
@@ -112,6 +118,22 @@ public class BidMachineBundleBuilder {
     private String sturl;
 
     /**
+     * Sets App store category definitions (e.g - "games")
+     */
+    private String storeCategory;
+
+    /**
+     * Sets App Store Subcategory definitions.
+     * The array is always capped at 3 strings (separated by comma)
+     */
+    private String storeSubCategories;
+
+    /**
+     * Sets app framework definitions
+     */
+    private String frameworkName;
+
+    /**
      * Determines, if it is a free or paid version of the app
      */
     private Boolean paid;
@@ -135,6 +157,26 @@ public class BidMachineBundleBuilder {
      * List of price floor
      */
     private JSONArray priceFloors;
+
+    /**
+     * Unique publisher identifier
+     */
+    private String publisherId;
+
+    /**
+     * Displayable name of the publisher
+     */
+    private String publisherName;
+
+    /**
+     * Highest level domain of the publisher (e.g., “publisher.com”)
+     */
+    private String publisherDomain;
+
+    /**
+     * List of content categories (separated by comma)
+     */
+    private String publisherCategories;
 
     public BidMachineBundleBuilder setSellerId(String sellerId) {
         this.sellerId = sellerId;
@@ -189,6 +231,11 @@ public class BidMachineBundleBuilder {
         return this;
     }
 
+    public BidMachineBundleBuilder setMediaAssetTypes(MediaAssetType... mediaAssetTypes) {
+        this.mediaAssetTypes = mediaAssetTypes;
+        return this;
+    }
+
     public BidMachineBundleBuilder setUserId(String userId) {
         this.userId = userId;
         return this;
@@ -229,6 +276,21 @@ public class BidMachineBundleBuilder {
         return this;
     }
 
+    public BidMachineBundleBuilder setStoreCategory(String storeCategory) {
+        this.storeCategory = storeCategory;
+        return this;
+    }
+
+    public BidMachineBundleBuilder setStoreSubCategories(String storeSubCategories) {
+        this.storeSubCategories = storeSubCategories;
+        return this;
+    }
+
+    public BidMachineBundleBuilder setFrameworkName(String frameworkName) {
+        this.frameworkName = frameworkName;
+        return this;
+    }
+
     public BidMachineBundleBuilder setPaid(Boolean paid) {
         this.paid = paid;
         return this;
@@ -251,6 +313,26 @@ public class BidMachineBundleBuilder {
 
     public BidMachineBundleBuilder setPriceFloors(JSONArray priceFloors) {
         this.priceFloors = priceFloors;
+        return this;
+    }
+
+    public BidMachineBundleBuilder setPublisherId(String publisherId) {
+        this.publisherId = publisherId;
+        return this;
+    }
+
+    public BidMachineBundleBuilder setPublisherName(String publisherName) {
+        this.publisherName = publisherName;
+        return this;
+    }
+
+    public BidMachineBundleBuilder setPublisherDomain(String publisherDomain) {
+        this.publisherDomain = publisherDomain;
+        return this;
+    }
+
+    public BidMachineBundleBuilder setPublisherCategories(String publisherCategories) {
+        this.publisherCategories = publisherCategories;
         return this;
     }
 
@@ -286,6 +368,19 @@ public class BidMachineBundleBuilder {
         if (adContentType != null) {
             extras.putString(BidMachineUtils.AD_CONTENT_TYPE, adContentType.name());
         }
+        if (mediaAssetTypes != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < mediaAssetTypes.length; i++) {
+                MediaAssetType mediaAssetType = mediaAssetTypes[i];
+                if (mediaAssetType != null) {
+                    if (i != 0) {
+                        stringBuilder.append(",");
+                    }
+                    stringBuilder.append(mediaAssetType.name());
+                }
+            }
+            extras.putString(BidMachineUtils.MEDIA_ASSET_TYPES, stringBuilder.toString());
+        }
         if (userId != null) {
             extras.putString(BidMachineUtils.USER_ID, userId);
         }
@@ -310,6 +405,15 @@ public class BidMachineBundleBuilder {
         if (sturl != null) {
             extras.putString(BidMachineUtils.STURL, sturl);
         }
+        if (storeCategory != null) {
+            extras.putString(BidMachineUtils.STORE_CAT, storeCategory);
+        }
+        if (storeSubCategories != null) {
+            extras.putString(BidMachineUtils.STORE_SUB_CAT, storeSubCategories);
+        }
+        if (frameworkName != null) {
+            extras.putString(BidMachineUtils.FMW_NAME, frameworkName);
+        }
         if (paid != null) {
             extras.putBoolean(BidMachineUtils.PAID, paid);
         }
@@ -324,6 +428,18 @@ public class BidMachineBundleBuilder {
         }
         if (priceFloors != null) {
             extras.putString(BidMachineUtils.PRICE_FLOORS, priceFloors.toString());
+        }
+        if (publisherId != null) {
+            extras.putString(BidMachineUtils.PUBLISHER_ID, publisherId);
+        }
+        if (publisherName != null) {
+            extras.putString(BidMachineUtils.PUBLISHER_NAME, publisherName);
+        }
+        if (publisherDomain != null) {
+            extras.putString(BidMachineUtils.PUBLISHER_DOMAIN, publisherDomain);
+        }
+        if (publisherCategories != null) {
+            extras.putString(BidMachineUtils.PUBLISHER_CATEGORIES, publisherCategories);
         }
         return extras;
     }

@@ -49,6 +49,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
     private static final String TAG = BidMachineAdMobFetchActivity.class.getSimpleName();
     private static final String BID_MACHINE_SELLER_ID = "5";
     private static final String BANNER_ID = "YOUR_BANNER_ID";
+    private static final String MREC_ID = "YOUR_MREC_ID";
     private static final String INTERSTITIAL_ID = "YOUR_INTERSTITIAL_ID";
     private static final String REWARDED_ID = "YOUR_REWARDED_ID";
     private static final String NATIVE_ID = "YOUR_NATIVE_ID";
@@ -56,6 +57,8 @@ public class BidMachineAdMobFetchActivity extends Activity {
     private Button bInitialize;
     private Button bLoadBanner;
     private Button bShowBanner;
+    private Button bLoadMrec;
+    private Button bShowMrec;
     private Button bLoadInterstitial;
     private Button bShowInterstitial;
     private Button bLoadRewarded;
@@ -64,7 +67,8 @@ public class BidMachineAdMobFetchActivity extends Activity {
     private Button bShowNative;
     private FrameLayout adContainer;
 
-    private AdView adView;
+    private AdView bannerAdView;
+    private AdView mrecAdView;
     private InterstitialAd interstitialAd;
     private RewardedAd rewardedAd;
     private NativeAd nativeAd;
@@ -80,6 +84,10 @@ public class BidMachineAdMobFetchActivity extends Activity {
         bLoadBanner.setOnClickListener(v -> loadBanner());
         bShowBanner = findViewById(R.id.bShowBanner);
         bShowBanner.setOnClickListener(v -> showBanner());
+        bLoadMrec = findViewById(R.id.bLoadMrec);
+        bLoadMrec.setOnClickListener(v -> loadMrec());
+        bShowMrec = findViewById(R.id.bShowMrec);
+        bShowMrec.setOnClickListener(v -> showMrec());
         bLoadInterstitial = findViewById(R.id.bLoadInterstitial);
         bLoadInterstitial.setOnClickListener(v -> loadInterstitial());
         bShowInterstitial = findViewById(R.id.bShowInterstitial);
@@ -105,6 +113,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
         super.onDestroy();
 
         destroyBanner();
+        destroyMrec();
         destroyInterstitial();
         destroyRewarded();
         destroyNative();
@@ -122,6 +131,7 @@ public class BidMachineAdMobFetchActivity extends Activity {
 
     private void enableButton() {
         bLoadBanner.setEnabled(true);
+        bLoadMrec.setEnabled(true);
         bLoadInterstitial.setEnabled(true);
         bLoadRewarded.setEnabled(true);
         bLoadNative.setEnabled(true);
@@ -185,13 +195,13 @@ public class BidMachineAdMobFetchActivity extends Activity {
         AdRequest adRequest = BidMachineUtils.createAdRequest(bannerRequest);
 
         // Create new AdView instance and load it
-        adView = new AdView(this);
-        adView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                                          ViewGroup.LayoutParams.MATCH_PARENT));
-        adView.setAdUnitId(BANNER_ID);
-        adView.setAdSize(AdSize.BANNER);
-        adView.setAdListener(new BannerViewListener());
-        adView.loadAd(adRequest);
+        bannerAdView = new AdView(this);
+        bannerAdView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                ViewGroup.LayoutParams.MATCH_PARENT));
+        bannerAdView.setAdUnitId(BANNER_ID);
+        bannerAdView.setAdSize(AdSize.BANNER);
+        bannerAdView.setAdListener(new BannerViewListener());
+        bannerAdView.loadAd(adRequest);
     }
 
     /**
@@ -202,8 +212,8 @@ public class BidMachineAdMobFetchActivity extends Activity {
 
         bShowBanner.setEnabled(false);
 
-        if (adView != null && adView.getParent() == null) {
-            addAdView(adView);
+        if (bannerAdView != null && bannerAdView.getParent() == null) {
+            addAdView(bannerAdView);
         } else {
             Log.d(TAG, "show error - banner object is null");
         }
@@ -216,10 +226,101 @@ public class BidMachineAdMobFetchActivity extends Activity {
         Log.d(TAG, "destroyBanner");
 
         adContainer.removeAllViews();
-        if (adView != null) {
-            adView.setAdListener(null);
-            adView.destroy();
-            adView = null;
+        if (bannerAdView != null) {
+            bannerAdView.setAdListener(null);
+            bannerAdView.destroy();
+            bannerAdView = null;
+        }
+    }
+
+    /**
+     * Method for load BannerRequest
+     */
+    private void loadMrec() {
+        bShowMrec.setEnabled(false);
+
+        // Destroy previous AdView
+        destroyMrec();
+
+        // Create new BidMachine request
+        BannerRequest bannerRequest = new BannerRequest.Builder()
+                .setSize(BannerSize.Size_300x250)
+                .setListener(new BannerRequest.AdRequestListener() {
+                    @Override
+                    public void onRequestSuccess(@NonNull BannerRequest bannerRequest,
+                                                 @NonNull AuctionResult auctionResult) {
+                        runOnUiThread(() -> loadAdMobMrec(bannerRequest));
+                    }
+
+                    @Override
+                    public void onRequestFailed(@NonNull BannerRequest bannerRequest,
+                                                @NonNull BMError bmError) {
+                        runOnUiThread(() -> {
+                            Log.d(TAG, "BannerRequestListener - onRequestFailed");
+                            Toast.makeText(BidMachineAdMobFetchActivity.this,
+                                           "MrecFetchFailed",
+                                           Toast.LENGTH_SHORT).show();
+                        });
+                    }
+
+                    @Override
+                    public void onRequestExpired(@NonNull BannerRequest bannerRequest) {
+                        //ignore
+                    }
+                })
+                .build();
+
+        // Request an ad from BidMachine without loading it
+        bannerRequest.request(this);
+
+        Log.d(TAG, "loadMrec");
+    }
+
+    /**
+     * Method for load AdView
+     */
+    private void loadAdMobMrec(@NonNull BannerRequest bannerRequest) {
+        Log.d(TAG, "loadAdMobMrec");
+
+        // Create AdRequest
+        AdRequest adRequest = BidMachineUtils.createAdRequest(bannerRequest);
+
+        // Create new AdView instance and load it
+        mrecAdView = new AdView(this);
+        mrecAdView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                              ViewGroup.LayoutParams.MATCH_PARENT));
+        mrecAdView.setAdUnitId(MREC_ID);
+        mrecAdView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+        mrecAdView.setAdListener(new MrecViewListener());
+        mrecAdView.loadAd(adRequest);
+    }
+
+    /**
+     * Method for show AdView
+     */
+    private void showMrec() {
+        Log.d(TAG, "showMrec");
+
+        bShowMrec.setEnabled(false);
+
+        if (mrecAdView != null && mrecAdView.getParent() == null) {
+            addAdView(mrecAdView);
+        } else {
+            Log.d(TAG, "show error - mrec object is null");
+        }
+    }
+
+    /**
+     * Method for destroy AdView
+     */
+    private void destroyMrec() {
+        Log.d(TAG, "destroyMrec");
+
+        adContainer.removeAllViews();
+        if (mrecAdView != null) {
+            mrecAdView.setAdListener(null);
+            mrecAdView.destroy();
+            mrecAdView = null;
         }
     }
 
@@ -556,6 +657,52 @@ public class BidMachineAdMobFetchActivity extends Activity {
         @Override
         public void onAdClosed() {
             Log.d(TAG, "BannerViewListener - onAdClosed");
+        }
+
+    }
+
+    /**
+     * Class for definition behavior AdView
+     */
+    private class MrecViewListener extends AdListener {
+
+        @Override
+        public void onAdLoaded() {
+            bShowMrec.setEnabled(true);
+
+            Log.d(TAG, "MrecViewListener - onAdLoaded");
+            Toast.makeText(BidMachineAdMobFetchActivity.this,
+                           "MrecLoaded",
+                           Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onAdFailedToLoad(LoadAdError loadAdError) {
+            Log.d(TAG, "MrecViewListener - onAdFailedToLoad with message: "
+                    + loadAdError.getMessage());
+            Toast.makeText(BidMachineAdMobFetchActivity.this,
+                           "MrecFailedToLoad",
+                           Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onAdOpened() {
+            Log.d(TAG, "MrecViewListener - onAdOpened");
+        }
+
+        @Override
+        public void onAdImpression() {
+            Log.d(TAG, "MrecViewListener - onAdImpression");
+        }
+
+        @Override
+        public void onAdClicked() {
+            Log.d(TAG, "MrecViewListener - onAdClicked");
+        }
+
+        @Override
+        public void onAdClosed() {
+            Log.d(TAG, "MrecViewListener - onAdClosed");
         }
 
     }
