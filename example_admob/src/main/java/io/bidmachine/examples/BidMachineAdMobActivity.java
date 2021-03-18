@@ -562,6 +562,7 @@ public class BidMachineAdMobActivity extends Activity {
                            "InterstitialFailedToLoad",
                            Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private static class InterstitialShowListener extends FullScreenContentCallback {
@@ -574,6 +575,11 @@ public class BidMachineAdMobActivity extends Activity {
         @Override
         public void onAdFailedToShowFullScreenContent(AdError adError) {
             Log.d(TAG, "InterstitialShowListener - onAdFailedToShowFullScreenContent");
+        }
+
+        @Override
+        public void onAdImpression() {
+            Log.d(TAG, "InterstitialShowListener - onAdImpression");
         }
 
         @Override
@@ -621,6 +627,11 @@ public class BidMachineAdMobActivity extends Activity {
         @Override
         public void onAdFailedToShowFullScreenContent(AdError adError) {
             Log.d(TAG, "RewardedShowListener - onAdFailedToShowFullScreenContent");
+        }
+
+        @Override
+        public void onAdImpression() {
+            Log.d(TAG, "RewardedShowListener - onAdImpression");
         }
 
         @Override

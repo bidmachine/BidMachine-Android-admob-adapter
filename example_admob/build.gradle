@@ -6,8 +6,8 @@ android {
         applicationId "io.bidmachine.examples"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
         multiDexEnabled true
     }
     buildTypes {
@@ -26,10 +26,10 @@ dependencies {
     implementation project(':bidmachine_android_admob')
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation 'com.google.android.gms:play-services-ads:19.7.0'
+    implementation 'com.google.android.gms:play-services-ads:19.8.0'
 
     implementation 'io.bidmachine:ads:1.6.4'
-//    implementation 'io.bidmachine:ads.adapters.admob:1.6.4.11'
+//    implementation 'io.bidmachine:ads.adapters.admob:1.6.4.12'
     implementation 'io.bidmachine:ads.networks.adcolony:1.6.4.7'
     implementation 'io.bidmachine:ads.networks.amazon:1.6.4.4'
     implementation 'io.bidmachine:ads.networks.criteo:1.6.4.6'

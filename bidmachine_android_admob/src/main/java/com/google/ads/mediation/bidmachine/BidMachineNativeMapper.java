@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.google.android.gms.ads.formats.NativeAd.Image;
-import com.google.android.gms.ads.formats.UnifiedNativeAdAssetNames;
 import com.google.android.gms.ads.mediation.UnifiedNativeAdMapper;
+import com.google.android.gms.ads.nativead.NativeAdAssetNames;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -56,9 +56,9 @@ class BidMachineNativeMapper extends UnifiedNativeAdMapper {
             for (Map.Entry<String, View> clickableAssets : clickableAssetViews.entrySet()) {
                 clickableViews.add(clickableAssets.getValue());
                 String key = clickableAssets.getKey();
-                if (key.equals(UnifiedNativeAdAssetNames.ASSET_ICON)) {
+                if (key.equals(NativeAdAssetNames.ASSET_ICON)) {
                     iconView = (ImageView) clickableAssets.getValue();
-                } else if (key.equals(UnifiedNativeAdAssetNames.ASSET_MEDIA_VIDEO)) {
+                } else if (key.equals(NativeAdAssetNames.ASSET_MEDIA_VIDEO)) {
                     mediaViewContains = true;
                 }
             }

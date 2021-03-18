@@ -13,9 +13,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.admanager.AdManagerAdView;
 import com.google.android.gms.ads.admanager.AdManagerInterstitialAd;
+import com.google.android.gms.ads.mediation.MediationAdConfiguration;
 import com.google.android.gms.ads.mediation.MediationAdLoadCallback;
 import com.google.android.gms.ads.mediation.MediationAdRequest;
-import com.google.android.gms.ads.mediation.MediationRewardedAdConfiguration;
 import com.google.android.gms.ads.mediation.customevent.CustomEventListener;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 
@@ -82,6 +82,10 @@ public class BidMachineUtils {
     static final String PUBLISHER_DOMAIN = "pubdomain";
     static final String PUBLISHER_CATEGORIES = "pubcat";
 
+    private static final String KEY_PARAMETER = "parameter";
+    private static final String KEY_BM_PF = "bm_pf";
+    private static final String KEY_AD_TITLE = "AdTitle";
+
     static void onAdFailedToLoad(@NonNull CustomEventListener listener, @NonNull BMError bmError) {
         onAdFailedToLoad(listener,
                          transformToAdMobErrorCode(bmError),
@@ -113,17 +117,6 @@ public class BidMachineUtils {
         return new AdError(errorCode, errorMessage, ERROR_DOMAIN);
     }
 
-    /**
-     * Preparing BidMachine before it may be used
-     *
-     * @param extras - bundle which contains one or more of:
-     *               1. {@link BidMachineUtils#SELLER_ID};
-     *               2. {@link BidMachineUtils#LOGGING_ENABLED};
-     *               3. {@link BidMachineUtils#TEST_MODE};
-     *               4. {@link BidMachineUtils#MEDIATION_CONFIG};
-     *               5. {@link BidMachineUtils#ENDPOINT}.
-     * @return was initialize or not
-     */
     static boolean prepareBidMachine(@NonNull Context context,
                                      @NonNull Bundle extras,
                                      @Nullable MediationAdRequest mediationAdRequest) {
@@ -133,9 +126,9 @@ public class BidMachineUtils {
 
     static boolean prepareBidMachine(@NonNull Context context,
                                      @NonNull Bundle extras,
-                                     @Nullable MediationRewardedAdConfiguration mediationRewardedAdConfiguration) {
+                                     @Nullable MediationAdConfiguration mediationAdConfiguration) {
         BidMachineUtils.updateCoppa(extras,
-                                    taggedForChildDirectedTreatment(mediationRewardedAdConfiguration));
+                                    taggedForChildDirectedTreatment(mediationAdConfiguration));
         return prepareBidMachine(context, extras);
     }
 
@@ -179,10 +172,10 @@ public class BidMachineUtils {
                 : MediationAdRequest.TAG_FOR_CHILD_DIRECTED_TREATMENT_UNSPECIFIED;
     }
 
-    private static int taggedForChildDirectedTreatment(@Nullable MediationRewardedAdConfiguration mediationRewardedAdConfiguration) {
-        return mediationRewardedAdConfiguration != null
-                ? mediationRewardedAdConfiguration.taggedForChildDirectedTreatment()
-                : MediationRewardedAdConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_UNSPECIFIED;
+    private static int taggedForChildDirectedTreatment(@Nullable MediationAdConfiguration mediationAdConfiguration) {
+        return mediationAdConfiguration != null
+                ? mediationAdConfiguration.taggedForChildDirectedTreatment()
+                : MediationAdConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_UNSPECIFIED;
     }
 
     /**
@@ -218,7 +211,7 @@ public class BidMachineUtils {
         Boolean coppaExtras = getBoolean(extras, COPPA);
         if (coppaExtras != null && coppaExtras
                 || taggedForChildDirectedTreatment ==
-                MediationAdRequest.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE) {
+                MediationAdConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE) {
             BidMachine.setCoppa(true);
         }
     }
@@ -248,10 +241,16 @@ public class BidMachineUtils {
         return extras != null && extras.containsKey(BidMachineFetcher.KEY_ID);
     }
 
+    static Bundle findServerExtras(MediationAdConfiguration mediationAdConfiguration) {
+        String serverParameters = BidMachineUtils.getString(mediationAdConfiguration.getServerParameters(),
+                                                            KEY_PARAMETER);
+        return BidMachineUtils.transformToBundle(serverParameters);
+    }
+
     static boolean isServerExtrasValid(@Nullable Bundle serverExtras,
                                        @Nullable Bundle localExtras) {
-        String serverPrice = serverExtras != null ? serverExtras.getString("bm_pf") : null;
-        String localPrice = localExtras != null ? localExtras.getString("bm_pf") : null;
+        String serverPrice = serverExtras != null ? serverExtras.getString(KEY_BM_PF) : null;
+        String localPrice = localExtras != null ? localExtras.getString(KEY_BM_PF) : null;
         return !TextUtils.isEmpty(serverPrice)
                 && !TextUtils.isEmpty(localPrice)
                 && serverPrice.equals(localPrice);
@@ -568,7 +567,7 @@ public class BidMachineUtils {
     @Nullable
     public static String getRewardedAdKey(RewardedAd rewardedAd) {
         Bundle metadata = rewardedAd.getAdMetadata();
-        return metadata.getString("AdTitle");
+        return metadata.getString(KEY_AD_TITLE);
     }
 
     @NonNull
@@ -624,6 +623,8 @@ public class BidMachineUtils {
                                                fetch(adRequest));
         } else if (adRequest instanceof RewardedRequest) {
             builder.addNetworkExtrasBundle(BidMachineAdapter.class,
+                                           fetch(adRequest));
+            builder.addNetworkExtrasBundle(BidMachineMediationRewardedAdAdapter.class,
                                            fetch(adRequest));
         } else if (adRequest instanceof NativeRequest) {
             builder.addCustomEventExtrasBundle(BidMachineCustomEventNative.class,

@@ -21,7 +21,9 @@ import io.bidmachine.rewarded.RewardedListener;
 import io.bidmachine.rewarded.RewardedRequest;
 import io.bidmachine.utils.BMError;
 
-@Deprecated
+/**
+ * @deprecated - use {@link BidMachineAdapter} instead
+ */
 public final class BidMachineMediationRewardedAdAdapter implements MediationRewardedVideoAdAdapter, OnContextChangedListener {
 
     private static final String TAG = BidMachineMediationRewardedAdAdapter.class.getSimpleName();

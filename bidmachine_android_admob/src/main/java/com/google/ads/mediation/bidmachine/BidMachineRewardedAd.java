@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -12,7 +13,6 @@ import com.google.android.gms.ads.mediation.MediationAdLoadCallback;
 import com.google.android.gms.ads.mediation.MediationRewardedAd;
 import com.google.android.gms.ads.mediation.MediationRewardedAdCallback;
 import com.google.android.gms.ads.mediation.MediationRewardedAdConfiguration;
-import com.google.android.gms.ads.reward.mediation.MediationRewardedVideoAdAdapter;
 import com.google.android.gms.ads.rewarded.RewardItem;
 
 import io.bidmachine.AdsType;
@@ -21,15 +21,20 @@ import io.bidmachine.rewarded.RewardedListener;
 import io.bidmachine.rewarded.RewardedRequest;
 import io.bidmachine.utils.BMError;
 
-public class BidMachineRewardedAd implements MediationRewardedAd {
+public class BidMachineRewardedAd implements MediationRewardedAd, RewardedListener {
 
     private static final String TAG = BidMachineRewardedAd.class.getSimpleName();
 
+    @Nullable
+    private MediationAdLoadCallback<MediationRewardedAd, MediationRewardedAdCallback> mediationAdLoadCallback;
+    @Nullable
+    private MediationRewardedAdCallback mediationRewardedAdCallback;
+    @Nullable
     private RewardedAd rewardedAd;
 
-    public void loadAd(MediationRewardedAdConfiguration mediationRewardedAdConfiguration,
+    public void loadAd(MediationRewardedAdConfiguration adConfiguration,
                        MediationAdLoadCallback<MediationRewardedAd, MediationRewardedAdCallback> mediationAdLoadCallback) {
-        Context context = mediationRewardedAdConfiguration.getContext();
+        Context context = adConfiguration.getContext();
         if (context == null) {
             BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback,
                                              AdRequest.ERROR_CODE_INVALID_REQUEST,
@@ -37,21 +42,17 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
             return;
         }
 
-        String serverParameters = BidMachineUtils.getString(mediationRewardedAdConfiguration.getServerParameters(),
-                                                            MediationRewardedVideoAdAdapter.CUSTOM_EVENT_SERVER_PARAMETER_FIELD);
-        Bundle serverParameterExtras = BidMachineUtils.transformToBundle(serverParameters);
-        Bundle localExtras = mediationRewardedAdConfiguration.getMediationExtras();
+        Bundle serverExtras = BidMachineUtils.findServerExtras(adConfiguration);
+        Bundle localExtras = adConfiguration.getMediationExtras();
         if (BidMachineUtils.isPreBidIntegration(localExtras)
-                && !BidMachineUtils.isServerExtrasValid(serverParameterExtras, localExtras)) {
+                && !BidMachineUtils.isServerExtrasValid(serverExtras, localExtras)) {
             BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback,
                                              AdRequest.ERROR_CODE_INVALID_REQUEST,
                                              "Local or Server extras invalid");
             return;
         }
-        Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverParameterExtras, localExtras);
-        if (!BidMachineUtils.prepareBidMachine(context,
-                                               fusedBundle,
-                                               mediationRewardedAdConfiguration)) {
+        Bundle fusedBundle = BidMachineUtils.getFusedBundle(serverExtras, localExtras);
+        if (!BidMachineUtils.prepareBidMachine(context, fusedBundle, adConfiguration)) {
             BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback,
                                              AdRequest.ERROR_CODE_INVALID_REQUEST,
                                              "Check BidMachine integration");
@@ -67,8 +68,8 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
                                                  "Fetched AdRequest not found");
                 return;
             } else {
-                request.notifyMediationWin();
                 Log.d(TAG, "Fetched request resolved: " + request.getAuctionResult());
+                request.notifyMediationWin();
             }
         } else {
             request = new RewardedRequest.Builder()
@@ -77,8 +78,10 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
                     .build();
         }
 
+        this.mediationAdLoadCallback = mediationAdLoadCallback;
+
         rewardedAd = new RewardedAd(context);
-        rewardedAd.setListener(new Listener(this, mediationAdLoadCallback));
+        rewardedAd.setListener(this);
         rewardedAd.load(request);
         Log.d(TAG, "Attempt load rewarded");
     }
@@ -87,6 +90,8 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
     public void showAd(Context context) {
         if (rewardedAd != null && rewardedAd.canShow()) {
             rewardedAd.show();
+        } else {
+            onAdShowFailed(BMError.Internal);
         }
     }
 
@@ -96,73 +101,86 @@ public class BidMachineRewardedAd implements MediationRewardedAd {
             rewardedAd.destroy();
             rewardedAd = null;
         }
+        mediationRewardedAdCallback = null;
+        mediationAdLoadCallback = null;
     }
 
-
-    private static class Listener implements RewardedListener {
-
-        private final BidMachineRewardedAd bidMachineRewardedAd;
-        private final MediationAdLoadCallback<MediationRewardedAd, MediationRewardedAdCallback> mediationAdLoadCallback;
-        private MediationRewardedAdCallback mediationRewardedAdCallback;
-
-        Listener(BidMachineRewardedAd bidMachineRewardedAd,
-                 MediationAdLoadCallback<MediationRewardedAd, MediationRewardedAdCallback> mediationAdLoadCallback) {
-            this.bidMachineRewardedAd = bidMachineRewardedAd;
-            this.mediationAdLoadCallback = mediationAdLoadCallback;
+    @Override
+    public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+        if (mediationAdLoadCallback != null) {
+            mediationRewardedAdCallback = mediationAdLoadCallback.onSuccess(this);
         }
+    }
 
-        @Override
-        public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-            mediationRewardedAdCallback = mediationAdLoadCallback.onSuccess(bidMachineRewardedAd);
-        }
-
-        @Override
-        public void onAdLoadFailed(@NonNull RewardedAd rewardedAd, @NonNull BMError bmError) {
+    @Override
+    public void onAdLoadFailed(@NonNull RewardedAd rewardedAd, @NonNull BMError bmError) {
+        if (mediationAdLoadCallback != null) {
             BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback, bmError);
         }
+    }
 
-        @Override
-        public void onAdShown(@NonNull RewardedAd rewardedAd) {
+    @Override
+    public void onAdShown(@NonNull RewardedAd rewardedAd) {
+        if (mediationRewardedAdCallback != null) {
             mediationRewardedAdCallback.onAdOpened();
             mediationRewardedAdCallback.onVideoStart();
         }
+    }
 
-        @Override
-        public void onAdShowFailed(@NonNull RewardedAd rewardedAd, @NonNull BMError bmError) {
-            AdError adError = BidMachineUtils.createAdError(AdRequest.ERROR_CODE_INTERNAL_ERROR,
-                                                            bmError.getMessage());
+    @Override
+    public void onAdShowFailed(@NonNull RewardedAd rewardedAd, @NonNull BMError bmError) {
+        onAdShowFailed(bmError);
+    }
+
+    void onAdShowFailed(@NonNull BMError bmError) {
+        String errorMessage = bmError.getMessage();
+        Log.d(TAG, errorMessage);
+
+        if (mediationRewardedAdCallback != null) {
+            int adMobErrorCode = BidMachineUtils.transformToAdMobErrorCode(bmError);
+            AdError adError = BidMachineUtils.createAdError(adMobErrorCode, errorMessage);
             mediationRewardedAdCallback.onAdFailedToShow(adError);
         }
+    }
 
-        @Override
-        public void onAdImpression(@NonNull RewardedAd rewardedAd) {
+    @Override
+    public void onAdImpression(@NonNull RewardedAd rewardedAd) {
+        if (mediationRewardedAdCallback != null) {
             mediationRewardedAdCallback.reportAdImpression();
         }
+    }
 
-        @Override
-        public void onAdClicked(@NonNull RewardedAd rewardedAd) {
+    @Override
+    public void onAdClicked(@NonNull RewardedAd rewardedAd) {
+        if (mediationRewardedAdCallback != null) {
             mediationRewardedAdCallback.reportAdClicked();
         }
+    }
 
-        @Override
-        public void onAdClosed(@NonNull RewardedAd rewardedAd, boolean b) {
+    @Override
+    public void onAdClosed(@NonNull RewardedAd rewardedAd, boolean b) {
+        if (mediationRewardedAdCallback != null) {
             mediationRewardedAdCallback.onAdClosed();
-
-            bidMachineRewardedAd.destroy();
         }
 
-        @Override
-        public void onAdRewarded(@NonNull RewardedAd rewardedAd) {
+        destroy();
+    }
+
+    @Override
+    public void onAdRewarded(@NonNull RewardedAd rewardedAd) {
+        if (mediationRewardedAdCallback != null) {
             mediationRewardedAdCallback.onVideoComplete();
             mediationRewardedAdCallback.onUserEarnedReward(new BidMachineReward());
         }
+    }
 
-        @Override
-        public void onAdExpired(@NonNull RewardedAd rewardedAd) {
+    @Override
+    public void onAdExpired(@NonNull RewardedAd rewardedAd) {
+        if (mediationAdLoadCallback != null) {
             BidMachineUtils.onAdFailedToLoad(mediationAdLoadCallback, BMError.Expired);
         }
-
     }
+
 
     private static final class BidMachineReward implements RewardItem {
 
