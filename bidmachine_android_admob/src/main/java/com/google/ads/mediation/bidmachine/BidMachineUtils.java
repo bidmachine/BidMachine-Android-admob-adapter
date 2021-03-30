@@ -151,7 +151,7 @@ public class BidMachineUtils {
         if (!BidMachine.isInitialized()) {
             String jsonData = getString(extras, MEDIATION_CONFIG);
             if (jsonData != null) {
-                BidMachine.registerNetworks(jsonData);
+                BidMachine.registerNetworks(context, jsonData);
             }
             String sellerId = getString(extras, SELLER_ID);
             if (!TextUtils.isEmpty(sellerId)) {

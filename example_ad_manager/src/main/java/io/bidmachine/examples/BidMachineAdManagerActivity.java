@@ -3,6 +3,7 @@ package io.bidmachine.examples;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -124,6 +125,11 @@ public class BidMachineAdManagerActivity extends Activity {
         bLoadRewarded.setEnabled(true);
     }
 
+    private void addAdView(View view) {
+        adContainer.removeAllViews();
+        adContainer.addView(view);
+    }
+
     /**
      * Method for load BannerRequest
      */
@@ -213,8 +219,7 @@ public class BidMachineAdManagerActivity extends Activity {
         if (bidMachineBannerView != null
                 && bidMachineBannerView.canShow()
                 && bidMachineBannerView.getParent() == null) {
-            adContainer.removeAllViews();
-            adContainer.addView(bidMachineBannerView);
+            addAdView(bidMachineBannerView);
         } else {
             Log.d(TAG, "show error - banner object is null");
         }
@@ -331,8 +336,7 @@ public class BidMachineAdManagerActivity extends Activity {
         if (bidMachineMrecView != null
                 && bidMachineMrecView.canShow()
                 && bidMachineMrecView.getParent() == null) {
-            adContainer.removeAllViews();
-            adContainer.addView(bidMachineMrecView);
+            addAdView(bidMachineMrecView);
         } else {
             Log.d(TAG, "show error - mrec object is null");
         }
