@@ -4,9 +4,9 @@
 
 * [Useful links](#useful-links)
 * [Banner implementation](#banner-implementation)
-* [Mrec implementation](#mrec-implementation)
+* [MREC implementation](#mrec-implementation)
 * [Interstitial implementation](#interstitial-implementation)
-* [RewardedVideo implementation](#rewardedvideo-implementation)
+* [Rewarded implementation](#rewarded-implementation)
 * [Utils](#utils)
 
 ## Useful links
@@ -83,9 +83,9 @@ private void showBanner() {
     }
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L130)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L136)
 
-## Mrec implementation
+## MREC implementation
 ```java
 private void loadMrec() {
     // Create new BidMachine request
@@ -155,7 +155,7 @@ private void showMrec() {
     }
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L248)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L253)
 
 ## Interstitial implementation
 ```java
@@ -223,11 +223,11 @@ private void showInterstitial() {
     }
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L366)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L370)
 
-## RewardedVideo implementation
+## Rewarded implementation
 ```java
-private void loadRewardedVideo() {
+private void loadRewarded() {
     // Create new BidMachine request
     rewardedRequest = new RewardedRequest.Builder()
             .setListener(new RewardedRequest.AdRequestListener() {
@@ -288,7 +288,7 @@ private void showRewarded() {
     }
 }
 ```
-[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L471)
+[*Example*](src/main/java/io/bidmachine/examples/BidMachineAdManagerActivity.java#L475)
 
 ## Utils
 Ways to set up AdManagerAdRequest by BidMachine AdRequest:

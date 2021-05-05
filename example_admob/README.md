@@ -2,9 +2,9 @@
 
 * [Useful links](#useful-links)
 * [Banner implementation](#banner-implementation)
-* [Mrec implementation](#mrec-implementation)
+* [MREC implementation](#mrec-implementation)
 * [Interstitial implementation](#interstitial-implementation)
-* [RewardedVideo implementation](#rewardedvideo-implementation)
+* [Rewarded implementation](#rewarded-implementation)
 * [Native implementation](#native-implementation)
 
 ## Useful links
@@ -112,7 +112,7 @@ adView.loadAd(adRequest);
 ```
 [*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L114)
 
-## Mrec implementation
+## MREC implementation
 Server configuration sample:
 ```json
 {
@@ -312,7 +312,7 @@ InterstitialAd.load(this, INTERSTITIAL_ID, adRequest, new InterstitialLoadListen
 ```
 [*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobActivity.java#L240)
 
-## RewardedVideo implementation
+## Rewarded implementation
 Server configuration sample:
 ```json
 {

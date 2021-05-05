@@ -2,9 +2,9 @@
 
 * [Useful links](#useful-links)
 * [Banner implementation](#banner-implementation)
-* [Mrec implementation](#mrec-implementation)
+* [MREC implementation](#mrec-implementation)
 * [Interstitial implementation](#interstitial-implementation)
-* [RewardedVideo implementation](#rewardedvideo-implementation)
+* [Rewarded implementation](#rewarded-implementation)
 * [Native implementation](#native-implementation)
 * [Utils](#utils)
 
@@ -46,7 +46,7 @@ private void loadAdMobBanner(@NonNull BannerRequest bannerRequest) {
 ```
 [*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L148)
 
-## Mrec implementation
+## MREC implementation
 ```java
 private void loadMrec() {
     // Create new BidMachine request
@@ -110,9 +110,9 @@ private void loadAdMobInterstitial(@NonNull InterstitialRequest interstitialRequ
 ```
 [*Example*](src/main/java/io/bidmachine/examples/BidMachineAdMobFetchActivity.java#L330)
 
-## RewardedVideo implementation
+## Rewarded implementation
 ```java
-private void loadRewardedVideo() {
+private void loadRewarded() {
     // Create new BidMachine request
     RewardedRequest rewardedRequest = new RewardedRequest.Builder()
             .setListener(new RewardedRequest.AdRequestListener() {
